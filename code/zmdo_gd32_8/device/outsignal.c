@@ -8,26 +8,22 @@
 /* 全局变量 */
 /* 私有函数声明 ***************************************************************/
 /* 私有函数  ******************************************************************/
-static void OutsignalClock(GPIO_TypeDef* port){
+static void OutsignalClock(uint32_t port){
     if (port == GPIOA)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+        rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOB)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+        rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOC)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+		rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOD)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
+        rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOE)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE, ENABLE);
+        rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOF)
-        RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOF, ENABLE);
+        rcu_periph_clock_enable(RCU_GPIOA);
 }
 
-void OutsignedInit(Stdoutsignal_n* outsignal) {
-    GPIO_InitTypeDef    GPIO_InitStructure;
-//    ADC_InitTypeDef     ADC_InitStructure;
-//    DMA_InitTypeDef     DMA_InitStructure;
-    
+void OutsignedInit(Stdoutsignal_n* outsignal) {   
     OutsignalClock(outsignal->DO1.port);
     OutsignalClock(outsignal->DO2.port);
     OutsignalClock(outsignal->DO3.port);
@@ -38,33 +34,17 @@ void OutsignedInit(Stdoutsignal_n* outsignal) {
     OutsignalClock(outsignal->DO8.port);
     
     OutsignalClock(outsignal->urgent.port);
-    
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO1.pin;
-    GPIO_Init(outsignal->DO1.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO2.pin;
-    GPIO_Init(outsignal->DO2.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO3.pin;
-    GPIO_Init(outsignal->DO3.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO4.pin;
-    GPIO_Init(outsignal->DO4.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO5.pin;
-    GPIO_Init(outsignal->DO5.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO6.pin;
-    GPIO_Init(outsignal->DO6.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO7.pin;
-    GPIO_Init(outsignal->DO7.port, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = outsignal->DO8.pin;
-    GPIO_Init(outsignal->DO8.port, &GPIO_InitStructure);
-    
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-    
-    GPIO_InitStructure.GPIO_Pin = outsignal->urgent.pin;
-    GPIO_Init(outsignal->urgent.port, &GPIO_InitStructure);
+
+	gpio_init(outsignal->DO1.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO1.pin);
+	gpio_init(outsignal->DO2.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO2.pin);
+	gpio_init(outsignal->DO3.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO3.pin);
+	gpio_init(outsignal->DO4.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO4.pin);
+	gpio_init(outsignal->DO5.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO5.pin);
+	gpio_init(outsignal->DO6.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO6.pin);
+	gpio_init(outsignal->DO7.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO7.pin);
+	gpio_init(outsignal->DO8.port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,outsignal->DO8.pin);
+
+	gpio_init(outsignal->urgent.port, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ,outsignal->urgent.pin);
 }
 
 void OutsignalSetout(Stdoutsignal_n* outsignal,uint8_t num,uint8_t var) {
@@ -97,19 +77,19 @@ void OutsignalSetout(Stdoutsignal_n* outsignal,uint8_t num,uint8_t var) {
         case 8:
             outsignal->all_pin_var = var;
             out_pin = outsignal->DO1;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO2;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO3;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO4;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO5;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO6;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO7;
-            GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+            gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
             out_pin = outsignal->DO8;
             break;
     }
@@ -126,7 +106,7 @@ void OutsignalSetout(Stdoutsignal_n* outsignal,uint8_t num,uint8_t var) {
             outsignal->coil_val = 0xff;
         }
     }
-    GPIO_WriteBit(out_pin.port,out_pin.pin,(BitAction)(var));
+    gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
 }
 
 uint8_t OutsignalReadout(Stdoutsignal_n* outsignal,uint8_t num) {
@@ -158,13 +138,13 @@ uint8_t OutsignalReadout(Stdoutsignal_n* outsignal,uint8_t num) {
         break;
         case 8:
             return outsignal->all_pin_var;
-        break;
+       // break;
     }
-    return GPIO_ReadOutputDataBit(out_pin.port,out_pin.pin);
+    return gpio_input_bit_get(out_pin.port,out_pin.pin);
 }
 
 uint8_t OutsignalEmergencyStop(Stdoutsignal_n* outsignal) {
-    return GPIO_ReadInputDataBit(outsignal->urgent.port,outsignal->urgent.pin);
+    return gpio_input_bit_get(outsignal->urgent.port,outsignal->urgent.pin);
 }
 
 /***************************************************************END OF FILE****/

@@ -1,6 +1,9 @@
 --cpu Cortex-M3
 ".\objects\app.o"
 ".\objects\can.o"
+".\objects\outsignal.o"
+".\objects\wdog.o"
+".\objects\flash.o"
 ".\objects\gd32f10x_adc.o"
 ".\objects\gd32f10x_bkp.o"
 ".\objects\gd32f10x_can.o"

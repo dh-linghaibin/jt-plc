@@ -8,165 +8,51 @@
 /* 私有函数声明 ***************************************************************/
 /* 私有函数  ******************************************************************/
 /* 变量 ----------------------------------------------------------------------*/
-volatile FLASH_Status FLASHStatus = FLASH_COMPLETE;
+#define PAGE_SIZE		((uint32_t)(1024))				   /* 一页的字节数 */
+#define FLASH_START		((uint32_t)(0x08000000 + 0x0c000)) /* flash获取地址120k */
+static uint32_t page_merry[PAGE_SIZE/4];				   /* 内存缓冲 */
 
-/************************************************
-函数名称 ： FLASH_PageWrite
-功    能 ： 写一页FLASH
-参    数 ： pBuffer ----- 数据缓冲区
-WriteAddr --- 写地址
-返 回 值 ： 无
-作    者 ： strongerHuang
-*************************************************/
-void FLASH_PageWrite(uint16_t *pBuffer, uint32_t WriteAddr)
-{
-    uint16_t cnt_tmp;
-    for(cnt_tmp=0; (cnt_tmp<FLASH_PAGE_LENGTH) && (FLASHStatus == FLASH_COMPLETE); cnt_tmp++)
-    {
-        FLASHStatus = FLASH_ProgramHalfWord(WriteAddr, *pBuffer);
-        WriteAddr += 2;
-        pBuffer++;
-    }
+static uint32_t flash_read32(uint32_t address) {
+	uint32_t temp1,temp2;
+	temp1=*(__IO uint16_t*)address; 
+	temp2=*(__IO uint16_t*)(address+2); 
+	return (temp2<<16)+temp1;
 }
 
-/************************************************
-函数名称 ： FLASH_WriteNWord
-功    能 ： 写Flash
-参    数 ： pBuffer ----- 数据缓冲区
-WriteAddr --- 写地址
-nWord ------- 长度
-返 回 值 ： 无
-作    者 ： strongerHuang
-*************************************************/
-void FLASH_WriteNWord(uint16_t *pBuffer, uint32_t WriteAddr, uint16_t nWord)
-{
-    static uint16_t buf_tmp[FLASH_PAGE_LENGTH];
-    uint32_t NbrOfPage = 0x00;                     //页数（读写）
-    
-    uint32_t length_beyond_start;                  //开始页超出的长度(半字)
-    uint32_t length_remain_start;                  //开始页剩余的长度(半字)
-    
-    uint32_t addr_first_page;                      //第一页(起始)地址
-    uint32_t addr_last_page;                       //最后页(起始)地址
-    uint16_t *pbuf_tmp;                            //buf指针
-    uint16_t cnt_length;                           //计数 - 长度
-    uint16_t cnt_page;                             //计数 - 页数
-    uint32_t prog_addr_start;                      //编程地址
-    uint32_t length_beyond_last;                   //最后页超出的长度(半字)
-    uint8_t  flag_last_page_fill;                  //最后一页装满标志
-    
-    
-    length_beyond_start = ((WriteAddr % FLASH_PAGE_SIZE) / FLASH_TYPE_LENGTH);
-    length_remain_start = FLASH_PAGE_LENGTH - length_beyond_start;
-    addr_first_page     = WriteAddr - (WriteAddr % FLASH_PAGE_SIZE);
-    
-    /* 擦除(写操作)的页数 */
-    if(0 == (length_beyond_start + nWord)%FLASH_PAGE_LENGTH)
-    {
-        flag_last_page_fill = FLAG_OK;               //最后一页刚好
-        NbrOfPage = (length_beyond_start + nWord) / FLASH_PAGE_LENGTH;
-    }
-    else
-    {
-        flag_last_page_fill = FLAG_NOOK;             //???跨页
-        NbrOfPage = (length_beyond_start + nWord) / FLASH_PAGE_LENGTH + 1;
-    }
-    
-    /* 解锁 */
-    FLASH_Unlock();
-    
-    /* 清除标志位 */
-    FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
-    
-    /* 操作第一页 */
-    FLASH_ReadNWord(buf_tmp, addr_first_page, FLASH_PAGE_LENGTH);
-    FLASHStatus = FLASH_ErasePage(addr_first_page);
-    /* 只有1页 */
-    if(1 == NbrOfPage)
-    {
-        pbuf_tmp = pBuffer;                          //复制地址(指针)
-        for(cnt_length=length_beyond_start; cnt_length<(length_beyond_start + nWord); cnt_length++)
-        {
-            buf_tmp[cnt_length] = *pbuf_tmp;
-            pbuf_tmp++;
-        }
-        FLASH_PageWrite(buf_tmp, addr_first_page);
-    }
-    /* 大于1页 */
-    else
-    {
-        /* 第一页 */
-        pbuf_tmp = pBuffer;
-        for(cnt_length=length_beyond_start; cnt_length<FLASH_PAGE_LENGTH; cnt_length++)
-        {
-            buf_tmp[cnt_length] = *pbuf_tmp;
-            pbuf_tmp++;
-        }
-        FLASH_PageWrite(buf_tmp, addr_first_page);
-        
-        /* 最后一页刚好装满，不用读取最后一页数据 */
-        if(FLAG_OK == flag_last_page_fill)
-        {
-            for(cnt_page=1; (cnt_page<NbrOfPage)  && (FLASHStatus == FLASH_COMPLETE); cnt_page++)
-            {                                          //这里编程地址为字节地址(故FLASH_PAGE_SIZE)
-                prog_addr_start = addr_first_page + cnt_page*FLASH_PAGE_SIZE;
-                FLASHStatus = FLASH_ErasePage(prog_addr_start);
-                //(cnt_page - 1):为下一页地址
-                FLASH_PageWrite((pBuffer + length_remain_start + (cnt_page - 1)*FLASH_PAGE_LENGTH), prog_addr_start);
-            }
-        }
-        else
-        {
-            /* 中间页 */
-            for(cnt_page=1; (cnt_page<(NbrOfPage - 1))  && (FLASHStatus == FLASH_COMPLETE); cnt_page++)
-            {                                          //这里编程地址为字节地址(故FLASH_PAGE_SIZE)
-                prog_addr_start = addr_first_page + cnt_page*FLASH_PAGE_SIZE;
-                FLASHStatus = FLASH_ErasePage(prog_addr_start);
-                //(cnt_page - 1):为下一页地址
-                FLASH_PageWrite((pBuffer + length_remain_start + (cnt_page - 1)*FLASH_PAGE_LENGTH), prog_addr_start);
-            }
-            
-            /* 最后一页 */
-            addr_last_page = addr_first_page + (NbrOfPage - 1)*FLASH_PAGE_SIZE;
-            
-            FLASH_ReadNWord(buf_tmp, addr_last_page, FLASH_PAGE_LENGTH);
-            FLASHStatus = FLASH_ErasePage(addr_last_page);
-            //NbrOfPage - 2: 首页 + 最后一页 共两页(-2)
-            pbuf_tmp = pBuffer + length_remain_start + (NbrOfPage - 2)*(FLASH_PAGE_SIZE/2);
-            length_beyond_last   = (nWord - length_remain_start) % FLASH_PAGE_LENGTH;
-            for(cnt_length=0; cnt_length<length_beyond_last; cnt_length++)
-            {
-                buf_tmp[cnt_length] = *pbuf_tmp;
-                pbuf_tmp++;
-            }
-            FLASH_PageWrite(buf_tmp, addr_last_page);
-        }
-    }
+
+int flash_write(uint32_t address,uint32_t data) {
+	uint16_t read_i = 0;
+	uint32_t addr  = 0;
+	uint8_t page_num = 0;
+	uint16_t page_offset = 0;
+
+	fmc_unlock();						  /* unlock the flash program/erase controller */
+	page_num = (address/PAGE_SIZE);		  /* 计算第几页 */
+	addr = (page_num*1024 + FLASH_START); /* 缓存块 */
+	/* 读取页到缓存区 */
+	do {
+		page_merry[read_i] = flash_read32(addr);
+		addr+=4;
+	} while(++read_i < 256);
+		
+	fmc_page_erase(page_num*1024 + FLASH_START); /* 擦除 */
+	page_offset = address%PAGE_SIZE;
+	page_merry[page_offset] = data;
+	addr = (page_num*1024 + FLASH_START);
+	read_i = 0;
+	do{
+		fmc_word_program(addr,page_merry[read_i]);
+		addr += 4;
+	}while(++read_i < 256);
+	
+	fmc_lock(); /* lock the main FMC operation */
+	return 0;
 }
 
-/************************************************
-函数名称 ： FLASH_ReadNWord
-功    能 ： 读N字
-参    数 ： pBuffer ----- 数据缓冲区
-ReadAddr ---- 读地址
-nWord ------- 长度
-返 回 值 ： 无
-作    者 ： strongerHuang
-*************************************************/
-void FLASH_ReadNWord(uint16_t* pBuffer, uint32_t ReadAddr, uint16_t nWord)
-{
-    while(nWord--)
-    {
-        *pBuffer = (*(__IO uint16_t*)ReadAddr);
-        ReadAddr += 2;
-        pBuffer++;
-    }
-}
-
-uint16_t FLASH_ReadNBit(uint32_t ReadAddr) {
-    uint16_t pBuffer = 0;
-    pBuffer = (*(__IO uint16_t*)ReadAddr );
-    return pBuffer;
+int flash_read(uint32_t address,uint32_t *read_data) {
+	uint32_t addr = (address/PAGE_SIZE)*1024 + FLASH_START + (address%PAGE_SIZE) * 4;
+	*read_data = flash_read32(addr);
+	return 0; 
 }
 
 /***************************************************************END OF FILE****/

@@ -2,12 +2,12 @@
 #define __TM1650_H
 
 /* 引用头文件 *****************************************************************/
-#include "stm32f0xx.h"
+#include "gd32f10x.h"
 /* 外部数据类型 ***************************************************************/
 
 typedef struct {
-	GPIO_TypeDef* 	port;
-	uint16_t        pin;
+	uint32_t 	port;
+	uint16_t    pin;
 } Stdtm1650_pin_TypeDef;
 
 typedef struct {   
