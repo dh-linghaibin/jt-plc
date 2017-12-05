@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_dialog"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/dialog_add_sene_enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="确定"
+        android:textColor="@color/blue"
+        android:textSize="14sp"/>
+
+    <RadioGroup
+        android:layout_marginTop="10dp"
+        android:id="@+id/dialog_add_sene_radioGroupID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/dialog_add_sene_originalfactory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="原厂面板"
+            android:textSize="10sp" />
+        <RadioButton
+            android:id="@+id/dialog_add_sene_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="485面板"
+            android:textSize="10sp"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.jt28.a6735.jtzmconfig.adapter.check.PickerView
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:id="@+id/dialog_add_sene_list"
+            android:layout_width="0dp"
+            android:layout_height="90dp" />
+
+        <LinearLayout
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_edit"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="设置设备地址"
+                android:textColor="#666666"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/dialog_add_sene_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:inputType="number"
+                android:maxLength="2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_edit"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="设置按钮名称"
+                android:textColor="#666666"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/dialog_add_sene_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:textColor="#666666"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

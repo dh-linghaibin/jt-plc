@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">JTConfig</string>
+    <string name="name_out1">继电器1 </string>
+    <string name="name_out2">继电器2  </string>
+    <string name="name_out3">继电器3  </string>
+    <string name="name_out4">继电器4  </string>
+    <string name="name_out5">继电器5  </string>
+    <string name="name_out6">继电器6  </string>
+    <string name="name_out7">继电器7  </string>
+    <string name="name_out8">继电器8  </string>
+    <string name="name_add">添加</string>
+    <string name="name_close">取消</string>
+    <string name="name_address">地址</string>
+</resources>

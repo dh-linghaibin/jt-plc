@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="languages">
+        <item>继电器1</item>
+        <item>继电器2</item>
+        <item>继电器2</item>
+        <item>继电器3</item>
+        <item>继电器4</item>
+        <item>继电器5</item>
+        <item>继电器6</item>
+        <item>继电器7</item>
+        <item>继电器8</item>
+    </string-array>
+</resources>

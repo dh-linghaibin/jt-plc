@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SwipeMenuExpandableListView"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <CheckBox
+        android:focusable="false"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/determine_chekbox"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:id="@+id/tv_source_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="场景名称"
+        android:textColor="@color/grey_color2"
+        android:textSize="@dimen/txt_14" />
+
+    <Button
+        android:focusable="false"
+        android:layout_alignParentRight="true"
+        android:id="@+id/tv_source_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="增加"/>
+
+</RelativeLayout>

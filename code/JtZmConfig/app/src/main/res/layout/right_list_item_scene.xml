@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/dp6">
+    <LinearLayout
+        android:gravity="center"
+        android:id="@+id/right_list_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/dp6">
+        <TextView
+            android:text="23"
+            android:textSize="25dp"
+            android:id="@+id/right_list_scene_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:gravity="center"
+        android:id="@+id/right_list_scene_menu"
+        android:visibility="gone"
+        android:layout_below ="@id/right_list_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/right_list_scene_menu_sub"
+            android:gravity="center"
+            android:clickable="true"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@color/red"
+            android:text="删除"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/SwipeMenuExpandableListView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+	android:background="@color/gray_light"
+    android:orientation="vertical" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/gray_light"
+		android:orientation="vertical">
+		<TextView
+			android:text="123"
+			android:id="@+id/left_list_item"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/dp60"
+			android:padding="@dimen/dp12"
+			android:gravity="center"
+			android:textColor="@color/black"
+			android:layout_gravity="center"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:gravity="center"
+		android:id="@+id/left_list_menu"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/white"
+		android:orientation="vertical">
+		<Button
+			android:id="@+id/left_list_menu_add"
+			android:gravity="center"
+			android:clickable="true"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:background="@color/colorPrimary"
+			android:text="添加"
+			android:textColor="@color/white"/>
+		<Button
+			android:id="@+id/left_list_menu_sub"
+			android:gravity="center"
+			android:clickable="true"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:background="@color/red"
+			android:text="删除"
+			android:textColor="@color/white"/>
+	</LinearLayout>
+
+</LinearLayout>

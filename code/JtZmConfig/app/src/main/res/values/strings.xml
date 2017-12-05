@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">照明配置</string>
+
+    <string name="bottom_main_item_beauty">场景</string>
+    <string name="bottom_main_item_android">安卓</string>
+    <string name="bottom_main_item_category">分类</string>
+    <string name="bottom_main_item_mine">Mine</string>
+
+    <string name="rationale_local">我们需要获取你的蓝牙。</string>
+    <string name="rationale_camera">我们需要访问您的相机才可以采集照片。</string>
+
+</resources>

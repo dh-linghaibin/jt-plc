@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<settings>
+    <StLinkDriver>
+        <stlinkserialNo>53362367</stlinkserialNo>
+        <stlinkfoundProbes />
+        <stlinkResetStyle>0</stlinkResetStyle>
+        <stlinkResetStrategy>1</stlinkResetStrategy>
+        <CStepIntDis>_ 0</CStepIntDis>
+        <LeaveTargetRunning>_ 0</LeaveTargetRunning>
+    </StLinkDriver>
+    <DebugChecksum>
+        <Checksum>1893576584</Checksum>
+    </DebugChecksum>
+    <Exceptions>
+        <StopOnUncaught>_ 0</StopOnUncaught>
+        <StopOnThrow>_ 0</StopOnThrow>
+    </Exceptions>
+    <Stack>
+        <FillEnabled>0</FillEnabled>
+        <OverflowWarningsEnabled>1</OverflowWarningsEnabled>
+        <WarningThreshold>90</WarningThreshold>
+        <SpWarningsEnabled>1</SpWarningsEnabled>
+        <WarnLogOnly>1</WarnLogOnly>
+        <UseTrigger>1</UseTrigger>
+        <TriggerName>main</TriggerName>
+        <LimitSize>0</LimitSize>
+        <ByteLimit>50</ByteLimit>
+    </Stack>
+    <CallStack>
+        <ShowArgs>0</ShowArgs>
+    </CallStack>
+    <struct_types>
+        <Fmt0>StdMenu_n-choice_num	4	0</Fmt0>
+        <Fmt1>StdMenu_n-cmd_merry_count	4	0</Fmt1>
+        <Fmt2>StdMenu_n-cmd_merry_switch	4	0</Fmt2>
+        <Fmt3>StdMenu_n-m_var	4	0</Fmt3>
+        <Fmt4>StdMenu_n-menu_page	4	0</Fmt4>
+    </struct_types>
+    <array_types>
+        <Fmt0>uint16_t[5]	4	0</Fmt0>
+        <Fmt1>uint16_t[6]	4	0</Fmt1>
+        <Fmt2>uint8_t[100]	4	0</Fmt2>
+        <Fmt3>uint8_t[10]	4	0</Fmt3>
+        <Fmt4>uint8_t[120]	4	0</Fmt4>
+        <Fmt5>uint8_t[160]	4	0</Fmt5>
+        <Fmt6>uint8_t[2]	4	0</Fmt6>
+        <Fmt7>uint8_t[8]	4	0</Fmt7>
+    </array_types>
+    <watch_formats>
+        <Fmt0>{W}1:but_num	3	0</Fmt0>
+    </watch_formats>
+    <LogFile>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+        <Category>_ 0</Category>
+    </LogFile>
+    <TermIOLog>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+    </TermIOLog>
+    <CallStackLog>
+        <Enabled>0</Enabled>
+    </CallStackLog>
+    <CallStackStripe>
+        <ShowTiming>1</ShowTiming>
+    </CallStackStripe>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Count>0</Count>
+    </Breakpoints2>
+    <Aliases>
+        <Count>0</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
+</settings>

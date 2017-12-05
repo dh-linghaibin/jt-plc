@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="时间设置"
+            android:textSize="12dp"
+            android:textColor="@color/cpb_red"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="horizontal">
+            <ListView
+                android:id="@+id/demo3_left_listview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:scrollbars="none"
+                android:divider="@null"
+                />
+            <com.jt28.a6735.jtzmconfig.View.PinnedHeaderListView
+                android:id="@+id/demo3_pinnedListView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="2"
+                android:background="@android:color/white"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/demo3_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="#FFFFFF"
+        android:layout_gravity="bottom|right"
+        android:clickable="true"
+        app:borderWidth="0dp"
+        app:elevation="7dp"
+        app:fabSize="mini"
+        app:layout_anchorGravity="bottom|left"
+        app:srcCompat="@mipmap/add" />
+
+</FrameLayout>

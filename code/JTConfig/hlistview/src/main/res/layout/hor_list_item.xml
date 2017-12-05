@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_margin="4dp"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <!--<TextView-->
+        <!--android:id="@+id/file"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:drawableLeft="@mipmap/controlpanel"-->
+        <!--android:drawableStart="@mipmap/controlpanel"-->
+        <!--android:gravity="center"-->
+        <!--android:focusable="false"-->
+        <!--android:padding="4dp"-->
+        <!--android:text="附件"-->
+        <!--android:textColor="#6f6f6f"/>-->
+
+    <ImageView
+        android:id="@+id/file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/controlpanel"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设备：DO-8"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="地址：34"/>
+
+</LinearLayout>

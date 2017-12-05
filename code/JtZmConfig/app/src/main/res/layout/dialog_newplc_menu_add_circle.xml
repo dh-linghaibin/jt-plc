@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_dialog"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/dialog_newplc_add_enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="确定"
+        android:textColor="@color/blue"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:drawableLeft="@drawable/ic_edit"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="线圈地址"
+        android:textColor="#666666"
+        android:textSize="14sp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/dialog_newplc_add_out_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:drawableLeft="@drawable/ic_edit"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="设备地址"
+        android:textColor="#666666"
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/dialog_newplc_add_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:inputType="number"
+        android:maxLength="2"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:drawableLeft="@drawable/ic_edit"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="备注"
+        android:textColor="#666666"
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/dialog_newplc_add_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:textColor="#666666"
+        android:textSize="14sp"/>
+
+</LinearLayout>
