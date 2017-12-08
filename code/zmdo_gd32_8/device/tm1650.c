@@ -15,19 +15,19 @@
 /* 全局变量 */
 /* 私有函数声明 ***************************************************************/
 /* 私有函数  ******************************************************************/
-static void OutsignalClock(uint32_t port){
+static void Tm1650Clock(uint32_t port){
     if (port == GPIOA)
         rcu_periph_clock_enable(RCU_GPIOA);
     else if(port == GPIOB)
-        rcu_periph_clock_enable(RCU_GPIOA);
+        rcu_periph_clock_enable(RCU_GPIOB);
     else if(port == GPIOC)
-		rcu_periph_clock_enable(RCU_GPIOA);
+		rcu_periph_clock_enable(RCU_GPIOC);
     else if(port == GPIOD)
-        rcu_periph_clock_enable(RCU_GPIOA);
+        rcu_periph_clock_enable(RCU_GPIOD);
     else if(port == GPIOE)
-        rcu_periph_clock_enable(RCU_GPIOA);
+        rcu_periph_clock_enable(RCU_GPIOE);
     else if(port == GPIOF)
-        rcu_periph_clock_enable(RCU_GPIOA);
+        rcu_periph_clock_enable(RCU_GPIOF);
 }
 
 static void Tm1650DelayMs(uint16_t ms) {						
@@ -39,23 +39,23 @@ static void Tm1650DelayMs(uint16_t ms) {
 
 static void TM1650Start(Stdtm1650_n * tm1650n)
 {
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
     Tm1650DelayMs(1);
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
     Tm1650DelayMs(1);
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
     Tm1650DelayMs(1);
 }
 
 static void TM1650Stop(Stdtm1650_n * tm1650n)
 {
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
     Tm1650DelayMs(1);
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
     Tm1650DelayMs(1);
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
     Tm1650DelayMs(1);
 }
 /*---------------------------------------------------------------*-
@@ -64,11 +64,11 @@ static void TM1650Stop(Stdtm1650_n * tm1650n)
 * Make sure the slave has received the data
 -*---------------------------------------------------------------*/
 static void TM1650ACK(Stdtm1650_n * tm1650n) {
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
     Tm1650DelayMs(1);
-    GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
+    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
 }
 /*---------------------------------------------------------------*-
 * TM1650_Write_Byte()
@@ -80,15 +80,15 @@ static void TM1650WriteByte(Stdtm1650_n * tm1650n,uint8_t data)
     uint8_t i;
     for (i = 0; i < 8; i++) {
         if ((data & 0x80) == 0)
-            GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
+            gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
         else
-            GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
+            gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
         data <<= 1;
-        GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
         Tm1650DelayMs(1);
-        GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
+        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
         Tm1650DelayMs(1);
-        GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
         Tm1650DelayMs(1);
     }
 }
@@ -105,24 +105,22 @@ static void TM1650Send(Stdtm1650_n * tm1650n,uint8_t cmd, uint8_t data)
 
 uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
+   
     uint8_t reKey,i;
     TM1650Start(tm1650n);
     TM1650WriteByte(tm1650n,0x49);
     TM1650ACK(tm1650n);
-    GPIO_WriteBit(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_InitStructure.GPIO_Pin = tm1650n->sda.pin;
-    GPIO_Init(tm1650n->sda.port, &GPIO_InitStructure);
+    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
+   
+	gpio_init(tm1650n->sda.port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
     
     for(i=0;i<8;i++)
     {
-        GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
+        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
         reKey=reKey>>1;
         Tm1650DelayMs(10);
-        GPIO_WriteBit(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-        if(GPIO_ReadInputDataBit(tm1650n->sda.port,tm1650n->sda.pin))
+        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
+        if(gpio_input_bit_get(tm1650n->sda.port,tm1650n->sda.pin))
         {
             reKey=reKey|0x80;
         }
@@ -133,10 +131,7 @@ uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n)
         Tm1650DelayMs(10);
     }
     
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin = tm1650n->sda.pin;
-    GPIO_Init(tm1650n->sda.port, &GPIO_InitStructure);
+	gpio_init(tm1650n->sda.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
     
     TM1650ACK(tm1650n);
     TM1650Stop(tm1650n);
@@ -252,20 +247,13 @@ void Tm1650ShowLed(Stdtm1650_n * tm1650n,uint8_t num,uint8_t var) {
         }
 }
 
-void Tm1650Init(Stdtm1650_n * tm1650n) {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    
+void Tm1650Init(Stdtm1650_n * tm1650n) { 
     Tm1650Clock(tm1650n->scl.port);
     Tm1650Clock(tm1650n->sda.port);
-    
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    
-    GPIO_InitStructure.GPIO_Pin = tm1650n->scl.pin;
-    GPIO_Init(tm1650n->scl.port, &GPIO_InitStructure);
-    
-    GPIO_InitStructure.GPIO_Pin = tm1650n->sda.pin;
-    GPIO_Init(tm1650n->sda.port, &GPIO_InitStructure);
+
+	gpio_init(tm1650n->scl.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->scl.pin);
+	gpio_init(tm1650n->sda.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
+
     Tm1650DelayMs(30);
     TM1650Send(tm1650n,DEFAULT_SETTING, NORMAL_DISPLAY);
     Tm1650ShowNex(tm1650n,0,0);

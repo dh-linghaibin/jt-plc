@@ -4,6 +4,7 @@
 ".\objects\outsignal.o"
 ".\objects\wdog.o"
 ".\objects\flash.o"
+".\objects\tm1650.o"
 ".\objects\gd32f10x_adc.o"
 ".\objects\gd32f10x_bkp.o"
 ".\objects\gd32f10x_can.o"
