@@ -14,6 +14,10 @@ extern "C" {
 
 #include "gd32f10x.h"
 
+void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct can_filter);
+void nvic_config(void);
+void can_gpio_config(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,6 +1,6 @@
 Dependencies for Project 'zmdo_8', Target 'Target 1': (DO NOT MODIFY !)
-F (..\user\app.c)(0x5A290F3D)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\app.o --omf_browse .\objects\app.crf --depend .\objects\app.d)
-I (..\device\include\can.h)(0x5A1CCD16)
+F (..\user\app.c)(0x5A2B6100)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\app.o --omf_browse .\objects\app.crf --depend .\objects\app.d)
+I (..\device\include\can.h)(0x5A2B4A31)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include\gd32f10x.h)(0x59560F50)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x574E3E26)
@@ -37,8 +37,8 @@ I (..\device\include\tm1650.h)(0x5A263D3F)
 I (..\device\include\outsignal.h)(0x5A1D13A1)
 I (..\device\include\flash.h)(0x5A263AAD)
 I (..\device\include\wdog.h)(0x5A290432)
-F (..\device\can.c)(0x5A1D0C9E)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\can.o --omf_browse .\objects\can.crf --depend .\objects\can.d)
-I (..\device\include\can.h)(0x5A1CCD16)
+F (..\device\can.c)(0x5A2B6583)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\can.o --omf_browse .\objects\can.crf --depend .\objects\can.d)
+I (..\device\include\can.h)(0x5A2B4A31)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include\gd32f10x.h)(0x59560F50)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x574E3E26)
@@ -273,7 +273,7 @@ I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_timer.h)(0x59560F40)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_usart.h)(0x59560F40)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_wwdgt.h)(0x59560F40)
-F (RTE\Device\GD32F103C8\gd32f10x_can.c)(0x59560F40)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\gd32f10x_can.o --omf_browse .\objects\gd32f10x_can.crf --depend .\objects\gd32f10x_can.d)
+F (RTE\Device\GD32F103C8\gd32f10x_can.c)(0x5A2B49FC)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\gd32f10x_can.o --omf_browse .\objects\gd32f10x_can.crf --depend .\objects\gd32f10x_can.d)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_can.h)(0x59560F40)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include\gd32f10x.h)(0x59560F50)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
@@ -967,7 +967,7 @@ I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_timer.h)(0x59560F40)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc\gd32f10x_usart.h)(0x59560F40)
 F (RTE\Device\GD32F103C8\startup_gd32f10x_md.s)(0x59560F40)(--cpu Cortex-M3 -g --apcs=interwork -ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include--pd "__UVISION_VERSION SETA 521" --pd "_RTE_ SETA 1" --pd "GD32F10X_MD SETA 1" --pd "USE_STDPERIPH_DRIVER SETA 1"--list .\listings\startup_gd32f10x_md.lst --xref -o .\objects\startup_gd32f10x_md.o --depend .\objects\startup_gd32f10x_md.d)
-F (RTE\Device\GD32F103C8\system_gd32f10x.c)(0x5A29041F)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\system_gd32f10x.o --omf_browse .\objects\system_gd32f10x.crf --depend .\objects\system_gd32f10x.d)
+F (RTE\Device\GD32F103C8\system_gd32f10x.c)(0x5A2B620C)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include-ID:\03-project\53-jt_plc\code\zmdo_gd32_8\pro\RTE-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Firmware\Peripherals\inc-IC:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include-D__UVISION_VERSION="521" -D_RTE_ -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\system_gd32f10x.o --omf_browse .\objects\system_gd32f10x.crf --depend .\objects\system_gd32f10x.d)
 I (C:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0.0\Device\Include\gd32f10x.h)(0x59560F50)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x574E3E26)

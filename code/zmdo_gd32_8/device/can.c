@@ -9,7 +9,7 @@
 
 /* select CAN baudrate */
 /* 1MBps */
-#define CAN_BAUDRATE  1000
+//#define CAN_BAUDRATE  1000
 /* 500kBps */
 /* #define CAN_BAUDRATE  500 */
 /* 250kBps */
@@ -19,7 +19,7 @@
 /* 100kBps */ 
 /* #define CAN_BAUDRATE  100 */
 /* 50kBps */ 
-/* #define CAN_BAUDRATE  50 */
+#define CAN_BAUDRATE  50
 /* 20kBps */ 
 /* #define CAN_BAUDRATE  20 */
 
@@ -36,7 +36,6 @@ void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct 
 {
     /* initialize CAN register */
     can_deinit(CAN0);
-    can_deinit(CAN1);
     
     /* initialize CAN parameters */
     can_parameter.time_triggered = DISABLE;
@@ -47,37 +46,12 @@ void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct 
     can_parameter.trans_fifo_order = DISABLE;
     can_parameter.working_mode = CAN_NORMAL_MODE;
     can_parameter.resync_jump_width = CAN_BT_SJW_1TQ;
-    can_parameter.time_segment_1 = CAN_BT_BS1_5TQ;
-    can_parameter.time_segment_2 = CAN_BT_BS2_3TQ;
-    
-    /* 1MBps */
-#if CAN_BAUDRATE == 1000
-    can_parameter.prescaler = 6;
-    /* 500KBps */
-#elif CAN_BAUDRATE == 500
-    can_parameter.prescaler = 12;
-    /* 250KBps */
-#elif CAN_BAUDRATE == 250
-    can_parameter.prescaler = 24;
-    /* 125KBps */
-#elif CAN_BAUDRATE == 125
-    can_parameter.prescaler = 48;
-    /* 100KBps */
-#elif  CAN_BAUDRATE == 100
-    can_parameter.prescaler = 60;
-    /* 50KBps */
-#elif  CAN_BAUDRATE == 50
-    can_parameter.prescaler = 120;
-    /* 20KBps */
-#elif  CAN_BAUDRATE == 20
-    can_parameter.prescaler = 300;
-#else
-    #error "please select list can baudrate in private defines in main.c "
-#endif  
+    can_parameter.time_segment_1 = CAN_BT_BS1_4TQ;
+    can_parameter.time_segment_2 = CAN_BT_BS2_5TQ;
+	can_parameter.prescaler = 72;
+
     /* initialize CAN */
     can_init(CAN0, &can_parameter);
-    can_init(CAN1, &can_parameter);
-    
     /* initialize filter */ 
     can_filter.filter_number=0;
     can_filter.filter_mode = CAN_FILTERMODE_MASK;
@@ -114,18 +88,19 @@ void nvic_config(void)
     \param[out] none
     \retval     none
 */
-void can_gpio_config(void)
-{
+void can_gpio_config(void) {
     /* enable CAN clock */
     rcu_periph_clock_enable(RCU_CAN0);
     rcu_periph_clock_enable(RCU_GPIOA);
-    rcu_periph_clock_enable(RCU_AF);
     
     /* configure CAN0 GPIO */
     gpio_init(GPIOA,GPIO_MODE_IN_FLOATING,GPIO_OSPEED_50MHZ,GPIO_PIN_11);
     gpio_init(GPIOA,GPIO_MODE_AF_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_12);
-    gpio_pin_remap_config(GPIO_CAN_FULL_REMAP,ENABLE);
 
 	gpio_init(GPIOA,GPIO_MODE_OUT_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_10);
+
+	gpio_bit_write(GPIOA,GPIO_PIN_10,RESET);
 }
+
+
 
