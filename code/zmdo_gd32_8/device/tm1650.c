@@ -108,7 +108,7 @@ uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n)
    
     uint8_t reKey,i;
     TM1650Start(tm1650n);
-    TM1650WriteByte(tm1650n,0x49);
+    //TM1650WriteByte(tm1650n,0x49);
     TM1650ACK(tm1650n);
     gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
    
@@ -128,7 +128,7 @@ uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n)
         {
             reKey=reKey|0x00;
         }
-        Tm1650DelayMs(10);
+        Tm1650DelayMs(30);
     }
     
 	gpio_init(tm1650n->sda.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);

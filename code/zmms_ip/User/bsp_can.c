@@ -147,8 +147,8 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
     } else {
         CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
         for(uint8_t i = 0;i < 8;i++) {
-        RINGBUF.put(&RINGBUF.ringbuf_n,RxMessage.Data[i]);
-    }
+			RINGBUF.put(&RINGBUF.ringbuf_n,RxMessage.Data[i]);
+		}
     }  
 }
 

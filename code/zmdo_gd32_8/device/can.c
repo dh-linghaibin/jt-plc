@@ -7,22 +7,6 @@
 
 #include "can.h"
 
-/* select CAN baudrate */
-/* 1MBps */
-//#define CAN_BAUDRATE  1000
-/* 500kBps */
-/* #define CAN_BAUDRATE  500 */
-/* 250kBps */
-/* #define CAN_BAUDRATE  250 */
-/* 125kBps */
-/* #define CAN_BAUDRATE  125 */
-/* 100kBps */ 
-/* #define CAN_BAUDRATE  100 */
-/* 50kBps */ 
-#define CAN_BAUDRATE  50
-/* 20kBps */ 
-/* #define CAN_BAUDRATE  20 */
-
 /*!
     \brief      initialize CAN and filter
     \param[in]  can_parameter
@@ -32,41 +16,13 @@
     \param[out] none
     \retval     none
 */
-void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct can_filter)
-{
+static void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct can_filter) {
     /* initialize CAN register */
     can_deinit(CAN0);
     
-    /* initialize CAN parameters */
-    can_parameter.time_triggered = DISABLE;
-    can_parameter.auto_bus_off_recovery = DISABLE;
-    can_parameter.auto_wake_up = DISABLE;
-    can_parameter.auto_retrans = DISABLE;
-    can_parameter.rec_fifo_overwrite = DISABLE;
-    can_parameter.trans_fifo_order = DISABLE;
-    can_parameter.working_mode = CAN_NORMAL_MODE;
-    can_parameter.resync_jump_width = CAN_BT_SJW_1TQ;
-    can_parameter.time_segment_1 = CAN_BT_BS1_4TQ;
-    can_parameter.time_segment_2 = CAN_BT_BS2_5TQ;
-	can_parameter.prescaler = 72;
-
     /* initialize CAN */
     can_init(CAN0, &can_parameter);
-    /* initialize filter */ 
-    can_filter.filter_number=0;
-    can_filter.filter_mode = CAN_FILTERMODE_MASK;
-    can_filter.filter_bits = CAN_FILTERBITS_32BIT;
-    can_filter.filter_list_high = 0x3000;
-    can_filter.filter_list_low = 0x0000;
-    can_filter.filter_mask_high = 0x3000;
-    can_filter.filter_mask_low = 0x0000;
-    can_filter.filter_fifo_number = CAN_FIFO0;
-    can_filter.filter_enable = ENABLE;
     
-    can_filter_init(&can_filter);
-    
-    /* CAN1 filter number */
-    can_filter.filter_number = 15;
     can_filter_init(&can_filter);
 }
 
@@ -76,10 +32,10 @@ void can_config(can_parameter_struct can_parameter, can_filter_parameter_struct 
     \param[out] none
     \retval     none
 */
-void nvic_config(void)
-{
+static void nvic_config(void) {
     /* configure CAN0 NVIC */
-    nvic_irq_enable(CAN0_RX1_IRQn,0,0);
+    nvic_irq_enable(USBD_LP_CAN0_RX0_IRQn,0,1);
+	//nvic_irq_enable(USBD_HP_CAN0_TX_IRQn,0,2);
 }
 
 /*!
@@ -88,7 +44,7 @@ void nvic_config(void)
     \param[out] none
     \retval     none
 */
-void can_gpio_config(void) {
+static void can_gpio_config(void) {
     /* enable CAN clock */
     rcu_periph_clock_enable(RCU_CAN0);
     rcu_periph_clock_enable(RCU_GPIOA);
@@ -100,6 +56,127 @@ void can_gpio_config(void) {
 	gpio_init(GPIOA,GPIO_MODE_OUT_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_10);
 
 	gpio_bit_write(GPIOA,GPIO_PIN_10,RESET);
+}
+
+void bxcan_init(struct _can_obj* can) {
+	can_parameter_struct can_init_parameter;
+	can_filter_parameter_struct can_filter_parameter;
+
+	/* initialize CAN parameters */
+    can_init_parameter.time_triggered = DISABLE;
+    can_init_parameter.auto_bus_off_recovery = DISABLE;
+    can_init_parameter.auto_wake_up = DISABLE;
+    can_init_parameter.auto_retrans = DISABLE;
+    can_init_parameter.rec_fifo_overwrite = DISABLE;
+    can_init_parameter.trans_fifo_order = DISABLE;
+    can_init_parameter.working_mode = CAN_NORMAL_MODE;
+    can_init_parameter.resync_jump_width = CAN_BT_SJW_1TQ;
+    can_init_parameter.time_segment_1 = CAN_BT_BS1_4TQ;
+    can_init_parameter.time_segment_2 = CAN_BT_BS2_5TQ;
+	can_init_parameter.prescaler = 72;
+	
+	/* initialize filter */ 
+    can_filter_parameter.filter_number=0;
+    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
+    can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
+    can_filter_parameter.filter_list_high = (can->id<<5);
+    can_filter_parameter.filter_list_low = 0|0x00000000;
+    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
+    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
+    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
+    can_filter_parameter.filter_enable = ENABLE;
+
+	/* configure GPIO */
+    can_gpio_config();
+	/* configure NVIC */
+    nvic_config();
+    /* initialize CAN and filter */
+    can_config(can_init_parameter, can_filter_parameter);
+    /* enable can receive FIFO0 not empty interrupt */
+	can_interrupt_enable(CAN0, CAN_INT_RFNE0);
+	can_interrupt_enable(CAN0, CAN_INT_RFO0);
+}
+
+void bxcan_send(struct _can_obj* can) {
+	can_trasnmit_message_struct transmit_message;
+	 /* initialize transmit message */
+    transmit_message.tx_sfid = can->send_msg.send_id;
+    transmit_message.tx_efid = 0x00;
+	transmit_message.tx_ft = CAN_FT_DATA;
+    transmit_message.tx_ff = CAN_FF_STANDARD;
+	transmit_message.tx_data[0] = can->send_msg.id;
+	
+	uint8_t send_len = can->send_msg.len+4; /* 发送的长度 */
+	uint8_t byte[68];
+	byte[0] = 0x3a;
+	byte[1] = can->send_msg.device_id;
+	byte[2] = can->send_msg.len;
+	byte[3] = can->send_msg.cmd;
+	for(int i = 4;i < send_len;i++) {
+		byte[i] = can->send_msg.arr[i-4];
+	}	
+	uint8_t qj_j = 0;
+	do {
+		if(send_len < 7) {
+			transmit_message.tx_dlen = send_len+1;
+			for(int i = 0;i < send_len;i++) {
+				transmit_message.tx_data[i+1] = byte[qj_j++];
+			}
+			send_len = 0;
+		} else {
+			transmit_message.tx_dlen = 8;
+			for(int i = 0;i < 7;i++) {
+				transmit_message.tx_data[i+1] = byte[qj_j++];
+			}
+			send_len -= 7;
+		}
+		can_message_transmit(CAN0, &transmit_message);
+		uint32_t timeout = 0xFFFF;
+		while((can_transmit_states(CAN0, CAN_MAILBOX0) != CAN_TRANSMIT_OK) && (timeout != 0)){
+			timeout--;
+		}
+//		timeout = 0xFFFF;
+//		while((can_transmit_states(CAN0, CAN_MAILBOX1) != CAN_TRANSMIT_OK) && (timeout != 0)){
+//			timeout--;
+//		}
+//		timeout = 0xFFFF;
+//		while((can_transmit_states(CAN0, CAN_MAILBOX2) != CAN_TRANSMIT_OK) && (timeout != 0)){
+//			timeout--;
+//		}
+	}while(send_len > 0);
+}
+
+void bxcan_set_id(struct _can_obj* can,uint8_t id) {
+	can_filter_parameter_struct can_filter_parameter;
+	
+	can->id = id;
+
+	/* initialize filter */ 
+    can_filter_parameter.filter_number=0;
+    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
+    can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
+    can_filter_parameter.filter_list_high = (can->id<<5);
+    can_filter_parameter.filter_list_low = 0|0x00000000;
+    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
+    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
+    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
+    can_filter_parameter.filter_enable = ENABLE;
+	can_filter_init(&can_filter_parameter);
+}
+
+/*!
+    \brief      this function handles CAN0 RX0 exception
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void USBD_LP_CAN0_RX0_IRQHandler(void) {
+    /* check the receive message */
+    //can_message_receive(CAN0, CAN_FIFO0, &receive_message);
+}
+
+void USBD_HP_CAN0_TX_IRQHandler(void) {
+
 }
 
 
