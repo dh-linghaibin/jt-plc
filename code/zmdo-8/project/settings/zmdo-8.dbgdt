@@ -688,7 +688,7 @@
                     <item>electric_current</item>
                     <item>Rc_Pwm_In</item>
                     <item>EXTERNACPUNT</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -763,7 +763,7 @@
                     <item>CANBUS</item>
                     <item>EXTERNACPUNT</item>
                     <item>reKey</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

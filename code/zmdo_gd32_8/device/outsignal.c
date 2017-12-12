@@ -140,7 +140,7 @@ uint8_t OutsignalReadout(Stdoutsignal_n* outsignal,uint8_t num) {
             return outsignal->all_pin_var;
        // break;
     }
-    return gpio_input_bit_get(out_pin.port,out_pin.pin);
+    return gpio_output_bit_get(out_pin.port,out_pin.pin);
 }
 
 uint8_t OutsignalEmergencyStop(Stdoutsignal_n* outsignal) {

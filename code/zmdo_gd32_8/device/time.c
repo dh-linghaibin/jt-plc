@@ -11,7 +11,7 @@ static uint8_t flag_1ms = 0;
 
 void time_init(struct _time_obj* time) {
 	/* setup systick timer for 1000Hz interrupts */
-    if (SysTick_Config(SystemCoreClock / 1000U)){
+    if (SysTick_Config(SystemCoreClock / 5000U)){
         /* capture error */
         while (1){
         }

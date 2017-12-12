@@ -49,6 +49,12 @@
 
 #define l_CallSub(number,SubTaskName)    do { l_WaitX(number,0);l##SubTaskName.task.timer=SubTaskName(&(l##SubTaskName));      \
                   if(l##SubTaskName.task.timer!=END) return l##SubTaskName.task.timer;} while(0)
+
+#define call_sub(SubTaskName)    do { l_WaitX(0);l##SubTaskName.task.timer=SubTaskName(&(l##SubTaskName));      \
+                  if(l##SubTaskName.task.timer!=END) return l##SubTaskName.task.timer;} while(0)
+
+#define call_task(SubTaskName)    do { WaitX(0);l##SubTaskName.task.timer=SubTaskName(&(l##SubTaskName));      \
+                  if(l##SubTaskName.task.timer!=END) return l##SubTaskName.task.timer;} while(0)
 /****************************************************************/
 #define Class(type)         typedef struct C_##type C_##type; struct C_##type
 

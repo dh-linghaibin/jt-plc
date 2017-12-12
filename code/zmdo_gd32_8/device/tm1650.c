@@ -33,108 +33,59 @@ static void Tm1650Clock(uint32_t port){
 static void Tm1650DelayMs(uint16_t ms) {						
     uint16_t i;
     while(ms--) {
-        for(i=0;i<1125;i++);//2M crystal cycle 1us, i = 140; just 1ms, when 16M, i = 1125
+        for(i=0;i<1000;i++);//2M crystal cycle 1us, i = 140; just 1ms, when 16M, i = 1125
     }
 }
 
-static void TM1650Start(Stdtm1650_n * tm1650n)
-{
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-    Tm1650DelayMs(1);
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
-    Tm1650DelayMs(1);
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-    Tm1650DelayMs(1);
+static void TM1650Send(Stdtm1650_n * tm1650n,uint8_t cmd, uint8_t data) {
+	/* wait until I2C bus is idle */
+    while(i2c_flag_get(I2C1, I2C_FLAG_I2CBSY));
+    /* send a start condition to I2C bus */
+    i2c_start_on_bus(I2C1);
+    /* wait until SBSEND bit is set */
+    while(!i2c_flag_get(I2C1, I2C_FLAG_SBSEND));
+    /* send slave address to I2C bus */
+    i2c_master_addressing(I2C1, cmd, I2C_TRANSMITTER);
+    /* wait until ADDSEND bit is set */
+    while(!i2c_flag_get(I2C1, I2C_FLAG_ADDSEND));
+    /* clear ADDSEND bit */
+    i2c_flag_clear(I2C1, I2C_FLAG_ADDSEND);
+    /* wait until the transmit data buffer is empty */
+    while(!i2c_flag_get(I2C1, I2C_FLAG_TBE));
+	/* data transmission */
+	i2c_data_transmit(I2C1, data);
+	/* wait until the TBE bit is set */
+	while(!i2c_flag_get(I2C1, I2C_FLAG_TBE));
+    i2c_stop_on_bus(I2C1);
+    while(I2C_CTL0(I2C1)&0x0200);
 }
 
-static void TM1650Stop(Stdtm1650_n * tm1650n)
-{
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
-    Tm1650DelayMs(1);
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-    Tm1650DelayMs(1);
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-    Tm1650DelayMs(1);
-}
-/*---------------------------------------------------------------*-
-* TM1650_ACK()
-* 
-* Make sure the slave has received the data
--*---------------------------------------------------------------*/
-static void TM1650ACK(Stdtm1650_n * tm1650n) {
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-    Tm1650DelayMs(1);
-    gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-}
-/*---------------------------------------------------------------*-
-* TM1650_Write_Byte()
-* 
-* Send one byte data to slave
--*---------------------------------------------------------------*/
-static void TM1650WriteByte(Stdtm1650_n * tm1650n,uint8_t data)
-{
-    uint8_t i;
-    for (i = 0; i < 8; i++) {
-        if ((data & 0x80) == 0)
-            gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(0));
-        else
-            gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-        data <<= 1;
-        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-        Tm1650DelayMs(1);
-        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-        Tm1650DelayMs(1);
-        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-        Tm1650DelayMs(1);
-    }
-}
-
-static void TM1650Send(Stdtm1650_n * tm1650n,uint8_t cmd, uint8_t data)
-{
-    TM1650Start(tm1650n);
-    TM1650WriteByte(tm1650n,cmd);	
-    TM1650ACK(tm1650n);
-    TM1650WriteByte(tm1650n,data);
-    TM1650ACK(tm1650n);
-    TM1650Stop(tm1650n);
-}
-
-uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n)
-{
-   
+uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n) {
     uint8_t reKey,i;
-    TM1650Start(tm1650n);
-    //TM1650WriteByte(tm1650n,0x49);
-    TM1650ACK(tm1650n);
-    gpio_bit_write(tm1650n->sda.port,tm1650n->sda.pin,(FlagStatus)(1));
-   
-	gpio_init(tm1650n->sda.port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
-    
-    for(i=0;i<8;i++)
-    {
-        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(0));
-        reKey=reKey>>1;
-        Tm1650DelayMs(10);
-        gpio_bit_write(tm1650n->scl.port,tm1650n->scl.pin,(FlagStatus)(1));
-        if(gpio_input_bit_get(tm1650n->sda.port,tm1650n->sda.pin))
-        {
-            reKey=reKey|0x80;
-        }
-        else
-        {
-            reKey=reKey|0x00;
-        }
-        Tm1650DelayMs(30);
-    }
-    
-	gpio_init(tm1650n->sda.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
-    
-    TM1650ACK(tm1650n);
-    TM1650Stop(tm1650n);
+	/* wait until I2C bus is idle */
+    while(i2c_flag_get(I2C1, I2C_FLAG_I2CBSY));
+    /* send a start condition to I2C bus */
+    i2c_start_on_bus(I2C1);
+    /* wait until SBSEND bit is set */
+    while(!i2c_flag_get(I2C1, I2C_FLAG_SBSEND));
+	/* send slave address to I2C bus */
+    i2c_master_addressing(I2C1, 0x49, I2C_RECEIVER);
+	  /* wait until ADDSEND bit is set */
+    while(!i2c_flag_get(I2C1, I2C_FLAG_ADDSEND));
+    /* clear ADDSEND bit */
+    i2c_flag_clear(I2C1, I2C_FLAG_ADDSEND);
+	
+	/* While there is data to be read */
+	/* Disable Acknowledgement */
+	i2c_ack_config(I2C1, I2C_ACK_DISABLE);	
+
+	/* Send STOP Condition */
+	i2c_stop_on_bus(I2C1);
+	/* wait until the RBNE bit is set */
+	while(!i2c_flag_get(I2C1, I2C_FLAG_RBNE));
+	/* Read a byte from the MPU6050 */
+	reKey = i2c_data_receive(I2C1);
+	i2c_ack_config(I2C1, I2C_ACK_ENABLE);
     return(reKey);
 }
 
@@ -251,8 +202,19 @@ void Tm1650Init(Stdtm1650_n * tm1650n) {
     Tm1650Clock(tm1650n->scl.port);
     Tm1650Clock(tm1650n->sda.port);
 
-	gpio_init(tm1650n->scl.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->scl.pin);
-	gpio_init(tm1650n->sda.port, GPIO_MODE_OUT_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
+    /* enable I2C1 clock */
+    rcu_periph_clock_enable(RCU_I2C1);
+	gpio_init(tm1650n->scl.port, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ,tm1650n->scl.pin);
+	gpio_init(tm1650n->sda.port, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ,tm1650n->sda.pin);
+
+	 /* I2C clock configure */
+    i2c_clock_config(I2C1, 400000U, I2C_DTCY_2);
+    /* I2C address configure */
+    i2c_mode_addr_config(I2C1, I2C_I2CMODE_ENABLE, I2C_ADDFORMAT_7BITS, 0x82);
+    /* enable I2C1 */
+    i2c_enable(I2C1);
+    /* enable acknowledge */
+    i2c_ack_config(I2C1, I2C_ACK_ENABLE);	
 
     Tm1650DelayMs(30);
     TM1650Send(tm1650n,DEFAULT_SETTING, NORMAL_DISPLAY);
