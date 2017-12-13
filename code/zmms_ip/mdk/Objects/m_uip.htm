@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\m_uip.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\m_uip.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Mon Nov 20 15:16:42 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Wed Dec 13 15:42:29 2017
 <BR><P>
 <H3>Maximum Stack Usage =        232 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -593,7 +593,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_tx_data
 </UL>
 
-<P><STRONG><a name="[89]"></a>CAN_config_init</STRONG> (Thumb, 182 bytes, Stack size 32 bytes, bsp_can.o(i.CAN_config_init))
+<P><STRONG><a name="[89]"></a>CAN_config_init</STRONG> (Thumb, 184 bytes, Stack size 32 bytes, bsp_can.o(i.CAN_config_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = CAN_config_init &rArr; CAN_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_StructInit
@@ -625,7 +625,6 @@ Global Symbols
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Transmit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Read_cmd
 </UL>
 
 <P><STRONG><a name="[c1]"></a>CmdZl</STRONG> (Thumb, 398 bytes, Stack size 12 bytes, app.o(i.CmdZl))
@@ -908,11 +907,10 @@ Global Symbols
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ltk_rtc_init
 </UL>
 
-<P><STRONG><a name="[9b]"></a>Read_cmd</STRONG> (Thumb, 276 bytes, Stack size 56 bytes, app.o(i.Read_cmd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Read_cmd &rArr; CAN_tx_data &rArr; CAN_TransmitStatus
+<P><STRONG><a name="[9b]"></a>Read_cmd</STRONG> (Thumb, 58 bytes, Stack size 32 bytes, app.o(i.Read_cmd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Read_cmd &rArr; SPI_Flash_Read &rArr; SPI_FLASH_SendByte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_Flash_Read
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_tx_data
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -1551,7 +1549,7 @@ Global Symbols
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 </UL>
 
-<P><STRONG><a name="[65]"></a>main</STRONG> (Thumb, 2660 bytes, Stack size 120 bytes, app.o(i.main))
+<P><STRONG><a name="[65]"></a>main</STRONG> (Thumb, 2650 bytes, Stack size 120 bytes, app.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 232 + Unknown Stack Size
 <LI>Call Chain = main &rArr; SPI_Flash_Write &rArr; SPI_Flash_Write_NoCheck &rArr; SPI_Flash_Write_Page &rArr; SPI_Flash_Wait_Busy &rArr; SPI_Flash_ReadSR &rArr; SPI_FLASH_SendByte
 </UL>

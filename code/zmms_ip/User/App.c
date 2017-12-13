@@ -104,23 +104,23 @@ void Read_cmd(uint8_t cmd,uint8_t addr) {
 	r_cmd_num_start = (uint16_t)val_cmd_S[1];
 	r_cmd_num_start |= (uint16_t)(val_cmd_S[2] << 8);
 
-	while( (val_cmd_S[0] > 0) && (r_cmd_num_start != 0xffff)){
-		SPI_Flash_Read(val_cmd_x,FLASH_ReadAddress + PRO_NR_BAADDR + (r_cmd_num_start*10),10);
-		
-		TxMessage.StdId=val_cmd_x[0];
-		TxMessage.DLC = 8;
-		TxMessage.Data[0]=val_cmd_x[1];
-		TxMessage.Data[1]=val_cmd_x[2];
-		TxMessage.Data[2]=val_cmd_x[3];
-		TxMessage.Data[3]=val_cmd_x[4];
-		TxMessage.Data[4]=val_cmd_x[5];
-		TxMessage.Data[5]=val_cmd_x[6];
-		TxMessage.Data[6]=val_cmd_x[7];
-		TxMessage.Data[7]=val_cmd_x[8];
-		CAN_tx_data(TxMessage);
-		r_cmd_num_start++;//开始地址加
-		val_cmd_S[0]--;//，命令减去
-	}
+//	while( (val_cmd_S[0] > 0) && (r_cmd_num_start != 0xffff)){
+//		SPI_Flash_Read(val_cmd_x,FLASH_ReadAddress + PRO_NR_BAADDR + (r_cmd_num_start*10),10);
+//		
+//		TxMessage.StdId=val_cmd_x[0];
+//		TxMessage.DLC = 8;
+//		TxMessage.Data[0]=val_cmd_x[1];
+//		TxMessage.Data[1]=val_cmd_x[2];
+//		TxMessage.Data[2]=val_cmd_x[3];
+//		TxMessage.Data[3]=val_cmd_x[4];
+//		TxMessage.Data[4]=val_cmd_x[5];
+//		TxMessage.Data[5]=val_cmd_x[6];
+//		TxMessage.Data[6]=val_cmd_x[7];
+//		TxMessage.Data[7]=val_cmd_x[8];
+//		CAN_tx_data(TxMessage);
+//		r_cmd_num_start++;//开始地址加
+//		val_cmd_S[0]--;//，命令减去
+//	}
 }
 
 int main(void) {
@@ -184,16 +184,16 @@ int main(void) {
     uip_init();
     /* 设置IP地址 */
 	{
-		uint8_t read_data[4] = {0x00,0x00,0x00,0x00};
-		SPI_Flash_Read(read_data,10,4);
+		uint8_t read_data[4] = {192,168,1,248};
+		//SPI_Flash_Read(read_data,10,4);
 		uip_ipaddr(ipaddr, read_data[0],read_data[1],read_data[2],read_data[3]);	
 		uip_sethostaddr(ipaddr);
 	}
     /* 设置默认路由器IP地址 */
 	{
-		uint8_t read_data[4] = {0x00,0x00,0x00,0x00};
+		uint8_t read_data[4] = {192,168,1,1};
 		//at45db161_read();
-		SPI_Flash_Read(read_data,14,4);
+		//SPI_Flash_Read(read_data,14,4);
 		uip_ipaddr(ipaddr, read_data[0],read_data[1],read_data[2],read_data[3]);	
 		uip_setdraddr(ipaddr);
 	}
@@ -205,7 +205,6 @@ int main(void) {
     eMBEnable();	
     BSP_ConfigUSART2();
     GPIO_Config(); 
-	
     /* 初始化 RTC */
     ltk_rtc_init();
     CAN_init();

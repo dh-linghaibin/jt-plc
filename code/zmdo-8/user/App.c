@@ -34,7 +34,7 @@ int main(void) {
             {GPIOF,GPIO_Pin_1},
             {GPIOF,GPIO_Pin_0},
             {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D,
-            0x07, 0x7F, 0x6F, 0x76, 0x40,0x79, 0x00},
+            0x07, 0x7F, 0x6F, 0x76, 0x40,0x79, 0x00,0x7c},
             {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
             {0x00,0x00,0x00,0x00},
         },
@@ -195,7 +195,7 @@ int main(void) {
                         TM1650.show_nex(&TM1650.tm1650_n,0,MENU.getvar(&MENU.menu_n)/10);
                         TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n)%10);
                     } else {
-                        TM1650.show_nex(&TM1650.tm1650_n,0,12);
+                        TM1650.show_nex(&TM1650.tm1650_n,0,14);
                         TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n));
                     }
                 }

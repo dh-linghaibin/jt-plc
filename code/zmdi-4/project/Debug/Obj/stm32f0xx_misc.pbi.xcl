@@ -1,22 +1,22 @@
-"C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\lib\src\stm32f0xx_misc.c"
+"D:\03-project\53-jt_plc\code\zmdi-4\lib\src\stm32f0xx_misc.c"
 -std=c11
 -ferror-limit=0
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\project\..\startup
+D:\03-project\53-jt_plc\code\zmdi-4\project\..\startup
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\project\..\user
+D:\03-project\53-jt_plc\code\zmdi-4\project\..\user
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\project\..\lib\inc
+D:\03-project\53-jt_plc\code\zmdi-4\project\..\lib\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\startup
+D:\03-project\53-jt_plc\code\zmdi-4\startup
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\user
+D:\03-project\53-jt_plc\code\zmdi-4\user
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\zmdi-4\lib\inc
+D:\03-project\53-jt_plc\code\zmdi-4\lib\inc
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
