@@ -18,6 +18,8 @@ typedef struct {
     Stdlinsignal_pin_TypeDef AI1;
     __IO uint16_t di_count[4];
     __IO uint16_t Data[4];
+    __IO uint8_t val;
+    __IO uint8_t val_flag[4];
 }Stdinsignal_n; 
 
 typedef struct {   

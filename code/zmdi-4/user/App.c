@@ -118,6 +118,7 @@ int main(void) {
     TIMER.Timer_n.timer[0] = TIMER.getclock() + 5;
     TIMER.Timer_n.timer[1] = TIMER.getclock() + 1;
     TIMER.Timer_n.timer[2] = TIMER.getclock() + 200;
+    TIMER.Timer_n.timer[4] = TIMER.getclock() + 3000;
     /** -- Can初始化 -- by lhb_steven -- 2017/6/15**/
     CANBUS.Init(&CANBUS.can_n);
     /** -- 按钮初始化 -- by lhb_steven -- 2017/6/18**/
@@ -196,6 +197,16 @@ int main(void) {
             } else {
                 TIMER.Timer_n.timer[3]++;
             }
+            /** -- 上传送报文 -- by lhb_steven -- 2017/12/13**/
+            if(TIMER.Timer_n.timer[4] <= TIMER.getclock()) {
+                TIMER.Timer_n.timer[2] = TIMER.getclock() + 3000;
+                /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                CANBUS.Send(&CANBUS.can_n);
+            }
         }
         /** -- 按键检测 -- by lhb_steven -- 2017/6/19**/
         if(TIMER.Timer_n.timer[1] <= TIMER.getclock()) {
@@ -207,9 +218,29 @@ int main(void) {
                 if(INSIGNED.insignal_n.di_count[0] == 50) {
                     //执行动作
                     MENU.implement(MENU.menu_n,&CANBUS,0,SFLASH);
+                    if(INSIGNED.insignal_n.val_flag[0] == 0) {
+                        INSIGNED.insignal_n.val_flag[0] = 1;
+                        INSIGNED.insignal_n.val |= (1 << 0);
+                        /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                        CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                        CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                        CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                        CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                        CANBUS.Send(&CANBUS.can_n);
+                    }
                 }
             } else {
                 INSIGNED.insignal_n.di_count[0] = 0;
+                if(INSIGNED.insignal_n.val_flag[0] == 1) {
+                    INSIGNED.insignal_n.val_flag[0] = 0;
+                    INSIGNED.insignal_n.val &= ~(1 << 0);
+                     /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                    CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                    CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                    CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                    CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                    CANBUS.Send(&CANBUS.can_n);
+                }
             }
             
             if(INSIGNED.read(&INSIGNED.insignal_n.DI2) == 0) {
@@ -218,9 +249,29 @@ int main(void) {
                 if(INSIGNED.insignal_n.di_count[1] == 50) {
                     //执行动作
                     MENU.implement(MENU.menu_n,&CANBUS,1,SFLASH);
+                    if(INSIGNED.insignal_n.val_flag[1] == 0) {
+                        INSIGNED.insignal_n.val_flag[1] = 1;
+                        INSIGNED.insignal_n.val |= (1 << 1);
+                        /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                        CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                        CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                        CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                        CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                        CANBUS.Send(&CANBUS.can_n);
+                    }
                 }
             } else {
                 INSIGNED.insignal_n.di_count[1] = 0;
+                if(INSIGNED.insignal_n.val_flag[1] == 1) {
+                    INSIGNED.insignal_n.val_flag[1] = 0;
+                    INSIGNED.insignal_n.val &= ~(1 << 1);
+                     /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                    CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                    CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                    CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                    CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                    CANBUS.Send(&CANBUS.can_n);
+                }
             }
             
             if(INSIGNED.read(&INSIGNED.insignal_n.DI3) == 0) {
@@ -229,9 +280,29 @@ int main(void) {
                 if(INSIGNED.insignal_n.di_count[2] == 50) {
                     //执行动作
                     MENU.implement(MENU.menu_n,&CANBUS,2,SFLASH);
+                    if(INSIGNED.insignal_n.val_flag[2] == 0) {
+                        INSIGNED.insignal_n.val_flag[2] = 1;
+                        INSIGNED.insignal_n.val |= (1 << 2);
+                        /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                        CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                        CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                        CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                        CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                        CANBUS.Send(&CANBUS.can_n);
+                    }
                 }
             } else {
                 INSIGNED.insignal_n.di_count[2] = 0;
+               if(INSIGNED.insignal_n.val_flag[2] == 1) {
+                    INSIGNED.insignal_n.val_flag[2] = 0;
+                    INSIGNED.insignal_n.val &= ~(1 << 2);
+                     /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                    CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                    CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                    CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                    CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                    CANBUS.Send(&CANBUS.can_n);
+                }
             }
             
             if(INSIGNED.read(&INSIGNED.insignal_n.DI4) == 0) {
@@ -240,9 +311,29 @@ int main(void) {
                 if(INSIGNED.insignal_n.di_count[3] == 50) {
                     //执行动作
                     MENU.implement(MENU.menu_n,&CANBUS,3,SFLASH);
+                    if(INSIGNED.insignal_n.val_flag[3] == 0) {
+                        INSIGNED.insignal_n.val_flag[3] = 1;
+                        INSIGNED.insignal_n.val |= (1 << 3);
+                        /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                        CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                        CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                        CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                        CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                        CANBUS.Send(&CANBUS.can_n);
+                    }
                 }
             } else {
                 INSIGNED.insignal_n.di_count[3] = 0;
+                if(INSIGNED.insignal_n.val_flag[3] == 1) {
+                    INSIGNED.insignal_n.val_flag[3] = 0;
+                    INSIGNED.insignal_n.val &= ~(1 << 3);
+                     /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+                    CANBUS.can_n.TxMessage.StdId = 254;//主机地址
+                    CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
+                    CANBUS.can_n.TxMessage.Data[1] = 0x61;//输出值
+                    CANBUS.can_n.TxMessage.Data[7] = INSIGNED.insignal_n.val ;//寄存器值
+                    CANBUS.Send(&CANBUS.can_n);
+                }
             }
             
             if(KEY.read(&KEY.Key_n.key1) == 0) {
