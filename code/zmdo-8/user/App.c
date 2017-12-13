@@ -19,12 +19,14 @@ int main(void) {
             {GPIOA, GPIO_Pin_15},
             4,
             0x1800f001,
+            B_10K,
             {0,0,0,0,0,0,0,0},
             {0}
         },
         &CanInit,
         &CanSend,
         &CanSetID,
+        &CanSetBlt,
         &CanReadPackage,
     };
     Stdtm1650 TM1650 = {
@@ -129,18 +131,21 @@ int main(void) {
     {
         uint16_t flag_data;//数据写入标志位
         SFLASH.read(&flag_data, FLASH_ADDR_FLAG(0), 1);
-        if(0x55AA != flag_data)
+        if(0x555A != flag_data)
         {
-            flag_data = 0x55AA;//将标志位置为"已写入"
+            flag_data = 0x555A;//将标志位置为"已写入"
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(0), 1);
             flag_data = 99;//默认地址
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(1), 1);
             flag_data = 0;//默认继电器状态
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(2), 1);
+            flag_data = B_10K;//默认继电器状态
+            SFLASH.write(&flag_data, FLASH_ADDR_FLAG(3), 1);
         }
     }
     /** -- 设置地址 -- by lhb_steven -- 2017/7/14**/
     CANBUS.setid(&CANBUS.can_n,SFLASH.readbit(FLASH_ADDR_FLAG(1)));//读取ID
+    CANBUS.set_btl(&CANBUS.can_n,(btl_e)SFLASH.readbit(FLASH_ADDR_FLAG(3)));//读取ID
     TM1650.show_nex(&TM1650.tm1650_n,0,CANBUS.can_n.id/10);
     TM1650.show_nex(&TM1650.tm1650_n,1,CANBUS.can_n.id%10);
     /** -- 设置IO状态 -- by lhb_steven -- 2017/7/14**/
@@ -178,7 +183,7 @@ int main(void) {
                 TM1650.show_led(&TM1650.tm1650_n,10,message_dr);
             }
             /** -- 数码管闪烁,提示正在设置地址 -- by lhb_steven -- 2017/6/26**/
-            if(MENU.getmenu(&MENU.menu_n) == 1) {
+            if(MENU.getmenu(&MENU.menu_n) > 0) {
                 static uint8_t dr = 0;
                 if(dr == 0) {
                     dr = 1;
@@ -186,10 +191,15 @@ int main(void) {
                     TM1650.show_nex(&TM1650.tm1650_n,1,13);
                 } else {
                     dr = 0;
-                    TM1650.show_nex(&TM1650.tm1650_n,0,MENU.getvar(&MENU.menu_n)/10);
-                    TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n)%10);
+                    if(MENU.getmenu(&MENU.menu_n) == 1) {
+                        TM1650.show_nex(&TM1650.tm1650_n,0,MENU.getvar(&MENU.menu_n)/10);
+                        TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n)%10);
+                    } else {
+                        TM1650.show_nex(&TM1650.tm1650_n,0,12);
+                        TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n));
+                    }
                 }
-                 /** -- 数码管超时不操作，退出 -- by lhb_steven -- 2017/7/31**/
+                /** -- 数码管超时不操作，退出 -- by lhb_steven -- 2017/7/31**/
                 if(MENU.menu_n.lcd_out_num < 30) {
                     MENU.menu_n.lcd_out_num++;
                 } else {
@@ -214,7 +224,7 @@ int main(void) {
         /** -- 报文-电量 -- by lhb_steven -- 2017/7/14**/
         if(TIMER.Timer_n.timer[3] <= TIMER.getclock()) {
             TIMER.Timer_n.timer[3] = TIMER.getclock() + 8000;
-            /** -- 数据上报 -- by lhb_steven -- 2017/7/5**/
+/** -- 数据上报 -- by lhb_steven -- 2017/7/5**/
 //            EXTERNACPUNT.read(&EXTERNACPUNT.externalcount_n,0);
 //            CANBUS.can_n.TxMessage.StdId = 254;//主机地址
 //            CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
@@ -326,6 +336,36 @@ int main(void) {
                                        MENU.setvar(&MENU.menu_n,0);
                                    }
                                    break;
+                                   case 2:
+                                   if(MENU.getvar(&MENU.menu_n) < 5) {
+                                       MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)+1);
+                                   } else {
+                                       MENU.setvar(&MENU.menu_n,0);
+                                   }
+                                   break;
+                               }
+                           }
+                    } else if(TM1650.tm1650_n.key_down_num == 10) {
+                        if( (TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] >= 1) &&
+                           (TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 34) ){
+                               switch(MENU.getmenu(&MENU.menu_n)) {
+                                   case 0:
+                                   
+                                   break;
+                                   case 1:
+                                   if(MENU.getvar(&MENU.menu_n) > 0) {
+                                       MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)-1);
+                                   } else {
+                                       MENU.setvar(&MENU.menu_n,99);
+                                   }
+                                   break;
+                                   case 2:
+                                   if(MENU.getvar(&MENU.menu_n) > 0) {
+                                       MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)-1);
+                                   } else {
+                                       MENU.setvar(&MENU.menu_n,5);
+                                   }
+                                   break;
                                }
                            }
                     }
@@ -370,19 +410,21 @@ int main(void) {
                     }
                     /** -- 地址减按钮检测 -- by lhb_steven -- 2017/6/26**/
                 } else if(TM1650.tm1650_n.key_down_num == 10) {
-                    if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 10)
+                    if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 35)
                         TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] ++;
-                    if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] == 1) {
+                    if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] == 34) {
                         switch(MENU.getmenu(&MENU.menu_n)) {
                             case 0:
-                            
+                            MENU.setvar(&MENU.menu_n,CANBUS.can_n.btl);
+                            MENU.menu_n.menu_page = 2;
                             break;
-                            case 1:
-                            if(MENU.getvar(&MENU.menu_n) > 0) {
-                                MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)-1);
-                            } else {
-                                MENU.setvar(&MENU.menu_n,99);
-                            }
+                            case 2:
+                            CANBUS.set_btl(&CANBUS.can_n,(btl_e)MENU.getvar(&MENU.menu_n));
+                            MENU.menu_n.menu_page = 0;
+                            TM1650.show_nex(&TM1650.tm1650_n,0,CANBUS.can_n.id/10);
+                            TM1650.show_nex(&TM1650.tm1650_n,1,CANBUS.can_n.id%10);
+                            uint16_t blt = CANBUS.can_n.btl;
+                            SFLASH.write(&blt, FLASH_ADDR_FLAG(3), 1);
                             break;
                         }
                     }
@@ -452,9 +494,9 @@ int main(void) {
             OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,8,0);
             TM1650.show_led(&TM1650.tm1650_n,8,0);
             
-             /** -- can监控 去除包 -- by lhb_steven -- 2017/6/21**/
+            /** -- can监控 去除包 -- by lhb_steven -- 2017/6/21**/
             if( CANBUS.readpack(&CANBUS.can_n) ) {
-            
+                
             }
         }
     }while(1);
