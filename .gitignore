@@ -54,6 +54,7 @@ dkms.conf
 
 /data/
 /Hardware/
+/zmdi-4\project/
 *.rar
 *.uvprojx
 *.a6735
