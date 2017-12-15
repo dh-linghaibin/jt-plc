@@ -237,8 +237,7 @@ void enc28j60_writephy(unsigned char address, unsigned int data)
 * 调用方法: 
 ********************************************************************************
 */
-void enc28j60_init(unsigned char* mac_addr)
-{
+void enc28j60_init(unsigned char* mac_addr) {
     GPIO_InitTypeDef GPIO_InitStructure;  
     /* 打开GPIOA时钟 */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC , ENABLE);
