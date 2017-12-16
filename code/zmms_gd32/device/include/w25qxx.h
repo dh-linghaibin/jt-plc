@@ -36,6 +36,10 @@ int w25qxx_erase_sector(struct _w25qxx_obj* w25qxx,unsigned long sector);
 void w25qxx_power_down(struct _w25qxx_obj* w25qxx);
 void w25qxx_wake_up(struct _w25qxx_obj* w25qxx);
 
+void SPI_Flash_Init(void);
+void SPI_Flash_Read(uint8_t * buff, unsigned long sector, uint16_t count);
+void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite);
+
 #ifdef __cplusplus
 }
 #endif

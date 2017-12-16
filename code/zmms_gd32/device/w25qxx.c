@@ -216,7 +216,8 @@ int w25qxx_write(struct _w25qxx_obj* w25qxx,const uint8_t * buff, unsigned long 
 		}
 		if(i<secremain)//需要擦除
 		{
-			w25qxx->erase_sector(w25qxx,secpos);//擦除这个扇区
+			//w25qxx->erase_sector(w25qxx,secpos);//擦除这个扇区
+			w25qxx_erase_sector(w25qxx,secpos);
 			//检测是否已擦除
 			w25qxx_read_b(w25qxx->SPI_FLASH_BUF2,secpos*4096,4096);
 			for(i=0;i<secremain;i++)     //复制
@@ -305,3 +306,128 @@ void w25qxx_wake_up(struct _w25qxx_obj* w25qxx) {
 	w25qxx_send_byte(W25X_ReleasePowerDown);   //  send W25X_PowerDown command 0xAB    
 	W25QXX_CS_HIGH();                        //取消片选                  
 }
+
+
+void SPI_Flash_Init(void) {
+	SPI_InitTypeDef  SPI_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* Enable SPI1 and GPIO clocks */
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB |
+							RCC_APB2Periph_GPIO_CS, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB ,ENABLE );
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13  |  GPIO_Pin_15; 
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure); 
+	GPIO_SetBits(GPIOB, GPIO_Pin_15);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14; 
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//GPIO_Mode_IN_FLOATING
+	GPIO_Init(GPIOB, &GPIO_InitStructure); 
+	GPIO_SetBits(GPIOB, GPIO_Pin_14);
+
+	/* Configure I/O for Flash Chip select */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_CS;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIO_CS, &GPIO_InitStructure);
+
+	/* Deselect the FLASH: Chip Select high */
+	W25QXX_CS_HIGH();
+
+	/* SPI1 configuration */
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;//SPI_BaudRatePrescaler_4;
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+	SPI_InitStructure.SPI_CRCPolynomial = 7;
+	SPI_Init(SPI2, &SPI_InitStructure);
+
+	/* Enable SPI1  */
+	SPI_Cmd(SPI2, ENABLE);
+}  
+
+void SPI_Flash_Read(uint8_t * buff, unsigned long sector, uint16_t count)   
+{ 
+ 	 u16 i;                                
+	W25QXX_CS_LOW();                               
+	w25qxx_send_byte(W25X_ReadData);       
+	w25qxx_send_byte((u8)((sector)>>16));  
+	w25qxx_send_byte((u8)((sector)>>8));   
+	w25qxx_send_byte((u8)sector);   
+	for(i=0;i<count;i++) { 
+		buff[i]=w25qxx_send_byte(0XFF);  
+	}
+	W25QXX_CS_HIGH();   		    	      
+}  
+
+int SPI_Flash_erase_sector(unsigned long sector) {
+	//监视falsh擦除情况,测试用    
+	sector*=4096;
+    w25qxx_write_enable();                   //SET WEL  
+    w25qxx_wait_busy();   
+    W25QXX_CS_LOW();                              //使能器件   
+    w25qxx_send_byte(W25X_SectorErase);       //发送扇区擦除指令 
+    w25qxx_send_byte((u8)((sector)>>16));   //发送24bit地址    
+    w25qxx_send_byte((u8)((sector)>>8));   
+    w25qxx_send_byte((u8)sector);  
+    W25QXX_CS_HIGH();                              //取消片选          
+    w25qxx_wait_busy();       //等待擦除完成
+	return 0;
+}
+
+u8 SPI_FLASH_BUFFER[4096];		 
+void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+{ 
+	u32 secpos;
+	u16 secoff;
+	u16 secremain;	   
+ 	u16 i;    
+	u8 * SPI_FLASH_BUF;	  
+   	SPI_FLASH_BUF=SPI_FLASH_BUFFER;	     
+ 	secpos=WriteAddr/4096;
+	secoff=WriteAddr%4096;
+	secremain=4096-secoff;
+ 	if(NumByteToWrite<=secremain)secremain=NumByteToWrite;
+	while(1) 
+	{	
+		SPI_Flash_Read(SPI_FLASH_BUF,secpos*4096,4096);
+		for(i=0;i<secremain;i++)
+		{
+			if(SPI_FLASH_BUF[secoff+i]!=0XFF)break;  
+		}
+		if(i<secremain)
+		{
+			SPI_Flash_erase_sector(secpos);
+			for(i=0;i<secremain;i++)	  
+			{
+				SPI_FLASH_BUF[i+secoff]=pBuffer[i];	  
+			}
+			w25qxx_write_nocheck(SPI_FLASH_BUF,secpos*4096,4096);
+
+		}else w25qxx_write_nocheck(pBuffer,WriteAddr,secremain);			   
+		if(NumByteToWrite==secremain)break;
+		else
+		{
+			secpos++;
+			secoff=0;
+
+		   	pBuffer+=secremain;  
+			WriteAddr+=secremain;
+		   	NumByteToWrite-=secremain;				
+			if(NumByteToWrite>4096)secremain=4096;	
+			else secremain=NumByteToWrite;		
+		}	 
+	};	 
+}
+
