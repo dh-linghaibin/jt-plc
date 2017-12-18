@@ -8,74 +8,27 @@
 /*-----------------------------------------------------------------------*/
 
 #include "diskio.h"		/* FatFs lower layer API */
+#include "w25qxx.h"
 
 /* Definitions of physical drive number for each drive */
 #define DEV_MMC		0	/* Example: Map Ramdisk to physical drive 0 */
 
-#include "w25qxx.h"
+w25qxx_obj w25a = {
+	2048*16,
+	{0,},
+	&w25qxx_init,
+	&w25qxx_write,
+	&w25qxx_read,
+	&w25qxx_get_id,
+	&w25qxx_erase_chip,
+	&w25qxx_erase_sector,
+	&w25qxx_power_down,
+	&w25qxx_wake_up,
+};
 
-
-//w25qxx_obj w25a = {
-//	{0,},
-//	{0,},
-//	&w25qxx_init,
-//	&w25qxx_write,
-//	&w25qxx_read,
-//	&w25qxx_get_id,
-//	&w25qxx_erase_chip,
-//	&w25qxx_erase_sector,
-//	&w25qxx_power_down,
-//	&w25qxx_wake_up,
-//};
-
-int RAM_disk_status() {
-	return RES_OK;
-}
-int MMC_disk_status() {
-	return RES_OK;
-}
-int USB_disk_status() {
-	return RES_OK;
-}
-
-int RAM_disk_initialize() {
-	return RES_OK;
-}
-int MMC_disk_initialize() {
-	return RES_OK;
-}
-int USB_disk_initialize() {
-	return RES_OK;
-}
-
-int RAM_disk_read(BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-int MMC_disk_read(BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-int USB_disk_read(BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-
-int RAM_disk_write(const BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-int MMC_disk_write(const BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-int USB_disk_write(const BYTE * buff, DWORD sector, UINT count) {
-	return RES_OK;
-}
-DWORD get_fattime() {
+DWORD get_fattime(void) {
 	return 55;
 }
-
-#define FLASH_SECTOR_SIZE 	512	
-//对于W25Q64 
-//前6M字节给fatfs用,6M字节后~6M+500K给用户用,6M+500K以后,用于存放字库,字库占用1.5M.		 			    
-u16	    FLASH_SECTOR_COUNT=2048*6;//6M字节,默认为W25Q64
-#define FLASH_BLOCK_SIZE  	8     //每个BLOCK有8个扇区
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -86,11 +39,9 @@ DSTATUS disk_status (
 )
 {
 	DSTATUS stat = RES_OK;
-	int result;
 
 	switch (pdrv) {
 	case DEV_MMC :
-		result = MMC_disk_status();
 		// translate the reslut code here
 		return stat;
 	}
@@ -108,14 +59,13 @@ DSTATUS disk_initialize (
 )
 {
 	DSTATUS stat = RES_OK;
-	int result;
 
 	switch (pdrv) {
 	case DEV_MMC :
-		SPI_Flash_Init();
+		w25a.init(&w25a);
 		return stat;
-	return STA_NOINIT;
 	}
+	return STA_NOINIT;
 }
 
 
@@ -132,12 +82,10 @@ DRESULT disk_read (
 )
 {
 	DRESULT res = RES_OK;
-	int result;
-
 	switch (pdrv) {
 		case DEV_MMC :
 		for(;count>0;count--) {
-			SPI_Flash_Read(buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
+			w25a.read(&w25a,buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
 			sector++;
 			buff+=FLASH_SECTOR_SIZE;
 		}
@@ -159,13 +107,12 @@ DRESULT disk_write (
 )
 {
 	DRESULT res = RES_OK;
-	int result;
 
 	switch (pdrv) {
 		case DEV_MMC :
 		for(;count>0;count--)
 		{										    
-			SPI_Flash_Write((u8*)buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
+			w25a.write(&w25a,(u8*)buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
 			sector++;
 			buff+=FLASH_SECTOR_SIZE;
 		}
@@ -188,7 +135,6 @@ DRESULT disk_ioctl (
 )
 {
 	DRESULT res = RES_OK;
-	int result;
 
 	switch (pdrv) {
 	case DEV_MMC :
@@ -206,7 +152,7 @@ DRESULT disk_ioctl (
 		        res = RES_OK;
 		        break;	 
 		    case GET_SECTOR_COUNT:
-		        *(DWORD*)buff = FLASH_SECTOR_COUNT;
+		        *(DWORD*)buff = w25a.sector_count;
 		        res = RES_OK;
 		        break;
 		    default:
@@ -215,7 +161,6 @@ DRESULT disk_ioctl (
 	    }
 		return res;
 	}
-
 	return RES_PARERR;
 }
 

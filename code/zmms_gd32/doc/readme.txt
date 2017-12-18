@@ -1,12 +1,3 @@
-/*
- * This file is part of the 
- *
- * Copyright (c) 2016-2017 linghaibin
- *
- */
-#include "w25qxx.h"
-#include "ff.h"
-
 void test(void) {
 	FATFS fs; /* FatFs文件系统对象 */
 	FIL fnew; /* 文件对象 */
@@ -43,7 +34,7 @@ void test(void) {
 	/*--------------------- 文件系统测试：写测试 -----------------------*/
 	/* 打开文件，如果文件不存在则创建它 */
 	//printf("\r\n****** 即将进行文件写入测试... ******\r\n");
-	res_sd=f_open(&fnew,"0:qqq.txt",FA_CREATE_ALWAYS|FA_WRITE);
+	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
 	if ( res_sd == FR_OK ) {
 		//printf("》打开/创建FatFs读写测试文件.txt文件成功，向文件写入数据。\r\n");
 		/* 将指定存储区内容写入到文件内 */
@@ -62,7 +53,7 @@ void test(void) {
 	}
 	/*------------------ 文件系统测试：读测试 --------------------------*/
 	//printf("****** 即将进行文件读取测试... ******\r\n");
-	res_sd=f_open(&fnew,"0:qqq.txt",FA_OPEN_EXISTING|FA_READ);
+	res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
 	if (res_sd == FR_OK) {
 		//printf("》打开文件成功。\r\n");
 		res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
@@ -84,10 +75,4 @@ void test(void) {
 	while (1) {
 
 	}
-}
-
-
-int main(void) {
-	test();
-	while(1);
 }
