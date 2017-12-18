@@ -5,7 +5,7 @@
 #include "enc28j60.h"
 
 struct uip_eth_addr uip_mac;
-static unsigned char ethernet_mac[6] = {0x04,0x02,0x35,0x01,0x00,0x01};  //MAC地址       
+static unsigned char ethernet_mac[6] = {0x05,0x01,0x35,0x01,0x00,0x01};  //MAC地址       
 /*---------------------------------------------------------------------------*/
 /* 配置网卡硬件，设置IP地址 */
 void tapdev_init(void)

@@ -10,9 +10,7 @@
 #include "diskio.h"		/* FatFs lower layer API */
 
 /* Definitions of physical drive number for each drive */
-#define DEV_RAM		0	/* Example: Map Ramdisk to physical drive 0 */
-#define DEV_MMC		1	/* Example: Map MMC/SD card to physical drive 1 */
-#define DEV_USB		2	/* Example: Map USB MSD to physical drive 2 */
+#define DEV_MMC		0	/* Example: Map Ramdisk to physical drive 0 */
 
 #include "w25qxx.h"
 
@@ -91,25 +89,9 @@ DSTATUS disk_status (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		result = RAM_disk_status();
-		
-		// translate the reslut code here
-
-		return stat;
-
 	case DEV_MMC :
 		result = MMC_disk_status();
-
 		// translate the reslut code here
-
-		return stat;
-
-	case DEV_USB :
-		result = USB_disk_status();
-
-		// translate the reslut code here
-
 		return stat;
 	}
 	return STA_NOINIT;
@@ -129,28 +111,11 @@ DSTATUS disk_initialize (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		//result = RAM_disk_initialize();
-		SPI_Flash_Init();
-		// translate the reslut code here
-
-		return stat;
-
 	case DEV_MMC :
-		result = MMC_disk_initialize();
-
-		// translate the reslut code here
-
+		SPI_Flash_Init();
 		return stat;
-
-	case DEV_USB :
-		result = USB_disk_initialize();
-
-		// translate the reslut code here
-
-		return stat;
-	}
 	return STA_NOINIT;
+	}
 }
 
 
@@ -170,36 +135,12 @@ DRESULT disk_read (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		// translate the arguments here
-
-		//result = RAM_disk_read(buff, sector, count);
-		for(;count>0;count--)
-			{
-				SPI_Flash_Read(buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
-				sector++;
-				buff+=FLASH_SECTOR_SIZE;
-			}
-		// translate the reslut code here
-
-		return res;
-
-	case DEV_MMC :
-		// translate the arguments here
-
-		result = MMC_disk_read(buff, sector, count);
-
-		// translate the reslut code here
-
-		return res;
-
-	case DEV_USB :
-		// translate the arguments here
-
-		result = USB_disk_read(buff, sector, count);
-
-		// translate the reslut code here
-
+		case DEV_MMC :
+		for(;count>0;count--) {
+			SPI_Flash_Read(buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
+			sector++;
+			buff+=FLASH_SECTOR_SIZE;
+		}
 		return res;
 	}
 
@@ -221,36 +162,13 @@ DRESULT disk_write (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		// translate the arguments here
-
-		//result = RAM_disk_write(buff, sector, count);
+		case DEV_MMC :
 		for(;count>0;count--)
-			{										    
-				SPI_Flash_Write((u8*)buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
-				sector++;
-				buff+=FLASH_SECTOR_SIZE;
-			}
-		// translate the reslut code here
-
-		return res;
-
-	case DEV_MMC :
-		// translate the arguments here
-
-		result = MMC_disk_write(buff, sector, count);
-
-		// translate the reslut code here
-
-		return res;
-
-	case DEV_USB :
-		// translate the arguments here
-
-		result = USB_disk_write(buff, sector, count);
-
-		// translate the reslut code here
-
+		{										    
+			SPI_Flash_Write((u8*)buff,sector*FLASH_SECTOR_SIZE,FLASH_SECTOR_SIZE);
+			sector++;
+			buff+=FLASH_SECTOR_SIZE;
+		}
 		return res;
 	}
 
@@ -273,7 +191,7 @@ DRESULT disk_ioctl (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
+	case DEV_MMC :
 		switch(cmd)
 	    {
 		    case CTRL_SYNC:
@@ -295,22 +213,6 @@ DRESULT disk_ioctl (
 		        res = RES_PARERR;
 		        break;
 	    }
-		// Process of the command for the RAM drive
-
-		return res;
-
-	case DEV_MMC :
-		*(WORD*)buff = 4096;
-		res = RES_OK;
-		// Process of the command for the MMC/SD card
-
-		return res;
-
-	case DEV_USB :
-		*(WORD*)buff = 4096;
-		res = RES_OK;
-		// Process of the command the USB drive
-
 		return res;
 	}
 

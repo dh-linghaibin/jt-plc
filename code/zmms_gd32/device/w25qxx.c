@@ -117,6 +117,170 @@ static void w25qxx_wait_page(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 	w25qxx_wait_busy();             //等待写入结束
 } 
 
+
+
+//int w25qxx_init(struct _w25qxx_obj* w25qxx) {
+//	SPI_InitTypeDef  SPI_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
+
+//	/* Enable SPI1 and GPIO clocks */
+//	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB |
+//							RCC_APB2Periph_GPIO_CS, ENABLE);
+//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB ,ENABLE );
+
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
+
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13  |  GPIO_Pin_15; 
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure); 
+//	GPIO_SetBits(GPIOB, GPIO_Pin_15);
+
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14; 
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//GPIO_Mode_IN_FLOATING
+//	GPIO_Init(GPIOB, &GPIO_InitStructure); 
+//	GPIO_SetBits(GPIOB, GPIO_Pin_14);
+
+//	/* Configure I/O for Flash Chip select */
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_CS;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIO_CS, &GPIO_InitStructure);
+
+//	/* Deselect the FLASH: Chip Select high */
+//	W25QXX_CS_HIGH();
+
+//	/* SPI1 configuration */
+//	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+//	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+//	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+//	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+//	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+//	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+//	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;//SPI_BaudRatePrescaler_4;
+//	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+//	SPI_InitStructure.SPI_CRCPolynomial = 7;
+//	SPI_Init(SPI2, &SPI_InitStructure);
+
+//	/* Enable SPI1  */
+//	SPI_Cmd(SPI2, ENABLE);
+//	return 0;
+//}
+
+//int w25qxx_write(struct _w25qxx_obj* w25qxx,const uint8_t * buff, unsigned long sector, uint16_t count) {
+//	u32 secpos;
+//	u32 secoff;
+//	u32 secremain;     
+//	u32 i;  
+//	u32 numToWrite = count; 
+
+//	secpos=sector/4096;//扇区地址 0~511 for w25x16
+//	secoff=sector%4096;//在扇区内的偏移
+//	secremain=4096-secoff;//扇区剩余空间大小   
+
+//	if(numToWrite<=secremain)secremain=numToWrite;//不大于4096个字节
+//	while(1) 
+//	{ 
+//		w25qxx_read_b(w25qxx->SPI_FLASH_BUF,secpos*4096,4096);//读出整个扇区的内容
+//		for(i=0;i<secremain;i++)//校验数据
+//		{
+//			if(w25qxx->SPI_FLASH_BUF[secoff+i]!=0XFF)break;//需要擦除     
+//		}
+//		if(i<secremain)//需要擦除
+//		{
+//			//w25qxx->erase_sector(w25qxx,secpos);//擦除这个扇区
+//			w25qxx_erase_sector(w25qxx,secpos);
+//			//检测是否已擦除
+//			w25qxx_read_b(w25qxx->SPI_FLASH_BUF2,secpos*4096,4096);
+//			for(i=0;i<secremain;i++)     //复制
+//			{
+//				*(w25qxx->SPI_FLASH_BUF+i+secoff)=buff[i];   
+//			}
+//			w25qxx_write_nocheck(w25qxx->SPI_FLASH_BUF,secpos*4096,4096);//写入整个扇区  
+//		}else{ 
+//			w25qxx_write_nocheck(buff,sector,secremain);
+//		}//写已经擦除了的,直接写入扇区剩余区间.           
+//		if(numToWrite==secremain) {
+//			break;//写入结束了
+//		} else {//写入未结束
+//			secpos++;//扇区地址增1
+//			secoff=0;//偏移位置为0    
+//			buff+=secremain;  //指针偏移
+//			sector+=secremain;//写地址偏移     
+//			numToWrite-=secremain;        //字节数递减
+//			if(numToWrite>4096)secremain=4096;  //下一个扇区还是写不完
+//				else secremain=numToWrite;      //下一个扇区可以写完了
+//		}  
+//	}    
+//	return 0;
+//}	
+
+//int w25qxx_read(struct _w25qxx_obj* w25qxx, uint8_t * buff, unsigned long sector, uint16_t count) {
+//	 u16 i;                                
+//	W25QXX_CS_LOW();                               
+//	w25qxx_send_byte(W25X_ReadData);       
+//	w25qxx_send_byte((u8)((sector)>>16));  
+//	w25qxx_send_byte((u8)((sector)>>8));   
+//	w25qxx_send_byte((u8)sector);   
+//	for(i=0;i<count;i++) { 
+//		buff[i]=w25qxx_send_byte(0XFF);  
+//	}
+//	W25QXX_CS_HIGH();   
+//	return 0;
+//}
+
+//uint16_t w25qxx_get_id(struct _w25qxx_obj* w25qxx) {
+//	u16 Temp = 0;   
+//	W25QXX_CS_LOW();               
+//	w25qxx_send_byte(0x90);
+//	w25qxx_send_byte(0x00);       
+//	w25qxx_send_byte(0x00);       
+//	w25qxx_send_byte(0x00);            
+//	Temp|=w25qxx_send_byte(0xFF)<<8;  
+//	Temp|=w25qxx_send_byte(0xFF);  
+//	W25QXX_CS_HIGH();        
+//	return Temp;
+//}
+
+//int w25qxx_erase_chip(struct _w25qxx_obj* w25qxx) {
+//	w25qxx_write_enable();                  //SET WEL 
+//	w25qxx_wait_busy();   
+//	W25QXX_CS_LOW();                               //使能器件   
+//	w25qxx_send_byte(W25X_ChipErase);        //发送片擦除命令  
+//	W25QXX_CS_HIGH();                             //取消片选             
+//	w25qxx_wait_busy();             //等待芯片擦除结束
+//	return 0;
+//}
+
+//int w25qxx_erase_sector(struct _w25qxx_obj* w25qxx,unsigned long sector) {
+//	//监视falsh擦除情况,测试用    
+//	sector*=4096;
+//    w25qxx_write_enable();                   //SET WEL  
+//    w25qxx_wait_busy();   
+//    W25QXX_CS_LOW();                              //使能器件   
+//    w25qxx_send_byte(W25X_SectorErase);       //发送扇区擦除指令 
+//    w25qxx_send_byte((u8)((sector)>>16));   //发送24bit地址    
+//    w25qxx_send_byte((u8)((sector)>>8));   
+//    w25qxx_send_byte((u8)sector);  
+//    W25QXX_CS_HIGH();                              //取消片选          
+//    w25qxx_wait_busy();       //等待擦除完成
+//	return 0;
+//}
+
+//void w25qxx_power_down(struct _w25qxx_obj* w25qxx) {
+//	W25QXX_CS_LOW();                               //使能器件   
+//	w25qxx_send_byte(W25X_PowerDown);        //发送掉电命令  
+//	W25QXX_CS_HIGH();                      //取消片选                               
+//}
+
+//void w25qxx_wake_up(struct _w25qxx_obj* w25qxx) {
+//	W25QXX_CS_LOW();                              //使能器件   
+//	w25qxx_send_byte(W25X_ReleasePowerDown);   //  send W25X_PowerDown command 0xAB    
+//	W25QXX_CS_HIGH();                        //取消片选                  
+//}
+
 //无检验写SPI FLASH 
 //必须确保所写的地址范围内的数据全部为0XFF,否则在非0XFF处写入的数据将失败!
 //具有自动换页功能 
@@ -144,169 +308,6 @@ static void w25qxx_write_nocheck(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWr
 		}
 	}  
 } 
-
-int w25qxx_init(struct _w25qxx_obj* w25qxx) {
-	SPI_InitTypeDef  SPI_InitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/* Enable SPI1 and GPIO clocks */
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB |
-							RCC_APB2Periph_GPIO_CS, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB ,ENABLE );
-
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13  |  GPIO_Pin_15; 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure); 
-	GPIO_SetBits(GPIOB, GPIO_Pin_15);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14; 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//GPIO_Mode_IN_FLOATING
-	GPIO_Init(GPIOB, &GPIO_InitStructure); 
-	GPIO_SetBits(GPIOB, GPIO_Pin_14);
-
-	/* Configure I/O for Flash Chip select */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_CS;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIO_CS, &GPIO_InitStructure);
-
-	/* Deselect the FLASH: Chip Select high */
-	W25QXX_CS_HIGH();
-
-	/* SPI1 configuration */
-	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
-	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
-	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;//SPI_BaudRatePrescaler_4;
-	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-	SPI_InitStructure.SPI_CRCPolynomial = 7;
-	SPI_Init(SPI2, &SPI_InitStructure);
-
-	/* Enable SPI1  */
-	SPI_Cmd(SPI2, ENABLE);
-	return 0;
-}
-
-int w25qxx_write(struct _w25qxx_obj* w25qxx,const uint8_t * buff, unsigned long sector, uint16_t count) {
-	u32 secpos;
-	u32 secoff;
-	u32 secremain;     
-	u32 i;  
-	u32 numToWrite = count; 
-
-	secpos=sector/4096;//扇区地址 0~511 for w25x16
-	secoff=sector%4096;//在扇区内的偏移
-	secremain=4096-secoff;//扇区剩余空间大小   
-
-	if(numToWrite<=secremain)secremain=numToWrite;//不大于4096个字节
-	while(1) 
-	{ 
-		w25qxx_read_b(w25qxx->SPI_FLASH_BUF,secpos*4096,4096);//读出整个扇区的内容
-		for(i=0;i<secremain;i++)//校验数据
-		{
-			if(w25qxx->SPI_FLASH_BUF[secoff+i]!=0XFF)break;//需要擦除     
-		}
-		if(i<secremain)//需要擦除
-		{
-			//w25qxx->erase_sector(w25qxx,secpos);//擦除这个扇区
-			w25qxx_erase_sector(w25qxx,secpos);
-			//检测是否已擦除
-			w25qxx_read_b(w25qxx->SPI_FLASH_BUF2,secpos*4096,4096);
-			for(i=0;i<secremain;i++)     //复制
-			{
-				*(w25qxx->SPI_FLASH_BUF+i+secoff)=buff[i];   
-			}
-			w25qxx_write_nocheck(w25qxx->SPI_FLASH_BUF,secpos*4096,4096);//写入整个扇区  
-		}else{ 
-			w25qxx_write_nocheck(buff,sector,secremain);
-		}//写已经擦除了的,直接写入扇区剩余区间.           
-		if(numToWrite==secremain) {
-			break;//写入结束了
-		} else {//写入未结束
-			secpos++;//扇区地址增1
-			secoff=0;//偏移位置为0    
-			buff+=secremain;  //指针偏移
-			sector+=secremain;//写地址偏移     
-			numToWrite-=secremain;        //字节数递减
-			if(numToWrite>4096)secremain=4096;  //下一个扇区还是写不完
-				else secremain=numToWrite;      //下一个扇区可以写完了
-		}  
-	}    
-	return 0;
-}	
-
-int w25qxx_read(struct _w25qxx_obj* w25qxx, uint8_t * buff, unsigned long sector, uint16_t count) {
-	 u16 i;                                
-	W25QXX_CS_LOW();                               
-	w25qxx_send_byte(W25X_ReadData);       
-	w25qxx_send_byte((u8)((sector)>>16));  
-	w25qxx_send_byte((u8)((sector)>>8));   
-	w25qxx_send_byte((u8)sector);   
-	for(i=0;i<count;i++) { 
-		buff[i]=w25qxx_send_byte(0XFF);  
-	}
-	W25QXX_CS_HIGH();   
-	return 0;
-}
-
-uint16_t w25qxx_get_id(struct _w25qxx_obj* w25qxx) {
-	u16 Temp = 0;   
-	W25QXX_CS_LOW();               
-	w25qxx_send_byte(0x90);
-	w25qxx_send_byte(0x00);       
-	w25qxx_send_byte(0x00);       
-	w25qxx_send_byte(0x00);            
-	Temp|=w25qxx_send_byte(0xFF)<<8;  
-	Temp|=w25qxx_send_byte(0xFF);  
-	W25QXX_CS_HIGH();        
-	return Temp;
-}
-
-int w25qxx_erase_chip(struct _w25qxx_obj* w25qxx) {
-	w25qxx_write_enable();                  //SET WEL 
-	w25qxx_wait_busy();   
-	W25QXX_CS_LOW();                               //使能器件   
-	w25qxx_send_byte(W25X_ChipErase);        //发送片擦除命令  
-	W25QXX_CS_HIGH();                             //取消片选             
-	w25qxx_wait_busy();             //等待芯片擦除结束
-	return 0;
-}
-
-int w25qxx_erase_sector(struct _w25qxx_obj* w25qxx,unsigned long sector) {
-	//监视falsh擦除情况,测试用    
-	sector*=4096;
-    w25qxx_write_enable();                   //SET WEL  
-    w25qxx_wait_busy();   
-    W25QXX_CS_LOW();                              //使能器件   
-    w25qxx_send_byte(W25X_SectorErase);       //发送扇区擦除指令 
-    w25qxx_send_byte((u8)((sector)>>16));   //发送24bit地址    
-    w25qxx_send_byte((u8)((sector)>>8));   
-    w25qxx_send_byte((u8)sector);  
-    W25QXX_CS_HIGH();                              //取消片选          
-    w25qxx_wait_busy();       //等待擦除完成
-	return 0;
-}
-
-void w25qxx_power_down(struct _w25qxx_obj* w25qxx) {
-	W25QXX_CS_LOW();                               //使能器件   
-	w25qxx_send_byte(W25X_PowerDown);        //发送掉电命令  
-	W25QXX_CS_HIGH();                      //取消片选                               
-}
-
-void w25qxx_wake_up(struct _w25qxx_obj* w25qxx) {
-	W25QXX_CS_LOW();                              //使能器件   
-	w25qxx_send_byte(W25X_ReleasePowerDown);   //  send W25X_PowerDown command 0xAB    
-	W25QXX_CS_HIGH();                        //取消片选                  
-}
-
 
 void SPI_Flash_Init(void) {
 	SPI_InitTypeDef  SPI_InitStructure;
@@ -357,7 +358,7 @@ void SPI_Flash_Init(void) {
 	SPI_Cmd(SPI2, ENABLE);
 }  
 
-void SPI_Flash_Read(uint8_t * buff, unsigned long sector, uint16_t count)   
+inline void SPI_Flash_Read(uint8_t * buff, unsigned long sector, uint16_t count)   
 { 
  	 u16 i;                                
 	W25QXX_CS_LOW();                               
@@ -366,9 +367,10 @@ void SPI_Flash_Read(uint8_t * buff, unsigned long sector, uint16_t count)
 	w25qxx_send_byte((u8)((sector)>>8));   
 	w25qxx_send_byte((u8)sector);   
 	for(i=0;i<count;i++) { 
-		buff[i]=w25qxx_send_byte(0XFF);  
+		*buff++=w25qxx_send_byte(0XFF);  
 	}
-	W25QXX_CS_HIGH();   		    	      
+	W25QXX_CS_HIGH();   	
+	return;
 }  
 
 int SPI_Flash_erase_sector(unsigned long sector) {
@@ -386,7 +388,7 @@ int SPI_Flash_erase_sector(unsigned long sector) {
 	return 0;
 }
 
-u8 SPI_FLASH_BUFFER[4096];		 
+u8 SPI_FLASH_BUFFER[4098];		 
 void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
 { 
 	u32 secpos;

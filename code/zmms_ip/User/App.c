@@ -560,6 +560,15 @@ int main(void) {
                     LED.setcan(&LED.Led_n,1);
                 }
             }
+			static uint8_t old_min = 0;
+			ltk_rtc_get_time(&rtc);
+			plc_time[0] = rtc.year;
+			plc_time[1] = rtc.month;
+			plc_time[2] = rtc.mday;
+			plc_time[3] = rtc.wday;
+			plc_time[4] = rtc.hour;
+			plc_time[5] = rtc.min;
+			plc_time[6] = rtc.sec;
 //            {
 //                static uint8_t old_min = 0;
 //                ltk_rtc_get_time(&rtc);
