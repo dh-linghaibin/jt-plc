@@ -47,7 +47,7 @@ void UsartInit(void) {
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
     GPIO_Init(GPIOA, &GPIO_InitStructure);        
     
-    USART_InitStructure.USART_BaudRate = 9600;//设置串口波特率115200
+    USART_InitStructure.USART_BaudRate = 115200;//设置串口波特率115200
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;//设置数据位
     USART_InitStructure.USART_StopBits = USART_StopBits_1;//设置停止位
     USART_InitStructure.USART_Parity = USART_Parity_No;//设置效验位

@@ -77,9 +77,9 @@ void CanInit(Stdcan_n* can)
     CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;//CAN_Mode_Normal; 
     //CAN波特率设置,500KHz@48MHz
     CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
-    CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+    CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
-    CAN_InitStructure.CAN_Prescaler = 160;
+    CAN_InitStructure.CAN_Prescaler = 600;
     CAN_Init(CAN, &CAN_InitStructure);
     
     //CAN过滤器FIFO0配置

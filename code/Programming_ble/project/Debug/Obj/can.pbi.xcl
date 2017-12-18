@@ -1,22 +1,22 @@
-"C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\user\can.c"
+"D:\03-project\53-jt_plc\code\Programming_ble\user\can.c"
 -std=c11
 -ferror-limit=0
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\project\..\startup
+D:\03-project\53-jt_plc\code\Programming_ble\project\..\startup
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\project\..\user
+D:\03-project\53-jt_plc\code\Programming_ble\project\..\user
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\project\..\lib\inc
+D:\03-project\53-jt_plc\code\Programming_ble\project\..\lib\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\startup
+D:\03-project\53-jt_plc\code\Programming_ble\startup
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\user
+D:\03-project\53-jt_plc\code\Programming_ble\user
 -I
-C:\Users\a6735\LHB_DATA\03-project\53-jt_plc\code\Programming_ble\lib\inc
+D:\03-project\53-jt_plc\code\Programming_ble\lib\inc
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
