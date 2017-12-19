@@ -27,11 +27,20 @@ Project File Date:  11/07/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 3 (build 300)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'm_uip'
+compiling bsp_can.c...
+..\User\bsp_can.c(35): warning:  #69-D: integer conversion resulted in truncation
+      RINGBUF.init(&RINGBUF.ringbuf_n, can_package_merry, 800);
+..\User\bsp_can.c: 1 warning, 0 errors
+compiling App.c...
+..\User\App.c(563): warning:  #177-D: variable "old_min" was declared but never referenced
+  			static uint8_t old_min = 0;
+..\User\App.c: 1 warning, 0 errors
 compiling tapdev.c...
+compiling enc28j60.c...
 linking...
 Program Size: Code=21280 RO-data=376 RW-data=428 ZI-data=15036  
 FromELF: creating hex file...
-".\Objects\m_uip.axf" - 0 Error(s), 0 Warning(s).
+".\Objects\m_uip.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,11 +67,11 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.0.0
 
    * Component: Keil::Device:Startup:1.0.0
-      Source file:   Device\Source\ARM\STM32F1xx_OPT.s
-      Source file:   Device\Source\system_stm32f10x.c
-      Include file:  RTE_Driver\Config\RTE_Device.h
       Source file:   Device\Source\ARM\startup_stm32f10x_md.s
-Build Time Elapsed:  00:00:03
+      Source file:   Device\Source\ARM\STM32F1xx_OPT.s
+      Include file:  RTE_Driver\Config\RTE_Device.h
+      Source file:   Device\Source\system_stm32f10x.c
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
