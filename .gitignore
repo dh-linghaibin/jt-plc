@@ -62,5 +62,5 @@ dkms.conf
 
 /data/
 /Hardware/
-/code/zmdo_gd32_8/pro/Objects/
-/code/zmms_gd32/mdk/
+/code/zmdo_gd32_8/pro/Objects
+/code/zmms_gd32/mdk

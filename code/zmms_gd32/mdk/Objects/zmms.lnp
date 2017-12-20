@@ -6,6 +6,7 @@
 ".\objects\can.o"
 ".\objects\led.o"
 ".\objects\wdog.o"
+".\objects\time.o"
 ".\objects\diskio.o"
 ".\objects\ff.o"
 ".\objects\ffsystem.o"

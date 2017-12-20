@@ -14,6 +14,13 @@
 #include "led.h"
 #include "fsm.h"
 #include "can.h"
+#include "time.h"
+
+static time_obj time = {
+	&time_init,
+	&time_get_1ms,
+	&time_set_1ms,
+};
 
 static led_obj led = {
 	.init = led_init,
@@ -22,13 +29,13 @@ static led_obj led = {
 };
 
 static can_obj can_bus = {
-		4,
-		{0,0,0,0,0,0,0,0},
-		{0},
+	0xff,
+	{0,0,0,0,0,0,0,0},
+	{0},
 	&bxcan_init,
 	&bxcan_send,
 	&bxcan_set_id,
-	&bxcan_get_packget,2
+	&bxcan_get_packget,
 };
 
 void test(void) {
@@ -125,9 +132,10 @@ fsm_init_name(can_rx_task)
 				if(pack->package[i][P_ADDR] == 0X3A) {
 					switch(pack->get_cmd(pack,i)) {
 						case 0: 
-
+						
 						break;
 						case 1: 
+							led.tager(&led,L_RUN);
 						break;	
 						case 2:
 
@@ -136,6 +144,8 @@ fsm_init_name(can_rx_task)
 
 						break;
 					}
+					pack->package[i][0] = 0x00;
+					WaitX(1);
 				} else {
 					pack->package[i][0] = 0x00;
 				}
@@ -147,7 +157,9 @@ fsm_end
 int main(void) {
 	led.init(&led);
 	led.tager(&led,L_RUN);
-
+		
+	can_bus.init(&can_bus);
+	
 	test();
 	timer_typedef periodic_timer, arp_timer;
     uip_ipaddr_t ipaddr;
@@ -172,45 +184,51 @@ int main(void) {
 
 	timer_set(&periodic_timer, CLOCK_SECOND / 20);
     timer_set(&arp_timer, CLOCK_SECOND * 5);
+
+	fsm_task_on(can_rx_task);
 	while(1) {
-		eMBPoll();
-		uip_len = tapdev_read();
-		/* 收到数据	*/
-		if(uip_len > 0)	{
-			/* 处理IP数据包 */
-			if(BUF->type == htons(UIP_ETHTYPE_IP)) {
-				uip_arp_ipin();
-				uip_input();
-				if (uip_len > 0) {
-					uip_arp_out();
-					tapdev_send();
-				}
-			} else if (BUF->type == htons(UIP_ETHTYPE_ARP)) {
-				/* 处理ARP报文 */
-				uip_arp_arpin();
-				if (uip_len > 0) {
-					tapdev_send();
-				}
-			}
+		if(time.get_1ms(&time) == 1) {
+			time.set_1ms(&time,0);
+			fsm_going(can_rx_task);
 		}
-		/* 0.5秒定时器超时 */
-		if(timer_expired(&periodic_timer)) {
-			timer_reset(&periodic_timer);
-			/* 处理TCP连接, UIP_CONNS缺省是10个 */
-			for(uint8_t i = 0; i < UIP_CONNS; i++) {
-				/* 处理TCP通信事件 */
-				uip_periodic(i);		
-				if(uip_len > 0) {
-					uip_arp_out();
-					tapdev_send();
-				}
-			}   
-			/* 定期ARP处理 */
-			if (timer_expired(&arp_timer)) {
-				timer_reset(&arp_timer);
-				uip_arp_timer();
-			}
-		}
+//		eMBPoll();
+//		uip_len = tapdev_read();
+//		/* 收到数据	*/
+//		if(uip_len > 0)	{
+//			/* 处理IP数据包 */
+//			if(BUF->type == htons(UIP_ETHTYPE_IP)) {
+//				uip_arp_ipin();
+//				uip_input();
+//				if (uip_len > 0) {
+//					uip_arp_out();
+//					tapdev_send();
+//				}
+//			} else if (BUF->type == htons(UIP_ETHTYPE_ARP)) {
+//				/* 处理ARP报文 */
+//				uip_arp_arpin();
+//				if (uip_len > 0) {
+//					tapdev_send();
+//				}
+//			}
+//		}
+//		/* 0.5秒定时器超时 */
+//		if(timer_expired(&periodic_timer)) {
+//			timer_reset(&periodic_timer);
+//			/* 处理TCP连接, UIP_CONNS缺省是10个 */
+//			for(uint8_t i = 0; i < UIP_CONNS; i++) {
+//				/* 处理TCP通信事件 */
+//				uip_periodic(i);		
+//				if(uip_len > 0) {
+//					uip_arp_out();
+//					tapdev_send();
+//				}
+//			}   
+//			/* 定期ARP处理 */
+//			if (timer_expired(&arp_timer)) {
+//				timer_reset(&arp_timer);
+//				uip_arp_timer();
+//			}
+//		}
 	}
 }
 

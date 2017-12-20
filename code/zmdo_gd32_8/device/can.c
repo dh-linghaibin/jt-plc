@@ -71,9 +71,9 @@ void bxcan_init(struct _can_obj* can) {
     can_init_parameter.trans_fifo_order = DISABLE;
     can_init_parameter.working_mode = CAN_NORMAL_MODE;
     can_init_parameter.resync_jump_width = CAN_BT_SJW_1TQ;
-    can_init_parameter.time_segment_1 = CAN_BT_BS1_4TQ;
-    can_init_parameter.time_segment_2 = CAN_BT_BS2_5TQ;
-	can_init_parameter.prescaler = 72;
+    can_init_parameter.time_segment_1 = CAN_BT_BS1_3TQ;
+    can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+	can_init_parameter.prescaler = 144;
 	
 	/* initialize filter */ 
     can_filter_parameter.filter_number=0;
