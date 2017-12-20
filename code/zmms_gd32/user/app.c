@@ -28,7 +28,7 @@ static can_obj can_bus = {
 	&bxcan_init,
 	&bxcan_send,
 	&bxcan_set_id,
-	&bxcan_get_packget,232
+	&bxcan_get_packget,2
 };
 
 void test(void) {
