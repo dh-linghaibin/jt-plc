@@ -51,10 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-
-/data/
-/Hardware/
-/code\zmdo_gd32_8\pro\Objects/
 *.rar
 *.uvprojx
 *.a6735
@@ -62,3 +58,9 @@ dkms.conf
 *.axf
 *.htm
 *.htm
+*.crf
+
+/data/
+/Hardware/
+/code/zmdo_gd32_8/pro/Objects
+/code/zmms_gd32/mdk
