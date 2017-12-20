@@ -37,10 +37,12 @@ static Stdoutsignal OUTSIGNAL = {
 	&OutsignalReadout,
 	&OutsignalEmergencyStop,
 };
+
 static flash_obj flash = {
 	&flash_write,
 	&flash_read,
 };
+
 static can_obj can_bus = {
 	
 		4,
@@ -52,6 +54,7 @@ static can_obj can_bus = {
 	&bxcan_set_id,
 	&bxcan_get_packget,
 };
+
 static Stdtm1650 TM1650 = {
 	{
 		{GPIOB,GPIO_PIN_10},

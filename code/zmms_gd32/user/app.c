@@ -4,8 +4,32 @@
  * Copyright (c) 2016-2017 linghaibin
  *
  */
-#include "w25qxx.h"
 #include "ff.h"
+#include "uip.h"
+#include "uip_arp.h"
+#include "mb.h"
+#include "mbutils.h"
+#include "timer.h"
+#include "tapdev.h"
+#include "led.h"
+#include "fsm.h"
+#include "can.h"
+
+static led_obj led = {
+	.init = led_init,
+	.set = led_set,
+	.tager = led_tager,
+};
+
+static can_obj can_bus = {
+		4,
+		{0,0,0,0,0,0,0,0},
+		{0},
+	&bxcan_init,
+	&bxcan_send,
+	&bxcan_set_id,
+	&bxcan_get_packget,
+};
 
 void test(void) {
 	FATFS fs; /* FatFs文件系统对象 */
@@ -86,16 +110,44 @@ void test(void) {
 //	}
 }
 
-#include "uip.h"
-#include "uip_arp.h"
-#include "mb.h"
-#include "mbutils.h"
-#include "timer.h"
-#include "tapdev.h"
+
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])	
 
+
+simple_fsm(can_rx_task,)
+fsm_init_name(can_rx_task)
+	while(1) {
+		WaitX(100);
+		can_package_obj *pack = can_bus.get_packget(&can_bus);
+		for(int i = 0;i < PACKAGE_NUM;i++) {
+			if(pack->package[i][0] == 0xff) {
+				if(pack->package[i][P_ADDR] == 0X3A) {
+					switch(pack->get_cmd(pack,i)) {
+						case 0: 
+
+						break;
+						case 1: 
+						break;	
+						case 2:
+
+						break;
+						case 3:
+
+						break;
+					}
+				} else {
+					pack->package[i][0] = 0x00;
+				}
+			}
+		}
+	}
+fsm_end
+
 int main(void) {
+	led.init(&led);
+	led.tager(&led,L_RUN);
+
 	test();
 	timer_typedef periodic_timer, arp_timer;
     uip_ipaddr_t ipaddr;
