@@ -40,7 +40,7 @@
 /* ----------------------- Defines  -----------------------------------------*/
 #define DEBUG 0
 #if DEBUG
-#define PRINTF(...) printf(__VA_ARGS__)
+#define PRINTF(...) //printf(__VA_ARGS__)
 #else
 #define PRINTF(...)
 #endif

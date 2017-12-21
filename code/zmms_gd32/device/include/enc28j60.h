@@ -27,6 +27,14 @@ uint16_t en28j60_packet_receive(struct _en28j60_obj* en28,uint8_t * packet,uint1
 void en28j60_packet_send(struct _en28j60_obj* en28,uint8_t * packet,uint16_t len);
 void en28j60_set_mac(struct _en28j60_obj* en28);
 
+//static en28j60_obj enc28 = {
+//	{0x05,0x01,0x35,0x01,0x00,0x01},//MACµØÖ·    
+//	&en28j60_init,
+//	&en28j60_packet_receive,
+//	&en28j60_packet_send,
+//	&en28j60_set_mac,
+//};
+
 #ifdef __cplusplus
 }
 #endif
