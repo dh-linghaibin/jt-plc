@@ -32,8 +32,6 @@ typedef struct {
     
     void (*setvar)(StdMenu_n* menu_n,uint8_t var);
     uint8_t (*getvar)(StdMenu_n* menu_n);
-    
-    void (*implement)(StdMenu_n menu_n,Stdcanbus *can_n,uint8_t di_num,Stdflash flash);
 }StdMenu; 
 /* 外部常数宏 *****************************************************************/
 /* 外部动作宏 *****************************************************************/
@@ -45,8 +43,6 @@ uint8_t MenuGet(StdMenu_n* menu_n);
 
 void MenuSetVar(StdMenu_n* menu_n,uint8_t var);
 uint8_t MenuGetVar(StdMenu_n* menu_n);
-
-void MenuImplementCmd(StdMenu_n menu_n,Stdcanbus *can_n,uint8_t di_num,Stdflash flash);
 
 #endif
 /***************************************************************END OF FILE****/

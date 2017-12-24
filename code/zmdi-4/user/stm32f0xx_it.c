@@ -172,14 +172,9 @@ void TIM3_IRQHandler(void)
   * @param  None
   * @retval None
   */
-extern Stdringbuf RINGBUF;
 void CEC_CAN_IRQHandler(void) {
     CanRxMsg RxMessage = {0};
     CAN_Receive(CAN, CAN_FIFO0, &RxMessage);
-    
-    for(uint8_t i = 0;i < 8;i++) {
-        RINGBUF.put(&RINGBUF.ringbuf_n,RxMessage.Data[i]);
-    }
 }
 /**
   * @brief  This function handles PPP interrupt request.

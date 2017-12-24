@@ -65,27 +65,49 @@ fsm_init_name(can_rx_task)
 		for(int i = 0;i < PACKAGE_NUM;i++) {
 			if(pack->package[i][0] == 0xff) {
 				if(pack->package[i][P_ADDR] == 0X3A) {
-					switch(pack->get_cmd(pack,i)) {
-						case 0: 
-						
-						break;
-						case 1: 
-							led.tager(&led,L_RUN);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8),pack->package[i][P_O0]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+1),pack->package[i][P_O1]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+2),pack->package[i][P_O2]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+3),pack->package[i][P_O3]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+4),pack->package[i][P_O4]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+5),pack->package[i][P_O5]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+6),pack->package[i][P_O6]);
-							modbus.set_coil(&modbus,(pack->package[i][1]*8+7),pack->package[i][P_O7]);
-						break;	
-						case 2:
+					switch(pack->package[i][3]) {
+						case 0xD0: {
+							switch(pack->get_cmd(pack,i)) {
+								case 0: 
+								
+								break;
+								case 1: 
+									led.tager(&led,L_RUN);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8),pack->package[i][P_O0]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+1),pack->package[i][P_O1]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+2),pack->package[i][P_O2]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+3),pack->package[i][P_O3]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+4),pack->package[i][P_O4]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+5),pack->package[i][P_O5]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+6),pack->package[i][P_O6]);
+									modbus.set_coil(&modbus,(pack->package[i][1]*8+7),pack->package[i][P_O7]);
+								break;	
+								case 2:
 
-						break;
-						case 3:
+								break;
+								case 3:
 
-						break;
+								break;
+							}
+						}
+							break;
+						case 0xD1: {
+							switch(pack->get_cmd(pack,i)) {
+								case 0: 
+								
+								break;
+								case 1: 
+									led.tager(&led,L_RUN);
+								break;	
+								case 2:
+
+								break;
+								case 3:
+
+								break;
+							}
+						}	
+							break;
 					}
 					pack->package[i][0] = 0x00;
 					WaitX(1);
@@ -151,10 +173,10 @@ int main(void) {
 	fsm_task_on(can_rx_task);
 	fsm_task_on(modbus_task);
 
-	ubasic_init(program);
-	do {
-		ubasic_run();
-	} while(!ubasic_finished());
+//	ubasic_init(program);
+//	do {
+//		ubasic_run();
+//	} while(!ubasic_finished());
 
 	while(1) {
 		if(time.get_1ms(&time) == 1) {
