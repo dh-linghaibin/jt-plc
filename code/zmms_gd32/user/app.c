@@ -6,13 +6,16 @@
  */
 #include "ff.h"
 #include "led.h"
-#include "fsm.h"
 #include "can.h"
 #include "time.h"
 #include "modbus.h"
 #include "ubasic.h"
 #include "usart.h"
 #include "stdio.h"
+//FreeRTOS Define
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
 
 static time_obj time = {
 	&time_init,
@@ -57,10 +60,40 @@ static can_obj can_bus = {
 	&bxcan_get_packget,
 };
 
-simple_fsm(can_rx_task,)
-fsm_init_name(can_rx_task)
-	while(1) {
-		WaitX(100);
+static const char program[] =
+"10 gosub 100\n\
+//20 for i = 1 to 10\n\
+//30 print i\n\
+//40 next i\n\
+//50 print \"end\"\n\
+//60 end\n\
+//100 print \"subroutine\"\n\
+//101 if 10 > 0 then print 1000\n\
+110 return\n";
+
+
+
+#define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
+#define DELAY_S(t) DELAY_mS(1000*t)
+#define DELAY_M(t) DELAY_S(60*t)
+
+void vTaskBlinkLED(void *p){
+    for(;;){
+        //led.tager(&led,L_RUN);
+        DELAY_mS(500);
+    }
+}
+
+void vTaskBlinkLED2(void *p){
+    for(;;){
+        //led.tager(&led,L_RS232);
+        DELAY_mS(500);
+    }
+}
+
+void vTaskBlinkLED3(void *p){
+    for(;;){
+        DELAY_mS(500);
 		can_package_obj *pack = can_bus.get_packget(&can_bus);
 		for(int i = 0;i < PACKAGE_NUM;i++) {
 			if(pack->package[i][0] == 0xff) {
@@ -72,7 +105,7 @@ fsm_init_name(can_rx_task)
 								
 								break;
 								case 1: 
-									led.tager(&led,L_RUN);
+									led.tager(&led,L_CAN);
 									modbus.set_coil(&modbus,(pack->package[i][1]*8),pack->package[i][P_O0]);
 									modbus.set_coil(&modbus,(pack->package[i][1]*8+1),pack->package[i][P_O1]);
 									modbus.set_coil(&modbus,(pack->package[i][1]*8+2),pack->package[i][P_O2]);
@@ -97,7 +130,7 @@ fsm_init_name(can_rx_task)
 								
 								break;
 								case 1: 
-									led.tager(&led,L_RUN);
+									led.tager(&led,L_CAN);
 								break;	
 								case 2:
 
@@ -110,7 +143,6 @@ fsm_init_name(can_rx_task)
 							break;
 					}
 					pack->package[i][0] = 0x00;
-					WaitX(1);
 				} else {
 					pack->package[i][0] = 0x00;
 				}
@@ -134,34 +166,41 @@ fsm_init_name(can_rx_task)
 			}
 			can_bus.send(&can_bus);
 		}
-	}
-fsm_end
+    }
+}
 
-simple_fsm(modbus_task,
-uint16_t time_count;)
-fsm_init_name(modbus_task)
-	while(1) {
-		WaitX(1);
+void theTimerCallback(TimerHandle_t pxTimer)
+{
+	//motor_durationTick();
+	led.tager(&led,L_CAN);
+	
+}
+
+void theTimerInit(int msCount)
+{
+	TickType_t timertime = (msCount/portTICK_PERIOD_MS);
+	TimerHandle_t theTimer = xTimerCreate("theTimer", timertime , pdTRUE, 0, theTimerCallback );
+	if( xTimerStart(theTimer, 0) != pdPASS )
+	{
+		//debugU("Timer failed to start");
+	}
+
+}
+
+void vTaskBlinkLED4(void *p){
+	uint16_t count = 0;
+	//theTimerInit(500);
+    for(;;){
 		modbus.loop(&modbus);
-		if(me.time_count < 400) {
-			me.time_count++;
+		if(count < 200) {
+			count++;
 		} else {
-			me.time_count = 0;
+			count = 0;
 			modbus.heart(&modbus);
 		}
-	}
-fsm_end
+    }
+}
 
-static const char program[] =
-"10 gosub 100\n\
-//20 for i = 1 to 10\n\
-//30 print i\n\
-//40 next i\n\
-//50 print \"end\"\n\
-//60 end\n\
-//100 print \"subroutine\"\n\
-//101 if 10 > 0 then print 1000\n\
-110 return\n";
 
 int main(void) {
 	time.init(&time);
@@ -170,37 +209,17 @@ int main(void) {
 	led.tager(&led,L_RUN);
 	can_bus.init(&can_bus);
 	modbus.init(&modbus);
-	fsm_task_on(can_rx_task);
-	fsm_task_on(modbus_task);
+
+	xTaskCreate(vTaskBlinkLED, (const char*)"IDLE", 512, NULL, 1, NULL);
+	xTaskCreate(vTaskBlinkLED2, (const char*)"IDLE2", 512, NULL, 1, NULL);
+	xTaskCreate(vTaskBlinkLED3, (const char*)"IDLE2", 512, NULL, 1, NULL);
+	xTaskCreate(vTaskBlinkLED4, (const char*)"IDLE2", 1024, NULL, 1, NULL);
+	vTaskStartScheduler();
 
 //	ubasic_init(program);
 //	do {
 //		ubasic_run();
 //	} while(!ubasic_finished());
-
-	while(1) {
-		if(time.get_1ms(&time) == 1) {
-			time.set_1ms(&time,0);
-			fsm_going(can_rx_task);
-			fsm_going(modbus_task);
-		}
-	}
 }
 
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-  /* Infinite loop */
-  while (1) {
-  }
-}
 

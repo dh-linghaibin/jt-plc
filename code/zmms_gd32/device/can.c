@@ -6,6 +6,10 @@
  */
 
 #include "can.h"
+//FreeRTOS Define
+#include "FreeRTOS.h"
+#include "task.h"
+
 
 #define GPIO_CAN                   GPIOA
 #define RCC_APB2Periph_GPIO_CAN    RCC_APB2Periph_GPIOA
@@ -182,7 +186,10 @@ static uint8_t bxcan_package_cmd( struct _can_package_obj* pack,uint8_t num) {
     \retval     none
 */
 void USB_LP_CAN1_RX0_IRQHandler(void) {
-    /* check the receive message */
+	UBaseType_t uxSavedInterruptStatus;
+	uxSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
+
+	/* check the receive message */
 	CanRxMsg receive_message;
 	if(SET == CAN_GetITStatus(CAN1,CAN_IT_FF0)) {
         CAN_ClearITPendingBit(CAN1,CAN_IT_FF0);
@@ -235,7 +242,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 				}
 			}
 		}
-    }  
+    }
+
+	portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedInterruptStatus );  
 }
 
 
