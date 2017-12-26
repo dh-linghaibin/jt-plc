@@ -76,3 +76,38 @@ void test(void) {
 
 	}
 }
+
+
+void theTimerCallback(TimerHandle_t pxTimer)
+{
+	//motor_durationTick();
+	led.tager(&led,L_CAN);
+	
+}
+
+void theTimerInit(int msCount)
+{
+	TickType_t timertime = (msCount/portTICK_PERIOD_MS);
+	TimerHandle_t theTimer = xTimerCreate("theTimer", timertime , pdTRUE, 0, theTimerCallback );
+	if( xTimerStart(theTimer, 0) != pdPASS )
+	{
+		//debugU("Timer failed to start");
+	}
+}
+//theTimerInit(500);
+
+static const char program[] =
+"10 gosub 100\n\
+//20 for i = 1 to 10\n\
+//30 print i\n\
+//40 next i\n\
+//50 print \"end\"\n\
+//60 end\n\
+//100 print \"subroutine\"\n\
+//101 if 10 > 0 then print 1000\n\
+110 return\n";
+
+//	ubasic_init(program);
+//	do {
+//		ubasic_run();
+//	} while(!ubasic_finished());

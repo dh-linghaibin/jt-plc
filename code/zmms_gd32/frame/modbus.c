@@ -79,13 +79,21 @@ void modbus_heart(struct _modbus_obj* modbus) {
 }
 
 void modbus_set_coil(struct _modbus_obj* modbus,uint16_t num,uint8_t val) {
-	uint16_t r_num = num/8;
-	uint16_t r_bit = num%8;
-	if(val == 0) {
-		modbus_coil[r_num] &= ~(1<<r_bit);
-	} else {	
-		modbus_coil[r_num] |= 1<<r_bit;
-	}
+//	uint16_t r_num = num/8;
+//	uint16_t r_bit = num%8;
+//	if(val == 0) {
+//		modbus_coil[r_num] &= ~(1<<r_bit);
+//	} else {	
+//		modbus_coil[r_num] |= 1<<r_bit;
+//	}
+//	modbus_coil_r[r_num] = modbus_coil[r_num];
+	modbus_coil[num] = val;
+	modbus_coil_r[num] = val;
+}
+
+void modbus_set_input(struct _modbus_obj* modbus,uint16_t num,uint8_t val) {
+	modbus_coil[num] = val;
+	modbus_coil_r[num] = val;
 }
 
 modbus_coil_obj modbus_up_coil(struct _modbus_obj* modbus) {
@@ -167,7 +175,7 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils,
             while( iNCoils > 0 ) {
                 *pucRegBuffer++ = modbus_coil[usBitOffset];
                 iNCoils -= 8;
-                usBitOffset = 1;
+                usBitOffset += 1;
             }
             break;
         case MB_REG_WRITE:

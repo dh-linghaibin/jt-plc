@@ -6,6 +6,7 @@
  */
 
 #include "can.h"
+#include <cstring>
 //FreeRTOS Define
 #include "FreeRTOS.h"
 #include "task.h"
@@ -165,20 +166,14 @@ void bxcan_set_id(struct _can_obj* can,uint8_t id) {
 	CAN_FilterInit(&CAN_FilterInitStructure); 
 }
 
-static uint8_t bxcan_package_cmd( struct _can_package_obj* pack,uint8_t num);
-
 static can_package_obj can_rx_package = {
-	{0,},
-	&bxcan_package_cmd,
+	.package = {0,},
 };
 
 can_package_obj*  bxcan_get_packget(struct _can_obj* can) {
 	return &can_rx_package;
 }
 
-static uint8_t bxcan_package_cmd( struct _can_package_obj* pack,uint8_t num) {
-	return pack->package[num][P_CMD];
-}
 /*!
     \brief      this function handles CAN0 RX0 exception
     \param[in]  none
@@ -197,49 +192,11 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
         CAN_ClearITPendingBit(CAN1,CAN_IT_FOV0);
     } else {
         CAN_Receive(CAN1, CAN_FIFO0, &receive_message);
-        uint8_t can_rx_flag = 0;/* 没有包的标志 */
 		for(int i = 0;i < PACKAGE_NUM;i++) {
-			if(can_rx_package.package[i][0] > 0) {
-				if(can_rx_package.package[i][1] == receive_message.Data[0]) { /* 判断地址是否相同 */
-					uint8_t pack_len = can_rx_package.package[i][4]/7;
-					if(can_rx_package.package[i][3]%7 != 0) {
-						pack_len += 1;
-					}
-					if(can_rx_package.package[i][0] < pack_len) { /* 一个包的最大数据长度 */
-						uint8_t pack_num = 1 + can_rx_package.package[i][0] * 8;
-						for(int j = 0;j < 8;j++) { /* 打包 */
-							can_rx_package.package[i][pack_num+j] = receive_message.Data[j];
-						}
-						can_rx_package.package[i][0]++;
-						if(can_rx_package.package[i][0] >= pack_len) {
-							/* 打包完成 */
-							can_rx_package.package[i][0] = 0xff;
-						}
-					} else {
-						/* 打包完成 */
-						can_rx_package.package[i][0] = 0xff;
-					}
-					can_rx_flag = 1;
-					break;
-				}
-			}
-		}
-		if(0 == can_rx_flag) {
-			if(receive_message.Data[1] == 0x3a) { /* 头帧保护 */
-				for(int i = 0;i < PACKAGE_NUM;i++) {
-					if(can_rx_package.package[i][0] == 0) {
-						for(int j = 0;j < 8;j++) { /* 打包 */
-							can_rx_package.package[i][1+j] = receive_message.Data[j];
-						}
-						if(can_rx_package.package[i][4] <= 4) {
-							/* 打包完成 */
-							can_rx_package.package[i][0] = 0xff;
-						} else {
-							can_rx_package.package[i][0]++;
-						}
-						break;
-					}
-				}
+			if(can_rx_package.package[i].flag == F_NO_USE) {
+				memcpy(can_rx_package.package[i].dat,receive_message.Data,8);
+				can_rx_package.package[i].flag  = F_USE;
+				break;
 			}
 		}
     }
