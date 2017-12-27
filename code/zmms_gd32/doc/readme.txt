@@ -107,6 +107,37 @@ static const char program[] =
 //101 if 10 > 0 then print 1000\n\
 110 return\n";
 
+static const char program2[] =
+"1 v=1\n\
+30 l=1000\n\
+2 for p = 0 to 7\n\
+3 write \"do_8\"\,0,p,v\n\
+4 wait l\n\
+5 next p\n\
+6 for p = 0 to 7\n\
+7 write \"do_8\"\,1,p,v\n\
+8 wait l\n\
+9 next p\n\
+10 for p = 0 to 7\n\
+11 write \"do_8\"\,2,p,v\n\
+12 wait l\n\
+13 next p\n\
+14 for p = 0 to 7\n\
+15 write \"do_8\"\,3,p,v\n\
+16 wait l\n\
+17 next p\n\
+18 for p = 0 to 7\n\
+19 write \"do_8\"\,4,p,v\n\
+20 wait l\n\
+21 next p\n\
+22 for p = 0 to 7\n\
+23 write \"do_8\"\,5,p,v\n\
+24 wait l\n\
+25 next p\n\
+26 if v=0 then goto 1\n\
+27 if v=1 then v=0\n\
+28 goto 2 ";
+
 //	ubasic_init(program);
 //	do {
 //		ubasic_run();

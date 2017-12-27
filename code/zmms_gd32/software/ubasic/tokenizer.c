@@ -53,7 +53,9 @@ struct keyword_token {
 static int current_token = TOKENIZER_ERROR;
 
 static const struct keyword_token keywords[] = { { "let", TOKENIZER_LET },
+		{"read", TOKENIZER_READ },
 		{"write", TOKENIZER_WRITE },
+		{"wait", TOKENIZER_WAIT },
 		{ "print", TOKENIZER_PRINT },
 		{ "if",TOKENIZER_IF },
 		{ "then", TOKENIZER_THEN },

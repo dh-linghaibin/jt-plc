@@ -31,7 +31,7 @@
 #define DEBUG 0
 
 #if DEBUG
-#define DEBUG_PRINTF(...)  //printf(__VA_ARGS__)
+#define DEBUG_PRINTF(...)  printf(__VA_ARGS__)
 #else
 #define DEBUG_PRINTF(...)
 #endif
@@ -41,6 +41,14 @@
 
 #include <stdio.h> /* printf() */
 #include <stdlib.h> /* exit() */
+//FreeRTOS Define
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+
+#define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
+#define DELAY_S(t) DELAY_mS(1000*t)
+#define DELAY_M(t) DELAY_S(60*t)
 
 static char const *program_ptr;
 #define MAX_STRINGLEN 40
@@ -221,16 +229,93 @@ static void goto_statement(void) {
 	jump_linenum(tokenizer_num());
 }
 /*---------------------------------------------------------------------------*/
+extern uint8_t modbus_coil_r[100];
+uint8_t bit = 0;
+uint8_t adr = 0;
+uint8_t adr_bit = 0;
 static void write_statement(void) {
 	accept(TOKENIZER_WRITE);
 	do {
 		DEBUG_PRINTF("Write loop\n");
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
-
+			
+			printf("get DI %s\n",string);
 			put_my_statement(string);
-
+			bit = 0;
 			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_COMMA) {
+			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_VARIABLE
+			|| tokenizer_token() == TOKENIZER_NUMBER) {
+			int i = expr();
+			if(bit == 0) {
+				bit = 1;
+				adr = i;
+			} else if(bit == 1) {
+				bit = 2;
+				adr_bit = i;
+			} else if(bit == 2) {
+				bit = 0;
+				printf("DI on %d  %d  %d \n",adr,adr_bit,i);
+				if(i == 0) {
+					modbus_coil_r[adr] &= ~(1 << adr_bit);
+				} else {
+					modbus_coil_r[adr] |= (1 << adr_bit);
+				}
+			}
+		}
+		else {
+			break;
+		}
+	} while (tokenizer_token() != TOKENIZER_CR
+			&& tokenizer_token() != TOKENIZER_ENDOFINPUT);
+	DEBUG_PRINTF("End of write\n");
+	tokenizer_next();
+}
+/*---------------------------------------------------------------------------*/
+static void read_statement(void) {
+	accept(TOKENIZER_READ);
+	do {
+		DEBUG_PRINTF("read loop\n");
+		if (tokenizer_token() == TOKENIZER_STRING) {
+			tokenizer_string(string, sizeof(string));
+			
+			printf("read DI %s\n",string);
+			put_my_statement(string);
+		
+			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_COMMA) {
+			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_VARIABLE
+			|| tokenizer_token() == TOKENIZER_NUMBER) {
+			 printf("read %d \n",expr());
+		}
+		else {
+			break;
+		}
+	} while (tokenizer_token() != TOKENIZER_CR
+			&& tokenizer_token() != TOKENIZER_ENDOFINPUT);
+	DEBUG_PRINTF("End of write\n");
+	tokenizer_next();
+}
+static void wait_statement(void) {
+	accept(TOKENIZER_WAIT);
+	do {
+		DEBUG_PRINTF("wait loop\n");
+		if (tokenizer_token() == TOKENIZER_STRING) {
+			tokenizer_string(string, sizeof(string));
+			
+			printf("read DI %s\n",string);
+			put_my_statement(string);
+		
+			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_COMMA) {
+			tokenizer_next();
+		} else if (tokenizer_token() == TOKENIZER_VARIABLE
+			|| tokenizer_token() == TOKENIZER_NUMBER) {
+			//printf("read %d \n",expr());
+			DELAY_mS(expr());
 		}
 		else {
 			break;
@@ -247,22 +332,22 @@ static void print_statement(void) {
 		DEBUG_PRINTF("Print loop\n");
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
-			//printf("%s", string);
+			printf("%s", string);
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_COMMA) {
-//			printf(" ");
+			printf(" ");
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_SEMICOLON) {
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_VARIABLE
 				|| tokenizer_token() == TOKENIZER_NUMBER) {
-//			printf("%d", expr());
+			printf("%d", expr());
 		} else {
 			break;
 		}
 	} while (tokenizer_token() != TOKENIZER_CR
 			&& tokenizer_token() != TOKENIZER_ENDOFINPUT);
-//	printf("\n");
+	printf("\n");
 	DEBUG_PRINTF("End of print\n");
 	tokenizer_next();
 }
@@ -389,6 +474,12 @@ static void statement(void) {
 	case TOKENIZER_WRITE:
 		write_statement();
 		break;
+	case TOKENIZER_READ:
+		read_statement();
+		break;
+	case TOKENIZER_WAIT:
+		wait_statement();
+		break;
 	case TOKENIZER_PRINT:
 		print_statement();
 		break;
@@ -423,6 +514,7 @@ static void statement(void) {
 		DEBUG_PRINTF("ubasic.c: statement(): not implemented %d\n", token);
 		exit(1);
 	}
+	//DELAY_mS(1000);
 }
 /*---------------------------------------------------------------------------*/
 static void line_statement(void) {

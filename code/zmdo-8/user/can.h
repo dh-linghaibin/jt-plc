@@ -18,6 +18,58 @@ typedef enum {
     B_5K = 0,
 } btl_e;
 
+
+typedef enum {
+	P_HEAD = 2,
+	P_CMD = 5,
+	P_LEN = 1,
+	P_ADDR = 2,
+	P_O0 = 6,
+	P_O1 = 7,
+	P_O2 = 8,
+	P_O3 = 10,
+	P_O4 = 11,
+	P_O5 = 12,
+	P_O6 = 13,
+	P_O7 = 14,
+}packet_cmd_e;
+
+typedef enum {
+	F_NO_USE = 0,
+	F_USE,
+	F_PACK_OK,
+}packet_flag_e;
+
+#define PACKAGE_NUM 40
+
+typedef struct _pacck_obj {
+	uint8_t flag;
+	uint8_t dat[8];
+}pack_obj;
+
+typedef struct _can_package_obj {
+	pack_obj package[PACKAGE_NUM];
+}can_package_obj;
+
+typedef struct _can_packr_obj {
+	uint8_t flag;
+	uint8_t pack_bum;
+	uint8_t id;
+	uint8_t device_id;
+	uint8_t cmd;
+	uint8_t len;
+	uint8_t arr[32];
+}can_packr_obj;
+
+typedef struct _can_message_obj {
+	uint8_t send_id;
+	uint8_t id;
+	uint8_t device_id;
+	uint8_t len;
+	uint8_t cmd;
+	uint8_t arr[32];
+}can_message_obj;
+
 typedef struct {
     Stdlcan_pin_TypeDef rx;
     Stdlcan_pin_TypeDef tx;
@@ -31,21 +83,22 @@ typedef struct {
 
 typedef struct canbus{   
     Stdcan_n can_n;
+    can_message_obj send_msg;
     void (*Init)(Stdcan_n* can);
-    void (*Send)(Stdcan_n* can);
+    void (*Send)(struct canbus* can);
     void (*setid)(Stdcan_n* can,uint8_t id);
     void (*set_btl)(Stdcan_n* can,btl_e btl);
-    uint8_t (*readpack)(Stdcan_n* can);
+    can_package_obj* (*get_packget)(Stdcan_n* can);
 }Stdcanbus; 
 /* 外部常数宏 *****************************************************************/
 /* 外部动作宏 *****************************************************************/
 /* 外部变量 *******************************************************************/
 /* 函数声明 *******************************************************************/
 void CanInit(Stdcan_n* can);
-void CanSend(Stdcan_n* can);
+void CanSend(struct canbus* can);
 void CanSetID(Stdcan_n* can,uint8_t id);
 void CanSetBlt(Stdcan_n* can,btl_e btl);
-uint8_t CanReadPackage(Stdcan_n* can);
+can_package_obj*  bxcan_get_packget(Stdcan_n* can);
 
 #endif
 /***************************************************************END OF FILE****/

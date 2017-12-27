@@ -139,23 +139,44 @@ void CanInit(Stdcan_n* can) {
     CAN_ITConfig(CAN, CAN_IT_FF0, ENABLE);
 }
 
-void CanSend(Stdcan_n* can) {
-    uint8_t  i;
-    uint8_t TransmitMailbox = 0;
-   
-    /* transmit */
-    //can->TxMessage.StdId = 0x01;
-    //TxMessage.ExtId = luwStdID;
-    can->TxMessage.RTR   = CAN_RTR_DATA;     //数据帧/远程帧
-    can->TxMessage.IDE   = CAN_ID_STD;       //标准帧
-    //TxMessage.IDE = CAN_ID_EXT;       //扩展帧
-    can->TxMessage.DLC   = 8;
-    
-    TransmitMailbox = CAN_Transmit(CAN, &can->TxMessage); 
-    i = 0;
-    while((CAN_TransmitStatus(CAN, TransmitMailbox) != CANTXOK) && (i != 0xFF)) {
-        i++;
-    }
+void CanSend(struct canbus* can) {
+    CanTxMsg transmit_message;
+	 /* initialize transmit message */
+	transmit_message.StdId=can->send_msg.send_id;
+	transmit_message.RTR=CAN_RTR_DATA;
+	transmit_message.IDE=CAN_ID_STD;
+	transmit_message.Data[0] = can->send_msg.id;
+	
+	uint8_t send_len = can->send_msg.len+4; /* ·￠?íμ?3¤?è */
+	uint8_t byte[68];
+	byte[0] = 0x3a;
+	byte[1] = can->send_msg.device_id;
+	byte[2] = can->send_msg.len;
+	byte[3] = can->send_msg.cmd;
+	for(int i = 4;i < send_len;i++) {
+		byte[i] = can->send_msg.arr[i-4];
+	}	
+	uint8_t qj_j = 0;
+	do {
+		if(send_len < 7) {
+			transmit_message.DLC = send_len+1;
+			for(int i = 0;i < send_len;i++) {
+				transmit_message.Data[i+1] = byte[qj_j++];
+			}
+			send_len = 0;
+		} else {
+			transmit_message.DLC = 8;
+			for(int i = 0;i < 7;i++) {
+				transmit_message.Data[i+1] = byte[qj_j++];
+			}
+			send_len -= 7;
+		}
+		uint8_t TransmitMailbox = CAN_Transmit(CAN, &transmit_message); 
+        uint8_t i = 0;
+        while((CAN_TransmitStatus(CAN, TransmitMailbox) != CANTXOK) && (i != 0xFF)) {
+            i++;
+        }
+	} while(send_len > 0);
 }
 
 void CanSetID(Stdcan_n* can,uint8_t id) {
@@ -226,11 +247,31 @@ void CanSetBlt(Stdcan_n* can,btl_e btl) {
     CAN_Init(CAN, &CAN_InitStructure);
 }
 
-uint8_t CanReadPackage(Stdcan_n* can) {
-    if(RINGBUF.get(&RINGBUF.ringbuf_n,can->package,8)) {
-        return true;
+static can_package_obj can_rx_package = {
+	.package = {0,},
+};
+
+can_package_obj*  bxcan_get_packget(Stdcan_n* can) {
+	return &can_rx_package;
+}
+
+/**
+  * @brief  This function handles CAN1 RX0 request.
+  * @param  None
+  * @retval None
+  */
+void CEC_CAN_IRQHandler(void) {
+    CanRxMsg RxMessage_data = {0};
+    CAN_Receive(CAN, CAN_FIFO0, &RxMessage_data);
+    for(int i = 0;i < PACKAGE_NUM;i++) {
+        if(can_rx_package.package[i].flag == F_NO_USE) {
+            for(int j = 0;j < 8;j++) {
+                can_rx_package.package[i].dat[j] = RxMessage_data.Data[j];
+            }
+            can_rx_package.package[i].flag  = F_USE;
+            break;
+        }
     }
-    return false;
 }
 
 /***************************************************************END OF FILE****/

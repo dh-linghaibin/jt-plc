@@ -153,20 +153,7 @@ void PendSV_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f0xx.s).                                               */
 /******************************************************************************/
-/**
-  * @brief  This function handles CAN1 RX0 request.
-  * @param  None
-  * @retval None
-  */
-extern Stdringbuf RINGBUF;
-void CEC_CAN_IRQHandler(void) {
-    CanRxMsg RxMessage_data = {0};
-    CAN_Receive(CAN, CAN_FIFO0, &RxMessage_data);
-    
-    for(uint8_t i = 0;i < 8;i++) {
-        RINGBUF.put(&RINGBUF.ringbuf_n,RxMessage_data.Data[i]);
-    }
-}
+
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

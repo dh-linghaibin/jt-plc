@@ -6,7 +6,6 @@
  */
 
 #include "usart.h"
-#include <stdio.h>
 
 void usart_init(struct _usart_obj* usart,uint32_t baud_rate) {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -51,24 +50,36 @@ void usart_init(struct _usart_obj* usart,uint32_t baud_rate) {
 	USART_ClearFlag(USART1, USART_FLAG_TC);
 }
 
-#pragma import(__use_no_semihosting)
-
-struct __FILE
-{
-    int handle;
-    /* Whatever you require here. If the only file you are using is */ 
-    /* standard output using printf() for debugging, no file handling */ 
-    /* is required. */ 
-};
-/* FILE is typedef’ d in stdio.h. */ 
-FILE __stdout; 
-int _sys_exit(int x)
-{
-    x = x;
+void usart_sen_byte(struct _usart_obj* usart,uint8_t dat) {
+	/* Ğ´Ò»¸ö×Ö½Úµ½USART1 */
+  USART_SendData(USART1, (uint8_t) dat);
+  /* µÈ´ı·¢ËÍ½áÊø */
+  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
+  {}
 }
 
-int fputc(int ch, FILE *f) {
-  /* Ğ´Ò»¸ö×Ö½Úµ½USART1 */
+
+//¼ÓÈëÒÔÏÂ´úÂë,Ö§³Öprintfº¯Êı,¶ø²»ĞèÒªÑ¡Ôñuse MicroLIB	  
+#if 1
+#pragma import(__use_no_semihosting)             
+//±ê×¼¿âĞèÒªµÄÖ§³Öº¯Êı                 
+struct __FILE 
+{ 
+	int handle; 
+
+}; 
+
+
+FILE __stdout;       
+//¶¨Òå_sys_exit()ÒÔ±ÜÃâÊ¹ÓÃ°ëÖ÷»úÄ£Ê½    
+void _sys_exit(int x) 
+{ 
+	x = x; 
+} 
+//ÖØ¶¨Òåfputcº¯Êı 
+int fputc(int ch, FILE *f)
+{      
+	/* Ğ´Ò»¸ö×Ö½Úµ½USART1 */
   USART_SendData(USART1, (uint8_t) ch);
   /* µÈ´ı·¢ËÍ½áÊø */
   while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
@@ -81,3 +92,5 @@ int fgetc(FILE *f) {
 	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
 	return (int)USART_ReceiveData(USART1);
 }
+#endif 
+

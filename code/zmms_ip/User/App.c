@@ -16,7 +16,6 @@
 #include "wdog.h"
 #include "spi_flash.h"
 
-
 uint8_t rs232_package_merry[35] = {0};
 /** -- 环形队列初始化 -- by lhb_steven -- 2017/6/30**/
 Stdringbuf RS232 = {
