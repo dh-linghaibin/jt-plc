@@ -19,6 +19,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
+//lua
+#include "lua.h"
 
 #define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
 #define DELAY_S(t) DELAY_mS(1000*t)
@@ -417,7 +419,21 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-	
+
+//  L   = lua_open();      
+//     luaopen_base(L);   
+//	lua_State *L = NULL;
+//	L =luaL_newstate();
+//	if(L == NULL)
+//		abort();
+//	luaopen_base(L);
+//	luaopen_mylib(L);
+////	ret= luaL_dostring(L, LUA_SCRIPT_GLOBAL);
+////	if (ret != 0)
+////	abort();
+////	lua_close(L);
+////	abort();
+
 	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
