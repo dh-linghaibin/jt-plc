@@ -30,7 +30,7 @@ static usart_obj usart = {
 };
 
 static only_id_obj only_id = {
-	.id = {0,},
+	.id		= {0,},
 	.get_id = only_id_get_id,
 };
 
@@ -59,12 +59,12 @@ static led_obj led = {
 };
 
 static can_obj can_bus = {
-	.id = 0xff,
+	.id 		 = 0xff,
 	.send_packed = {0,0,0,0,0,0,0,0},
-	.send_msg = {0},
-	.init = bxcan_init,
-	.send = bxcan_send,
-	.set_id = bxcan_set_id,
+	.send_msg	 = {0},
+	.init 		 = bxcan_init,
+	.send 		 = bxcan_send,
+	.set_id 	 = bxcan_set_id,
 	.get_packget = bxcan_get_packget,
 };
 
@@ -72,21 +72,20 @@ can_packr_obj pacckr[PACKAGE_NUM];
 
 void can_task(void *p){
     for(;;) {
-		/* ´ò°ü½âÎö */
 		can_package_obj *pack = can_bus.get_packget(&can_bus);
 		for(int i = 0;i < PACKAGE_NUM;i++) {
 			DELAY_mS(1);
 			uint8_t can_rx_flag = 0;
-			if(pack->package[i].flag == F_USE) { /* »ñÈ¡Êý¾Ý */
+			if(pack->package[i].flag == F_USE) {
 				for(int j = 0;j < PACKAGE_NUM;j++) {
-					if(pacckr[j].flag == F_USE) { /* ÅÐ¶ÏÊÇ·ñÊ¹ÓÃ */
-						if(pacckr[j].id == pack->package[i].dat[0]) { /* ÅÐ¶ÏIDÊÇ·ñÏàÍ¬ */
-							for(int k = 0;k < 7;k++) { /* ´ò°ü */
+					if(pacckr[j].flag == F_USE) {
+						if(pacckr[j].id == pack->package[i].dat[0]) {
+							for(int k = 0;k < 7;k++) {
 								pacckr[j].arr[pacckr[j].pack_bum + k] = pack->package[i].dat[1+k];
 							}
 							pacckr[j].pack_bum += 7;
-							if(pacckr[j].pack_bum >= pacckr[j].len) { /* ÅÐ¶Ï´ò°üÊÇ·ñÍê³É */
-								pacckr[j].flag = F_PACK_OK; /* ´ò°üÍê³É */
+							if(pacckr[j].pack_bum >= pacckr[j].len) { 
+								pacckr[j].flag = F_PACK_OK; 
 							}
 							can_rx_flag = 1;
 						}
@@ -94,37 +93,36 @@ void can_task(void *p){
 					}
 				}
 				if(can_rx_flag == 0) {
-					if(pack->package[i].dat[1] == 0x3a) { /* ÅÐ¶ÏÕâ¸öÒ»Ö¡ÊÇ²»ÊÇÍ·Õë */
+					if(pack->package[i].dat[1] == 0x3a) {
 						for(int j = 0;j < PACKAGE_NUM;j++) {
-							if(pacckr[j].flag == F_NO_USE) { /* Ñ°ÕÒÎ´Ê¹ÓÃ°ü */
-								pacckr[j].id = pack->package[i].dat[0]; /* »ñÈ¡ID */
+							if(pacckr[j].flag == F_NO_USE) { 
+								pacckr[j].id = pack->package[i].dat[0];
 								pacckr[j].device_id = pack->package[i].dat[2];
 								pacckr[j].len = pack->package[i].dat[3];
 								pacckr[j].cmd = pack->package[i].dat[4];
-								for(int k = 0;k < 3;k++) { /* ´ò°ü */
+								for(int k = 0;k < 3;k++) { 
 									pacckr[j].arr[k] = pack->package[i].dat[5+k];
 								}
 								if(pacckr[j].len <= 3) { 
-									pacckr[j].flag = F_PACK_OK; /* ´ò°üÍê³É */
+									pacckr[j].flag = F_PACK_OK;
 								} else {
 									pacckr[j].pack_bum = 3;
-									pacckr[j].flag = F_USE; /* ÌáÊ¾µÚÒ»¸ö°üÒÑ¾­´ò°üÍê³É */
+									pacckr[j].flag = F_USE; 
 								}
 								break;
 							}
 						}
 					}
 				}
-				pack->package[i].flag = F_NO_USE;//±íÊ¾Õâ¸öÒÑ¾­´ò°üÍê³É
+				pack->package[i].flag = F_NO_USE;
 			}
 		}
 		
-		/* ÔËÐÐÃüÁî */
 		for(int i = 0;i < PACKAGE_NUM;i++) { 
 			DELAY_mS(1);
 			if(pacckr[i].flag == F_PACK_OK) {
 				switch(pacckr[i].device_id) {
-					case 0xD0: { /* °ËÎ»Êý×ÖÊä³ö */
+					case 0xD0: { 
 						switch(pacckr[i].cmd) {
 							case 0: 
 							
@@ -142,7 +140,7 @@ void can_task(void *p){
 						}
 					}
 						break;
-					case 0xD1: { /* ËÄÎ»Êý×ÖÊäÈë */
+					case 0xD1: { 
 						switch(pacckr[i].cmd) {
 								case 0: 
 								
@@ -161,9 +159,10 @@ void can_task(void *p){
 					}
 						break;
 				}
-				pacckr[i].flag = F_NO_USE;/* Êý¾Ý´¦ÀíÍê±Ï */
+				pacckr[i].flag = F_NO_USE;
 			}
 		}
+		
 		for(int adr = 0;adr < 100;adr++) {
 			DELAY_mS(1);
 			modbus_coil_obj coil = modbus.up_coil(&modbus,adr);
@@ -194,84 +193,134 @@ void modbus_task(void *p) {
     }
 }
 
-uint8_t tcp_server_tsta=0XFF;
-uint8_t tcp_client_tsta=0XFF;
 
-extern u8 tcp_client_databuf[200];
-extern u8 tcp_client_sta;
-extern u8 tcp_server_databuf[200];
-extern u8 tcp_server_sta;
+FATFS fs; /* FatFs文件系统对象 */
+FIL fnew; /* 文件对象 */
+FRESULT res_sd; /* 文件操作结果 */
+UINT fnum; /* 文件成功读写数量 */
+BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
+BYTE WriteBuffer[1024] = {0,};//
+BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
+
+extern uint8_t tcp_server_databuf[200];   	//发送数据缓存	  
+extern uint8_t tcp_server_sta;				//服务端状态
+uint8_t tcp_server_tsta=0XFF;
+extern uint16_t pack_len;
+
+uint8_t file_flag = 0;
+
+uint16_t r_len;
+
+
+static TaskHandle_t xhande_task_basic = NULL;
+
+void ubasic_task(void *p);
 
 void can_up_task(void *p){
     for(;;){
-		DELAY_mS(1);
 		if(tcp_server_tsta!=tcp_server_sta)//TCP Server状态改变
 		{
 			if(tcp_server_sta&(1<<7)) {
-				//led.set_rs232(&led,0);
+				
 			} else {
-				//led.set_rs232(&led,1);
+				
 			}
  			if(tcp_server_sta&(1<<6))	//收到新数据
 			{
+				if(pack_len == 1) {
+					if(tcp_server_databuf[0] == 'c') {
+						file_flag = 1;
+						printf("start \n");
+						//vTaskSuspend(xhande_task_basic); /* 挂起任务 */
+						if(xhande_task_basic!=NULL) {
+							vTaskDelete(xhande_task_basic);
+							xhande_task_basic=NULL;
+						}
+					} if(tcp_server_databuf[0] == 'q') {
+						file_flag = 2;
+						printf("end %s \n",WriteBuffer);
+						/*--------------------- 文件系统测试：写测试 -----------------------*/
+						res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+						if ( res_sd == FR_OK ) {
+							res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+							f_close(&fnew);
+						}
+						//f_mount(0,"0:",0);
+
+						res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
+						if (res_sd == FR_OK) {
+							printf("open ok\r\n");
+							res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+							if (res_sd==FR_OK) {
+								printf("read: %d\r\n",fnum);
+								printf("read-a: \r\n%s \r\n", ReadBuffer);
+							} else {
+								printf("file (%d)\n",res_sd);
+							}
+						} else {
+							printf("file\r\n");
+						}
+
+						/* 不再读写，关闭文件 */
+						f_close(&fnew);
+						//vTaskResume(xhande_task_basic);/* 回复任务 */
+						xTaskCreate(ubasic_task, 
+									(const char*)"ubasic_task", 
+									1024, 
+									NULL, 
+									4, 
+									&xhande_task_basic);
+					}
+				} else {
+					switch(file_flag) {
+						case 1:
+							printf("write %d \n",pack_len);
+							for(int i = 0;i < pack_len;i++) {
+								WriteBuffer[r_len] = tcp_server_databuf[i];
+								r_len++;
+							}
+							break;
+						case 2:	
+							
+							break;
+						case 3:	
+							
+							break;
+					}
+				}
 				tcp_server_sta&=~(1<<6);		//标记数据已经被处理
 			}
 			tcp_server_tsta=tcp_server_sta;
 		}
-//		if(key==1)//TCP Server 请求发送数据
-//		{
-//			if(tcp_server_sta&(1<<7))	//连接还存在
-//			{
-////				sprintf((char*)tcp_server_databuf,"TCP Server OK %d\r\n",tcnt);
-//				tcp_server_sta|=1<<5;//标记有数据需要发送
-//				tcnt++;
-//			}
-//		}
-//		if(tcp_client_tsta!=tcp_client_sta)//TCP Client状态改变
-//		{
-//			if(tcp_client_sta&(1<<7)) {
-//					//led.set_rs485(&led,0);
-//			} else {
-//				//ed.set_rs485(&led,1);
-//			}
-// 			if(tcp_client_sta&(1<<6))	//收到新数据
-//			{
-//				tcp_client_sta&=~(1<<6);		//标记数据已经被处理
-//			}
-//			tcp_client_tsta=tcp_client_sta;
-//		}
-//		if(key==2)//TCP Client 请求发送数据
-//		{
-//			if(tcp_client_sta&(1<<7))	//连接还存在
-//			{
-////				sprintf((char*)tcp_client_databuf,"TCP Client OK %d\r\n",tcnt);
-//				tcp_client_sta|=1<<5;//标记有数据需要发送
-//				tcnt++;
-//			}
-//		}
     }
 }
 
+void theTimerCallback(TimerHandle_t pxTimer) {
+//	uint8_t pcWriteBuffer[500];
+//	printf("=================================================\r\n");
+//	printf("ÈÎÎñÃû      ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
+//	vTaskList((char *)&pcWriteBuffer);
+//	printf("%s\r\n", pcWriteBuffer);
 
-static const char program2[] =
-"1 v=1\n\
-2 l=1500\n\
-3 for g = 0 to 5\n\
-4 for p = 0 to 7\n\
-5 write \"do_8\"\,g,p,v\n\
-6 wait l\n\
-7 next p\n\
-8 next g\n\
-9 if v=0 then goto 1\n\
-10 if v=1 then v=0\n\
-11 goto 2 ";
+//	printf("\r\nÈÎÎñÃû       ÔËÐÐ¼ÆÊý         Ê¹ÓÃÂÊ\r\n");
+//	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
+//	printf("%s\r\n", pcWriteBuffer);
+}
 
-//50 write \"do_8\"\,1,p,v\n\
-//42 read \"di_4\"\,3,2,0\n\
+void theTimerInit(int msCount)
+{
+	TickType_t timertime = (msCount/portTICK_PERIOD_MS);
+	TimerHandle_t theTimer = xTimerCreate("theTimer", timertime , pdTRUE, 0, theTimerCallback );
+	if( xTimerStart(theTimer, 0) != pdPASS )
+	{
+		//debugU("Timer failed to start");
+	}
+}
+
 
 void ubasic_task(void *p){
     for(;;){
-		ubasic_init(program2);
+		ubasic_init(ReadBuffer);
 		do {
 			ubasic_run();
 		} while(!ubasic_finished());
@@ -279,9 +328,87 @@ void ubasic_task(void *p){
     }
 }
 
+void test(void) {
+	
+	//在外部SPI Flash挂载文件系统，文件系统挂载时会对SPI设备初始化
+	res_sd = f_mount(&fs,"0:",0);
+	/*----------------------- 格式化测试 ---------------------------*/
+	/* 如果没有文件系统就格式化创建创建文件系统 */
+	if (res_sd == FR_NO_FILESYSTEM) {
+		//printf("》SD卡还没有文件系统，即将进行格式化...\r\n");
+		/* 格式化 */
+		res_sd=f_mkfs("0:",FM_FAT,0,work, sizeof work );
+		if (res_sd == FR_OK) {
+			printf("gsh ok\r\n");
+			/* 格式化后，先取消挂载 */
+			res_sd = f_mount(0,"0:",0);
+			/* 重新挂载 */
+			res_sd = f_mount(&fs,"0:",0);
+		} else {
+			printf("gsh file\r\n");
+			while (1);
+		}
+	} else if (res_sd!=FR_OK) {
+		printf("file\r\n");
+		while (1);
+	} else {
+		printf("ok\r\n");
+	}
+		/*--------------------- 文件系统测试：写测试 -----------------------*/
+	/* 打开文件，如果文件不存在则创建它 */
+	//printf("\r\n****** 即将进行文件写入测试... ******\r\n");
+//	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+//	if ( res_sd == FR_OK ) {
+//		printf("open ok write \r\n");
+//		/* 将指定存储区内容写入到文件内 */
+//		res_sd=f_write(&fnew,"linghaibin haha",30,&fnum);
+//		if (res_sd==FR_OK) {
+//			printf("ok %d\n",fnum);
+//		} else {
+//			printf("fale\n");
+//		}
+//		/* 不再读写，关闭文件 */
+//		f_close(&fnew);
+//	} else {
+//		printf("open file\r\n");
+//	}
+	/*------------------ 文件系统测试：读测试 --------------------------*/
+	printf("file read\r\n");
+	res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
+	if (res_sd == FR_OK) {
+		printf("open ok\r\n");
+		res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+		if (res_sd==FR_OK) {
+			printf("read: %d\r\n",fnum);
+			printf("read-a: \r\n%s \r\n", ReadBuffer);
+		} else {
+			printf("file (%d)\n",res_sd);
+		}
+	} else {
+		printf("file\r\n");
+	}
+
+	/* 不再读写，关闭文件 */
+	f_close(&fnew);
+	/* 不再使用文件系统，取消挂载文件系统 */
+	//f_mount(0,"0:",0);
+}
+
+void delay() {
+	for(int i = 0;i < 200;i++) 
+		for(int j = 0;j < 0xffff;j++);
+}
+
 int main(void) {
+	delay();
+
 	usart.init(&usart,115200);
 	led.init(&led);
+		
+	printf("------------\n");
+
+	test();
+	
 	only_id.get_id(&only_id);
 	can_bus.init(&can_bus);
 	/* mac ID */
@@ -290,11 +417,12 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-
+	
+	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
-	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, NULL);
-	//xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
+	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
+	xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
 	vTaskStartScheduler();
 }
 

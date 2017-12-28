@@ -16,7 +16,7 @@
 /* 私有函数  ******************************************************************/
 /* 变量 ----------------------------------------------------------------------*/
 #define PAGE_SIZE		((uint32_t)(1024))				   /* 一页的字节数 */
-#define FLASH_START		((uint32_t)(0x08000000 + 0x0c000)) /* flash获取地址120k */
+#define FLASH_START		((uint32_t)(0x08000000 + 0x0c800)) /* flash获取地址62k */
 static uint32_t page_merry[PAGE_SIZE/4];				   /* 内存缓冲 */
 
 static uint32_t flash_read32(uint32_t address) {

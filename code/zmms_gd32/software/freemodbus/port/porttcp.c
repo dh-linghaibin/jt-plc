@@ -32,17 +32,19 @@
 #include "mb.h"
 #include "mbport.h"
 
+/* ----------------------- file includes ----------------------------------*/
+#include "tcp_file.h"
 /* ----------------------- MBAP Header --------------------------------------*/
 #define MB_TCP_UID          6
 #define MB_TCP_LEN          4
 #define MB_TCP_FUNC         7
 
 /* ----------------------- Defines  -----------------------------------------*/
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
-#define PRINTF(...) //printf(__VA_ARGS__)
+#define PRINTF(...) printf(__VA_ARGS__)
 #else
-#define PRINTF(...)
+#define PRINTF(...) 
 #endif
 
 #define MB_TCP_DEFAULT_PORT  502          /* TCP listening port. */
@@ -120,8 +122,7 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 }
 
 
-void uip_modbus_appcall(void)
-{
+void uip_modbus_appcall(void) {
     if(uip_connected())
     {
         PRINTF("connected!\r\n");
@@ -131,25 +132,63 @@ void uip_modbus_appcall(void)
     {
         PRINTF("closed\r\n");
     }
-    
-    if(uip_newdata())
-    {
-        PRINTF("request!\r\n");
-        // 获得modbus请求
-        memcpy(ucTCPRequestFrame, uip_appdata, uip_len );
-        ucTCPRequestLen = uip_len;
-        // 向 modbus poll发送消息
-        xMBPortEventPost( EV_FRAME_RECEIVED );
-    }
-    
-    if(uip_poll())
-    {
-        if(bFrameSent)
-        {
-            bFrameSent = FALSE;
-            // uIP发送Modbus应答数据包
-            uip_send( ucTCPResponseFrame , ucTCPResponseLen );
-        }
-    }
+//    if(uip_newdata())
+//    {
+//        PRINTF("request!\r\n");
+//        // 获得modbus请求
+//        memcpy(ucTCPRequestFrame, uip_appdata, uip_len );
+//        ucTCPRequestLen = uip_len;
+//        // 向 modbus poll发送消息
+//        xMBPortEventPost( EV_FRAME_RECEIVED );
+//    }
+//    
+//    if(uip_poll())
+//    {
+//        if(bFrameSent)
+//        {
+//            bFrameSent = FALSE;
+//            // uIP发送Modbus应答数据包
+//            uip_send( ucTCPResponseFrame , ucTCPResponseLen );
+//        }
+//    }
+
+	switch(uip_conn->lport)//local port mission, port 80 and 1200
+	{
+		case HTONS(1200):
+		    tcp_server_file(); 
+			break;
+		case HTONS(MB_TCP_DEFAULT_PORT):
+			if(uip_newdata())
+			{
+				PRINTF("request!\r\n");
+				// 获得modbus请求
+				memcpy(ucTCPRequestFrame, uip_appdata, uip_len );
+				ucTCPRequestLen = uip_len;
+				// 向 modbus poll发送消息
+				xMBPortEventPost( EV_FRAME_RECEIVED );
+			}
+			
+			if(uip_poll())
+			{
+				if(bFrameSent)
+				{
+					bFrameSent = FALSE;
+					// uIP发送Modbus应答数据包
+					uip_send( ucTCPResponseFrame , ucTCPResponseLen );
+				}
+			}
+			break;
+		default:						  
+		    break;
+	}		    
+	switch(uip_conn->rport)	//remote port mission, port:1400
+	{
+	    case HTONS(1400):
+			//tcp_client_demo_appcall();
+			PRINTF("1400\r\n");
+	       break;
+	    default: 
+	       break;
+	}   
 }
 

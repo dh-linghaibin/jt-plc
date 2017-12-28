@@ -32,7 +32,7 @@
 ".\objects\mbfuncother.o"
 ".\objects\mbutils.o"
 ".\objects\mbtcp.o"
-".\objects\tftp.o"
+".\objects\tcp_file.o"
 ".\objects\tokenizer.o"
 ".\objects\ubasic.o"
 ".\objects\write_statement.o"

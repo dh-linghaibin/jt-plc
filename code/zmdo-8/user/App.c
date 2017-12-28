@@ -225,34 +225,7 @@ int main(void) {
         /** -- 报文-电量 -- by lhb_steven -- 2017/7/14**/
         if(TIMER.Timer_n.timer[3] <= TIMER.getclock()) {
             TIMER.Timer_n.timer[3] = TIMER.getclock() + 8000;
-/** -- 数据上报 -- by lhb_steven -- 2017/7/5**/
-//            EXTERNACPUNT.read(&EXTERNACPUNT.externalcount_n,0);
-//            CANBUS.can_n.TxMessage.StdId = 254;//主机地址
-//            CANBUS.can_n.TxMessage.Data[0] = CANBUS.can_n.id;//本机地址
-//            CANBUS.can_n.TxMessage.Data[1] = 0x62;//电量
-//            CANBUS.can_n.TxMessage.Data[2] = (uint8_t)EXTERNACPUNT.externalcount_n.XC1.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[3] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC1.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[4] = (uint8_t)EXTERNACPUNT.externalcount_n.XC2.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[5] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC2.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[6] = (uint8_t)EXTERNACPUNT.externalcount_n.XC3.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[7] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC3.val >> 8);
-//            CANBUS.Send(&CANBUS.can_n);
-//            CANBUS.can_n.TxMessage.Data[1] = 0x63;//第2组
-//            CANBUS.can_n.TxMessage.Data[2] = (uint8_t)EXTERNACPUNT.externalcount_n.XC4.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[3] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC4.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[4] = (uint8_t)EXTERNACPUNT.externalcount_n.XC5.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[5] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC5.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[6] = (uint8_t)EXTERNACPUNT.externalcount_n.XC6.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[7] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC6.val >> 8);
-//            CANBUS.Send(&CANBUS.can_n);
-//            CANBUS.can_n.TxMessage.Data[1] = 0x64;//第3组
-//            CANBUS.can_n.TxMessage.Data[2] = (uint8_t)EXTERNACPUNT.externalcount_n.XC7.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[3] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC7.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[4] = (uint8_t)EXTERNACPUNT.externalcount_n.XC8.val;;//电量值
-//            CANBUS.can_n.TxMessage.Data[5] = (uint8_t)(EXTERNACPUNT.externalcount_n.XC8.val >> 8);
-//            CANBUS.can_n.TxMessage.Data[6] = 0;
-//            CANBUS.can_n.TxMessage.Data[7] = 0; 
-//            CANBUS.Send(&CANBUS.can_n);
+            /** -- 数据上报 -- by lhb_steven -- 2017/7/5**/
         }
         /** -- 急停检测 -- by lhb_steven -- 2017/7/14**/
         if(TIMER.Timer_n.timer[4] <= TIMER.getclock()) {
@@ -264,21 +237,21 @@ int main(void) {
                 if(OUTSIGNAL.outsignal_n.stop_flag == 1) {
                     OUTSIGNAL.outsignal_n.stop_flag = 0;
                     //恢复状态
-                    {
-                        uint8_t coil_val = 0;
-                        OUTSIGNAL.outsignal_n.coil_val = SFLASH.readbit(FLASH_ADDR_FLAG(2));
-                        coil_val = OUTSIGNAL.outsignal_n.coil_val;
-                        for(uint8_t i = 0;i < 8;i++) {
-                            uint8_t val = 1;
-                            if ((coil_val & 0x80) == 0) {
-                                val = 0;
-                            }
-                            coil_val <<= 1;
-                            /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-                            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
-                            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
-                        }
-                    }
+//                    {
+//                        uint8_t coil_val = 0;
+//                        OUTSIGNAL.outsignal_n.coil_val = SFLASH.readbit(FLASH_ADDR_FLAG(2));
+//                        coil_val = OUTSIGNAL.outsignal_n.coil_val;
+//                        for(uint8_t i = 0;i < 8;i++) {
+//                            uint8_t val = 1;
+//                            if ((coil_val & 0x80) == 0) {
+//                                val = 0;
+//                            }
+//                            coil_val <<= 1;
+//                            /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
+//                            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
+//                            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
+//                        }
+//                    }
                 }
             }
         }
@@ -386,7 +359,7 @@ int main(void) {
                         /** -- 保存IO状态 -- by lhb_steven -- 2017/7/14**/
                         {
                             uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-                            SFLASH.write(&val, FLASH_ADDR_FLAG(2), 1);
+                            //SFLASH.write(&val, FLASH_ADDR_FLAG(2), 1);
                             
                             CANBUS.send_msg.send_id = 0xff;	  
                             CANBUS.send_msg.id = CANBUS.can_n.id; 
@@ -514,7 +487,7 @@ int main(void) {
                     }
                     {
                         uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-                        SFLASH.write(&val, FLASH_ADDR_FLAG(2), 1);
+                        //SFLASH.write(&val, FLASH_ADDR_FLAG(2), 1);
                     }
                     CANBUS.send_msg.send_id = 0xff;	  
                     CANBUS.send_msg.id = CANBUS.can_n.id; 
@@ -527,64 +500,6 @@ int main(void) {
                     pacckr[i].flag = F_NO_USE;
                 }
             }
-//            if( CANBUS.readpack(&CANBUS.can_n) ) {
-//                /** -- 包计数，通讯指示使用 -- by lhb_steven -- 2017/8/1**/
-//                MENU.menu_n.message_packet_num++;
-//                /** -- 解析命令 -- by lhb_steven -- 2017/6/30**/
-//                switch(CANBUS.can_n.package[0]) {
-//                    case 0x00:
-//                    
-//                    break;
-//                    case 0x01://设置继电器组
-//                    if(CANBUS.can_n.package[1] == 1) {//设置第一组继电器
-//                        for(uint8_t i = 0;i < 4;i++) {
-//                            if(CANBUS.can_n.package[i+4] == 0) {//关闭继电器
-//                                /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,0);
-//                                TM1650.show_led(&TM1650.tm1650_n,i,0);
-//                            } else if(CANBUS.can_n.package[i+4] == 1) {//打开继电器
-//                                /** -- 打开继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,1);
-//                                TM1650.show_led(&TM1650.tm1650_n,i,1);
-//                            } else if(CANBUS.can_n.package[i+4] == 2) {//翻转
-//                                uint8_t var = 0;
-//                                var = (OUTSIGNAL.readout(&OUTSIGNAL.outsignal_n,i) == 0)?1:0;
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,var);
-//                                TM1650.show_led(&TM1650.tm1650_n,i,var); 
-//                            }
-//                        }
-//                    } else if(CANBUS.can_n.package[1] == 2){//设置第二组继电器
-//                        for(uint8_t i = 0;i < 4;i++) {
-//                            if(CANBUS.can_n.package[i+4] == 0) {//关闭继电器
-//                                /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i+4,0);
-//                                TM1650.show_led(&TM1650.tm1650_n,i+4,0);
-//                            } else if(CANBUS.can_n.package[i+4] == 1) {//打开继电器
-//                                /** -- 打开继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i+4,1);
-//                                TM1650.show_led(&TM1650.tm1650_n,i+4,1);
-//                            } else if(CANBUS.can_n.package[i+4] == 2) {//翻转
-//                                uint8_t var = 0;
-//                                var = (OUTSIGNAL.readout(&OUTSIGNAL.outsignal_n,i+4) == 0)?1:0;
-//                                OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i+4,var);
-//                                TM1650.show_led(&TM1650.tm1650_n,i+4,var); 
-//                            }
-//                        }
-//                    }
-//                    /** -- 保存IO状态 -- by lhb_steven -- 2017/7/14**/
-//                    {
-//                        uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-//                        SFLASH.write(&val, FLASH_ADDR_FLAG(2), 1);
-//                    }
-//                    break;
-//                    case 0x02://读取电量
-//                    
-//                    break;
-//                    case 0x03:
-//                    
-//                    break;
-//                }
-//            }
         } else {
             /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
             OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,8,0);

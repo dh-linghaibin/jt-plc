@@ -10,7 +10,7 @@
 #define FLASH_PAGE_LENGTH         (FLASH_PAGE_SIZE/FLASH_TYPE_LENGTH)
 #define FLAG_OK                   0x00
 #define FLAG_NOOK                 0x01
-#define FLASH_ADDR_FLAG(x)           0x08005020+x*2     //FLASH地址 - 标志位0x08003000
+#define FLASH_ADDR_FLAG(x)           0x08003c00+x*2     //FLASH地址 - 标志位0x08003000
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 /* 外部数据类型 ***************************************************************/
 typedef struct {   

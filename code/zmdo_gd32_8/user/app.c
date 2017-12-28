@@ -153,7 +153,7 @@ fsm_init_name(menu_task)
 				/* 保存设备继电器信息 */
 				{
 					uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-					flash.write(C_DEVICE_VAL,val);
+					//flash.write(C_DEVICE_VAL,val);
 				}
 				/*更新设备情况*/
 				can_bus.send_msg.send_id = 0xff;	  /* 目标设备地址 */
@@ -313,7 +313,7 @@ fsm_init_name(can_rx_task)
 				/* 保存设备继电器信息 */
 				{
 					uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-					flash.write(C_DEVICE_VAL,val);
+					//flash.write(C_DEVICE_VAL,val);
 				}
 				/*更新设备情况*/
 				can_bus.send_msg.send_id = 0xff;	  /* 目标设备地址 */
