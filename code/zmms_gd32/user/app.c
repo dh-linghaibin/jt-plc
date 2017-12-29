@@ -21,6 +21,7 @@
 #include "timers.h"
 //lua
 #include "lua.h"
+#include <lauxlib.h>
 
 #define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
 #define DELAY_S(t) DELAY_mS(1000*t)
@@ -37,7 +38,7 @@ static only_id_obj only_id = {
 };
 
 static modbus_obj modbus = {
-	.ipv4_ip 			  = {192,168,1,200},
+	.ipv4_ip 			  = {192,168,1,201},
 	.gateway_ip 		  = {192,168,1,1},
 	.mask_ip 			  = {255,255,255,0},
 	.uip_mac.addr 	      = {0,},
@@ -420,24 +421,33 @@ int main(void) {
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
 
-//  L   = lua_open();      
-//     luaopen_base(L);   
-//	lua_State *L = NULL;
-//	L =luaL_newstate();
-//	if(L == NULL)
-//		abort();
-//	luaopen_base(L);
-//	luaopen_mylib(L);
-////	ret= luaL_dostring(L, LUA_SCRIPT_GLOBAL);
-////	if (ret != 0)
-////	abort();
-////	lua_close(L);
-////	abort();
+//	lua_State * L=luaL_newstate();
+//	if( !L )
+//		return 1;
+//	//lua_close(L);
+
+//	//L = luaL_newstate();
+//	//luaL_openlibs(L);
+//	luaL_dostring(L, "print('Hello World.')");
+//	lua_close(L);
+
+	lua_State *L = luaL_newstate();  /* create state */
+	if (L == NULL) {
+		printf("lua,cannot create state: not enough memory\n");
+		return 0;
+	}
+	luaL_openlibs(L);
+	//print_version();
+	//dostring(L,"print('hello')","Test_lua");
+	//dofile(L, NULL);  /* executes stdin as a file */
+	//doREPL(L);
+
+	lua_close(L);
 
 	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
-	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
+	//xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
 	xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
 	vTaskStartScheduler();
 }

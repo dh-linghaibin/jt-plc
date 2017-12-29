@@ -149,3 +149,20 @@ int remove(const char *filename) {
 char *_sys_command_string(char *cmd, int len) {
 	return NULL;
 }
+
+int time(int *t) {  
+    return 0;  
+}
+
+unsigned int clock(void) {
+	return 0;
+}
+
+int system(const char* a) {
+	return 0;
+}
+
+int rename(const char *a, const char *b) {
+	return 0;
+}
+
