@@ -52,15 +52,6 @@ Mkfile.old
 dkms.conf
 
 *.rar
-*.uvprojx
-*.a6735
-*.uvoptx
-*.axf
-*.htm
-*.htm
-*.crf
 
 /data/
 /Hardware/
-/code/zmdo_gd32_8/pro/Objects
-/code/zmms_gd32/mdk
