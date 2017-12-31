@@ -56,9 +56,9 @@ ARM Macro Assembler    Page 1
    32 00000000         ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
    33 00000000         ; </h>
    34 00000000         
-   35 00000000 00002000 
+   35 00000000 00000800 
                        Stack_Size
-                               EQU              0x00002000
+                               EQU              0x00000800
    36 00000000         
    37 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
 =3
@@ -70,17 +70,17 @@ ARM Macro Assembler    Page 2
 
 
                                SPACE            Stack_Size
-   39 00002000         __initial_sp
-   40 00002000         
-   41 00002000         ; <h> Heap Configuration
-   42 00002000         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
-   43 00002000         ; </h>
-   44 00002000         
-   45 00002000 00005000 
+   39 00000800         __initial_sp
+   40 00000800         
+   41 00000800         ; <h> Heap Configuration
+   42 00000800         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   43 00000800         ; </h>
+   44 00000800         
+   45 00000800 00005000 
                        Heap_Size
                                EQU              0x00005000
-   46 00002000         
-   47 00002000                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
+   46 00000800         
+   47 00000800                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
 3
    48 00000000         __heap_base
    49 00000000         Heap_Mem
@@ -560,7 +560,7 @@ ARM Macro Assembler    Page 9
               00000000 
               00000000 
               00000000 
-              00002000 
+              00000800 
               00005000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
@@ -595,7 +595,7 @@ Symbol: Stack_Mem
       At line 347 in file RTE\Device\STM32F103RC\startup_stm32f10x_hd.s
       At line 349 in file RTE\Device\STM32F103RC\startup_stm32f10x_hd.s
 
-__initial_sp 00002000
+__initial_sp 00000800
 
 Symbol: __initial_sp
    Definitions
@@ -1419,7 +1419,7 @@ Symbol: Heap_Size
       At line 49 in file RTE\Device\STM32F103RC\startup_stm32f10x_hd.s
       At line 348 in file RTE\Device\STM32F103RC\startup_stm32f10x_hd.s
 
-Stack_Size 00002000
+Stack_Size 00000800
 
 Symbol: Stack_Size
    Definitions

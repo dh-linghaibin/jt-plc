@@ -199,13 +199,13 @@ void modbus_task(void *p) {
 }
 
 
-FATFS fs; /* FatFs文件系统对象 */
-FIL fnew; /* 文件对象 */
-FRESULT res_sd; /* 文件操作结果 */
-UINT fnum; /* 文件成功读写数量 */
-BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
-BYTE WriteBuffer[1024] = {0,};//
-BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
+//FATFS fs; /* FatFs文件系统对象 */
+//FIL fnew; /* 文件对象 */
+//FRESULT res_sd; /* 文件操作结果 */
+//UINT fnum; /* 文件成功读写数量 */
+//BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
+//BYTE WriteBuffer[1024] = {0,};//
+//BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
 
 extern uint8_t tcp_server_databuf[200];   	//发送数据缓存	  
 extern uint8_t tcp_server_sta;				//服务端状态
@@ -243,31 +243,31 @@ void can_up_task(void *p){
 						}
 					} if(tcp_server_databuf[0] == 'q') {
 						file_flag = 2;
-						printf("end %s \n",WriteBuffer);
-						/*--------------------- 文件系统测试：写测试 -----------------------*/
-						res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
-						if ( res_sd == FR_OK ) {
-							res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
-							f_close(&fnew);
-						}
-						//f_mount(0,"0:",0);
+//						printf("end %s \n",WriteBuffer);
+//						/*--------------------- 文件系统测试：写测试 -----------------------*/
+//						res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+//						if ( res_sd == FR_OK ) {
+//							res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+//							f_close(&fnew);
+//						}
+//						//f_mount(0,"0:",0);
 
-						res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
-						if (res_sd == FR_OK) {
-							printf("open ok\r\n");
-							res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
-							if (res_sd==FR_OK) {
-								printf("read: %d\r\n",fnum);
-								printf("read-a: \r\n%s \r\n", ReadBuffer);
-							} else {
-								printf("file (%d)\n",res_sd);
-							}
-						} else {
-							printf("file\r\n");
-						}
+//						res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
+//						if (res_sd == FR_OK) {
+//							printf("open ok\r\n");
+//							res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+//							if (res_sd==FR_OK) {
+//								printf("read: %d\r\n",fnum);
+//								printf("read-a: \r\n%s \r\n", ReadBuffer);
+//							} else {
+//								printf("file (%d)\n",res_sd);
+//							}
+//						} else {
+//							printf("file\r\n");
+//						}
 
 						/* 不再读写，关闭文件 */
-						f_close(&fnew);
+			//			f_close(&fnew);
 						//vTaskResume(xhande_task_basic);/* 回复任务 */
 						xTaskCreate(ubasic_task, 
 									(const char*)"ubasic_task", 
@@ -281,7 +281,7 @@ void can_up_task(void *p){
 						case 1:
 							printf("write %d \n",pack_len);
 							for(int i = 0;i < pack_len;i++) {
-								WriteBuffer[r_len] = tcp_server_databuf[i];
+								//WriteBuffer[r_len] = tcp_server_databuf[i];
 								r_len++;
 							}
 							break;
@@ -325,16 +325,22 @@ void theTimerInit(int msCount)
 
 void ubasic_task(void *p){
     for(;;){
-		ubasic_init(ReadBuffer);
-		do {
-			ubasic_run();
-		} while(!ubasic_finished());
+//		ubasic_init(ReadBuffer);
+//		do {
+//			ubasic_run();
+//		} while(!ubasic_finished());
 		DELAY_mS(1000);
     }
 }
 
 void test(void) {
-	
+	FATFS fs; /* FatFs文件系统对象 */
+	FIL fnew; /* 文件对象 */
+	FRESULT res_sd; /* 文件操作结果 */
+	UINT fnum; /* 文件成功读写数量 */
+	BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
+	BYTE WriteBuffer[1024] = {0,};//
+	BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
 	//在外部SPI Flash挂载文件系统，文件系统挂载时会对SPI设备初始化
 	res_sd = f_mount(&fs,"0:",0);
 	/*----------------------- 格式化测试 ---------------------------*/
@@ -362,21 +368,21 @@ void test(void) {
 		/*--------------------- 文件系统测试：写测试 -----------------------*/
 	/* 打开文件，如果文件不存在则创建它 */
 	//printf("\r\n****** 即将进行文件写入测试... ******\r\n");
-//	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
-//	if ( res_sd == FR_OK ) {
-//		printf("open ok write \r\n");
-//		/* 将指定存储区内容写入到文件内 */
-//		res_sd=f_write(&fnew,"linghaibin haha",30,&fnum);
-//		if (res_sd==FR_OK) {
-//			printf("ok %d\n",fnum);
-//		} else {
-//			printf("fale\n");
-//		}
-//		/* 不再读写，关闭文件 */
-//		f_close(&fnew);
-//	} else {
-//		printf("open file\r\n");
-//	}
+	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+	if ( res_sd == FR_OK ) {
+		printf("open ok write \r\n");
+		/* 将指定存储区内容写入到文件内 */
+		res_sd=f_write(&fnew,"linghaibin haha",30,&fnum);
+		if (res_sd==FR_OK) {
+			printf("ok %d\n",fnum);
+		} else {
+			printf("fale\n");
+		}
+		/* 不再读写，关闭文件 */
+		f_close(&fnew);
+	} else {
+		printf("open file\r\n");
+	}
 	/*------------------ 文件系统测试：读测试 --------------------------*/
 	printf("file read\r\n");
 	res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
@@ -397,6 +403,11 @@ void test(void) {
 	f_close(&fnew);
 	/* 不再使用文件系统，取消挂载文件系统 */
 	//f_mount(0,"0:",0);
+	int count;
+	do {
+		f_gets(ReadBuffer,6,&fnew);
+		count++;
+	}while(count<10);
 }
 
 /*
@@ -492,7 +503,7 @@ int main(void) {
 	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
-	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
+	//xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
 	xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
 	vTaskStartScheduler();
 }

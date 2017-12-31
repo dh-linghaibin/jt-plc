@@ -35,7 +35,7 @@ typedef enum {
 	F_PACK_OK,
 }packet_flag_e;
 
-#define PACKAGE_NUM 40
+#define PACKAGE_NUM 10
 /* Ω” ’ */
 typedef struct _pacck_obj {
 	uint8_t flag;
@@ -53,7 +53,7 @@ typedef struct _can_packr_obj {
 	uint8_t device_id;
 	uint8_t cmd;
 	uint8_t len;
-	uint8_t arr[32];
+	uint8_t arr[16];
 }can_packr_obj;
 
 /* ∑¢ÀÕ */
@@ -63,7 +63,7 @@ typedef struct _can_message_obj {
 	uint8_t device_id;
 	uint8_t len;
 	uint8_t cmd;
-	uint8_t arr[32];
+	uint8_t arr[16];
 }can_message_obj;
 
 typedef struct _can_obj{   
