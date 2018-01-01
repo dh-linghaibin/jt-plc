@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>..\frame\list.c</FilePath>
             </File>
+            <File>
+              <FileName>mcu_lua.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\frame\mcu_lua.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

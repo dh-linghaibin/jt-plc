@@ -4,6 +4,7 @@
 ".\objects\pack_list.o"
 ".\objects\sha1.o"
 ".\objects\list.o"
+".\objects\mcu_lua.o"
 ".\objects\w25qxx.o"
 ".\objects\led.o"
 ".\objects\wdog.o"
