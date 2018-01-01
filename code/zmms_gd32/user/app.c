@@ -19,11 +19,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
-//lua
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-#include "string.h"
 
 #define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
 #define DELAY_S(t) DELAY_mS(1000*t)
@@ -65,6 +60,7 @@ static led_obj led = {
 
 static can_obj can_bus = {
 	.id 		 = 0xff,
+	.baud_rate	 = B_10k,
 	.send_packed = {0,0,0,0,0,0,0,0},
 	.send_msg	 = {0},
 	.init 		 = bxcan_init,
@@ -404,10 +400,10 @@ void test(void) {
 	/* 不再使用文件系统，取消挂载文件系统 */
 	//f_mount(0,"0:",0);
 	int count;
-	do {
-		f_gets(ReadBuffer,6,&fnew);
-		count++;
-	}while(count<10);
+//	do {
+//		f_gets(ReadBuffer,6,&fnew);
+//		count++;
+//	}while(count<10);
 }
 
 
@@ -435,16 +431,6 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-
-	lua_State *L = luaL_newstate();  /* create state */
-	if (L == NULL) {
-		printf("lua,cannot create state: not enough memory\n");
-		return 0;
-	}
-	luaL_openlibs(L);
-	dostring(L,"print('hello my name is a linghaibin haha ')","Test_lua");
-	dostring(L,"print('hello my name is a linghaibin haha ')","Test_lua");
-	lua_close(L);
 
 	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);

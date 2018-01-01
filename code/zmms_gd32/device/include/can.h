@@ -14,20 +14,24 @@ extern "C" {
 
 #include "stm32f10x.h"
 
+//typedef enum {
+//	P_HEAD = 2,
+//	P_CMD = 5,
+//	P_LEN = 1,
+//	P_ADDR = 2,
+//	P_O0 = 6,
+//	P_O1 = 7,
+//	P_O2 = 8,
+//	P_O3 = 10,
+//	P_O4 = 11,
+//	P_O5 = 12,
+//	P_O6 = 13,
+//	P_O7 = 14,
+//}packet_cmd_e;
 typedef enum {
-	P_HEAD = 2,
-	P_CMD = 5,
-	P_LEN = 1,
-	P_ADDR = 2,
-	P_O0 = 6,
-	P_O1 = 7,
-	P_O2 = 8,
-	P_O3 = 10,
-	P_O4 = 11,
-	P_O5 = 12,
-	P_O6 = 13,
-	P_O7 = 14,
-}packet_cmd_e;
+	B_5K,
+	B_10k,
+}baud_rate_e;
 
 typedef enum {
 	F_NO_USE = 0,
@@ -68,6 +72,7 @@ typedef struct _can_message_obj {
 
 typedef struct _can_obj{   
 	uint16_t id;
+	baud_rate_e baud_rate;
     uint8_t send_packed[8];
 	can_message_obj send_msg;
     void (*init)(struct _can_obj* can);
