@@ -35,7 +35,7 @@ static only_id_obj only_id = {
 };
 
 static modbus_obj modbus = {
-	.ipv4_ip 			  = {192,168,1,201},
+	.ipv4_ip 			  = {192,168,1,200},
 	.gateway_ip 		  = {192,168,1,1},
 	.mask_ip 			  = {255,255,255,0},
 	.uip_mac.addr 	      = {0,},
@@ -60,16 +60,15 @@ static led_obj led = {
 
 static can_obj can_bus = {
 	.id 		 = 0xff,
-	.baud_rate	 = B_10k,
 	.send_packed = {0,0,0,0,0,0,0,0},
 	.send_msg	 = {0},
 	.init 		 = bxcan_init,
 	.send 		 = bxcan_send,
+	.send_s		 = bxcan_send_s,
 	.set_id 	 = bxcan_set_id,
 	.get_packget = bxcan_get_packget,
 };
 
-can_packr_obj pacckr[PACKAGE_NUM];
 
 void can_task(void *p){
     for(;;) {
@@ -78,103 +77,37 @@ void can_task(void *p){
 			DELAY_mS(1);
 			uint8_t can_rx_flag = 0;
 			if(pack->package[i].flag == F_USE) {
-				for(int j = 0;j < PACKAGE_NUM;j++) {
-					if(pacckr[j].flag == F_USE) {
-						if(pacckr[j].id == pack->package[i].dat[0]) {
-							for(int k = 0;k < 7;k++) {
-								pacckr[j].arr[pacckr[j].pack_bum + k] = pack->package[i].dat[1+k];
-							}
-							pacckr[j].pack_bum += 7;
-							if(pacckr[j].pack_bum >= pacckr[j].len) { 
-								pacckr[j].flag = F_PACK_OK; 
-							}
-							can_rx_flag = 1;
-						}
-						break;
-					}
+				if(pack->package[i].dat[1] == 0x61) {
+					led.tager(&led,L_CAN);
+					modbus.set_coil(&modbus, pack->package[i].dat[0], pack->package[i].dat[7]);
+					pack->package[i].flag = F_NO_USE;
 				}
-				if(can_rx_flag == 0) {
-					if(pack->package[i].dat[1] == 0x3a) {
-						for(int j = 0;j < PACKAGE_NUM;j++) {
-							if(pacckr[j].flag == F_NO_USE) { 
-								pacckr[j].id = pack->package[i].dat[0];
-								pacckr[j].device_id = pack->package[i].dat[2];
-								pacckr[j].len = pack->package[i].dat[3];
-								pacckr[j].cmd = pack->package[i].dat[4];
-								for(int k = 0;k < 3;k++) { 
-									pacckr[j].arr[k] = pack->package[i].dat[5+k];
-								}
-								if(pacckr[j].len <= 3) { 
-									pacckr[j].flag = F_PACK_OK;
-								} else {
-									pacckr[j].pack_bum = 3;
-									pacckr[j].flag = F_USE; 
-								}
-								break;
-							}
-						}
-					}
-				}
-				pack->package[i].flag = F_NO_USE;
-			}
-		}
-		
-		for(int i = 0;i < PACKAGE_NUM;i++) { 
-			DELAY_mS(1);
-			if(pacckr[i].flag == F_PACK_OK) {
-				switch(pacckr[i].device_id) {
-					case 0xD0: { 
-						switch(pacckr[i].cmd) {
-							case 0: 
-							
-							break;
-							case 1: 
-								led.tager(&led,L_CAN);
-								modbus.set_coil(&modbus,pacckr[i].id,pacckr[i].arr[0]);
-							break;	
-							case 2:
-
-							break;
-							case 3:
-
-							break;
-						}
-					}
-						break;
-					case 0xD1: { 
-						switch(pacckr[i].cmd) {
-								case 0: 
-								
-								break;
-								case 1: 
-									led.tager(&led,L_CAN);
-									modbus.set_input(&modbus,pacckr[i].id,pacckr[i].arr[0]);
-								break;	
-								case 2:
-
-								break;
-								case 3:
-
-								break;
-							}
-					}
-						break;
-				}
-				pacckr[i].flag = F_NO_USE;
 			}
 		}
 		
 		for(int adr = 0;adr < 100;adr++) {
 			DELAY_mS(1);
 			modbus_coil_obj coil = modbus.up_coil(&modbus,adr);
-			if(coil.id != 0xffff) {
+			if(coil.id != 0xffff) { //地址 命令 继电器组
 				can_bus.send_msg.send_id = coil.id;	 
 				can_bus.send_msg.id = can_bus.id;
-				can_bus.send_msg.device_id = 0xf0;	 
-				can_bus.send_msg.cmd = 0x01;	
-				can_bus.send_msg.len = 1;			
-				can_bus.send_msg.arr[0] = coil.val;
-				can_bus.send(&can_bus);
+				uint8_t coil_val = coil.val;
+				for(uint8_t i = 0;i < 4;i++) {
+					if ((coil_val & 0x80) == 0) {
+						
+					}
+					coil_val <<= 1;
+				}
+				can_bus.send_s(&can_bus);
+				
+				can_bus.send_msg.send_id = coil.id;	 
+				can_bus.send_msg.id = can_bus.id;
+				can_bus.send_s(&can_bus);
+//				can_bus.send_msg.device_id = 0xf0;	 
+//				can_bus.send_msg.cmd = 0x01;	
+//				can_bus.send_msg.len = 1;			
+//				can_bus.send_msg.arr[0] = coil.val;
+//				can_bus.send(&can_bus);
 				DELAY_mS(1);
 			} 
 		}
@@ -195,13 +128,13 @@ void modbus_task(void *p) {
 }
 
 
-//FATFS fs; /* FatFs文件系统对象 */
-//FIL fnew; /* 文件对象 */
-//FRESULT res_sd; /* 文件操作结果 */
-//UINT fnum; /* 文件成功读写数量 */
-//BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
-//BYTE WriteBuffer[1024] = {0,};//
-//BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
+FATFS fs; /* FatFs文件系统对象 */
+FIL fnew; /* 文件对象 */
+FRESULT res_sd; /* 文件操作结果 */
+UINT fnum; /* 文件成功读写数量 */
+BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
+BYTE WriteBuffer[1024] = {0,};//
+BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
 
 extern uint8_t tcp_server_databuf[200];   	//发送数据缓存	  
 extern uint8_t tcp_server_sta;				//服务端状态
@@ -239,31 +172,31 @@ void can_up_task(void *p){
 						}
 					} if(tcp_server_databuf[0] == 'q') {
 						file_flag = 2;
-//						printf("end %s \n",WriteBuffer);
-//						/*--------------------- 文件系统测试：写测试 -----------------------*/
-//						res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
-//						if ( res_sd == FR_OK ) {
-//							res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
-//							f_close(&fnew);
-//						}
-//						//f_mount(0,"0:",0);
+						printf("end %s \n",WriteBuffer);
+						/*--------------------- 文件系统测试：写测试 -----------------------*/
+						res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+						if ( res_sd == FR_OK ) {
+							res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+							f_close(&fnew);
+						}
+						//f_mount(0,"0:",0);
 
-//						res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
-//						if (res_sd == FR_OK) {
-//							printf("open ok\r\n");
-//							res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
-//							if (res_sd==FR_OK) {
-//								printf("read: %d\r\n",fnum);
-//								printf("read-a: \r\n%s \r\n", ReadBuffer);
-//							} else {
-//								printf("file (%d)\n",res_sd);
-//							}
-//						} else {
-//							printf("file\r\n");
-//						}
+						res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
+						if (res_sd == FR_OK) {
+							printf("open ok\r\n");
+							res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+							if (res_sd==FR_OK) {
+								printf("read: %d\r\n",fnum);
+								printf("read-a: \r\n%s \r\n", ReadBuffer);
+							} else {
+								printf("file (%d)\n",res_sd);
+							}
+						} else {
+							printf("file\r\n");
+						}
 
 						/* 不再读写，关闭文件 */
-			//			f_close(&fnew);
+						f_close(&fnew);
 						//vTaskResume(xhande_task_basic);/* 回复任务 */
 						xTaskCreate(ubasic_task, 
 									(const char*)"ubasic_task", 
@@ -277,7 +210,7 @@ void can_up_task(void *p){
 						case 1:
 							printf("write %d \n",pack_len);
 							for(int i = 0;i < pack_len;i++) {
-								//WriteBuffer[r_len] = tcp_server_databuf[i];
+								WriteBuffer[r_len] = tcp_server_databuf[i];
 								r_len++;
 							}
 							break;
@@ -297,15 +230,7 @@ void can_up_task(void *p){
 }
 
 void theTimerCallback(TimerHandle_t pxTimer) {
-//	uint8_t pcWriteBuffer[500];
-//	printf("=================================================\r\n");
-//	printf("ÈÎÎñÃû      ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
-//	vTaskList((char *)&pcWriteBuffer);
-//	printf("%s\r\n", pcWriteBuffer);
 
-//	printf("\r\nÈÎÎñÃû       ÔËÐÐ¼ÆÊý         Ê¹ÓÃÂÊ\r\n");
-//	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
-//	printf("%s\r\n", pcWriteBuffer);
 }
 
 void theTimerInit(int msCount)
@@ -321,22 +246,16 @@ void theTimerInit(int msCount)
 
 void ubasic_task(void *p){
     for(;;){
-//		ubasic_init(ReadBuffer);
-//		do {
-//			ubasic_run();
-//		} while(!ubasic_finished());
+		ubasic_init( (const char *)ReadBuffer);
+		do {
+			ubasic_run();
+		} while(!ubasic_finished());
 		DELAY_mS(1000);
     }
 }
 
 void test(void) {
-	FATFS fs; /* FatFs文件系统对象 */
-	FIL fnew; /* 文件对象 */
-	FRESULT res_sd; /* 文件操作结果 */
-	UINT fnum; /* 文件成功读写数量 */
-	BYTE ReadBuffer[1024]= {0}; /* 读缓冲区 */
-	BYTE WriteBuffer[1024] = {0,};//
-	BYTE work[FF_MAX_SS]; /* Work area (larger is better for processing time) */
+	
 	//在外部SPI Flash挂载文件系统，文件系统挂载时会对SPI设备初始化
 	res_sd = f_mount(&fs,"0:",0);
 	/*----------------------- 格式化测试 ---------------------------*/
@@ -364,21 +283,21 @@ void test(void) {
 		/*--------------------- 文件系统测试：写测试 -----------------------*/
 	/* 打开文件，如果文件不存在则创建它 */
 	//printf("\r\n****** 即将进行文件写入测试... ******\r\n");
-	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
-	if ( res_sd == FR_OK ) {
-		printf("open ok write \r\n");
-		/* 将指定存储区内容写入到文件内 */
-		res_sd=f_write(&fnew,"linghaibin haha",30,&fnum);
-		if (res_sd==FR_OK) {
-			printf("ok %d\n",fnum);
-		} else {
-			printf("fale\n");
-		}
-		/* 不再读写，关闭文件 */
-		f_close(&fnew);
-	} else {
-		printf("open file\r\n");
-	}
+//	res_sd=f_open(&fnew,"0:lhb6.txt",FA_CREATE_ALWAYS|FA_WRITE);
+//	if ( res_sd == FR_OK ) {
+//		printf("open ok write \r\n");
+//		/* 将指定存储区内容写入到文件内 */
+//		res_sd=f_write(&fnew,"linghaibin haha",30,&fnum);
+//		if (res_sd==FR_OK) {
+//			printf("ok %d\n",fnum);
+//		} else {
+//			printf("fale\n");
+//		}
+//		/* 不再读写，关闭文件 */
+//		f_close(&fnew);
+//	} else {
+//		printf("open file\r\n");
+//	}
 	/*------------------ 文件系统测试：读测试 --------------------------*/
 	printf("file read\r\n");
 	res_sd=f_open(&fnew,"0:lhb6.txt",FA_OPEN_EXISTING|FA_READ);
@@ -399,14 +318,7 @@ void test(void) {
 	f_close(&fnew);
 	/* 不再使用文件系统，取消挂载文件系统 */
 	//f_mount(0,"0:",0);
-	int count;
-//	do {
-//		f_gets(ReadBuffer,6,&fnew);
-//		count++;
-//	}while(count<10);
 }
-
-
 
 void delay() {
 	for(int i = 0;i < 200;i++) 
@@ -431,12 +343,11 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-
+	
 	theTimerInit(500);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
-	//xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
+	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
 	xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
 	vTaskStartScheduler();
 }
-

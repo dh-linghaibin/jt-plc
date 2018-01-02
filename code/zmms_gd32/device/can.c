@@ -143,6 +143,46 @@ void bxcan_send(struct _can_obj* can) {
 	} while(send_len > 0);
 }
 
+void bxcan_send_s(struct _can_obj* can) {
+	CanTxMsg transmit_message;
+	 /* initialize transmit message */
+	transmit_message.StdId=can->send_msg.send_id;
+	transmit_message.RTR=CAN_RTR_DATA;
+	transmit_message.IDE=CAN_ID_STD;
+	transmit_message.Data[0] = can->send_msg.id;
+	
+	uint8_t send_len = can->send_msg.len+4; /* 发送的长度 */
+	uint8_t byte[68];
+	byte[0] = 0x3a;
+	byte[1] = can->send_msg.device_id;
+	byte[2] = can->send_msg.len;
+	byte[3] = can->send_msg.cmd;
+	for(int i = 4;i < send_len;i++) {
+		byte[i] = can->send_msg.arr[i-4];
+	}	
+	uint8_t qj_j = 0;
+	do {
+		if(send_len < 7) {
+			transmit_message.DLC = send_len+1;
+			for(int i = 0;i < send_len;i++) {
+				transmit_message.Data[i+1] = byte[qj_j++];
+			}
+			send_len = 0;
+		} else {
+			transmit_message.DLC = 8;
+			for(int i = 0;i < 7;i++) {
+				transmit_message.Data[i+1] = byte[qj_j++];
+			}
+			send_len -= 7;
+		}
+		uint8_t TransmitMailbox = CAN_Transmit(CAN1, &transmit_message);
+		uint32_t timeout = 0xFFFF;
+		while((CAN_TransmitStatus(CAN1, TransmitMailbox) != CANTXOK) && (timeout != 0xFFFFFF)) {
+			timeout++;
+		}
+	} while(send_len > 0);
+}
+
 void bxcan_set_id(struct _can_obj* can,uint8_t id) {
 	CAN_FilterInitTypeDef  CAN_FilterInitStructure;
 	

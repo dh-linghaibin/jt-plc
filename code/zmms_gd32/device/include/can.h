@@ -77,6 +77,7 @@ typedef struct _can_obj{
 	can_message_obj send_msg;
     void (*init)(struct _can_obj* can);
     void (*send)(struct _can_obj* can);
+	void (*send_s)(struct _can_obj* can);
     void (*set_id)(struct _can_obj* can,uint8_t id);
 	can_package_obj* (*get_packget)(struct _can_obj* can);
 }can_obj; 
@@ -84,6 +85,7 @@ typedef struct _can_obj{
 
 void bxcan_init(struct _can_obj* can);
 void bxcan_send(struct _can_obj* can);
+void bxcan_send_s(struct _can_obj* can);
 void bxcan_set_id(struct _can_obj* can,uint8_t id);
 can_package_obj*  bxcan_get_packget(struct _can_obj* can);
 
