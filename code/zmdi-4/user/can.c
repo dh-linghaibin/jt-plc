@@ -64,9 +64,38 @@ void bxcan_init(struct _can_obj* can) {
     CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;//CAN_Mode_Normal; 
     //CAN波特率设置,500KHz@48MHz
     CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
-    CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
-    CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
-    CAN_InitStructure.CAN_Prescaler = 160;
+    switch(can->btl) {
+        case B_250K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_7tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_8tq;
+            CAN_InitStructure.CAN_Prescaler = 12;
+        break;
+        case B_125K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_2tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_1tq;
+            CAN_InitStructure.CAN_Prescaler = 96;
+        break;
+        case B_50K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
+            CAN_InitStructure.CAN_Prescaler = 160;
+        break;
+        case B_20K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_6tq;
+            CAN_InitStructure.CAN_Prescaler = 240;
+        break;
+        case B_10K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
+            CAN_InitStructure.CAN_Prescaler = 600;
+        break;
+        case B_5K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_8tq;
+            CAN_InitStructure.CAN_Prescaler = 686;
+        break;
+    }
     CAN_Init(CAN, &CAN_InitStructure);
     
     //CAN过滤器FIFO0配置
@@ -151,6 +180,54 @@ void bxcan_set_id(struct _can_obj* can,uint8_t id) {
 	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE; //激活此过滤器组  
 
 	CAN_FilterInit(&CAN_FilterInitStructure); 
+}
+
+void bxcan_set_blt(struct _can_obj* can,btl_e btl) {
+    CAN_InitTypeDef                     CAN_InitStructure;
+    //CAN单元设置
+    CAN_InitStructure.CAN_TTCM = DISABLE; 
+    CAN_InitStructure.CAN_ABOM = DISABLE;  
+    CAN_InitStructure.CAN_AWUM = DISABLE; 
+    CAN_InitStructure.CAN_NART = ENABLE; 
+    CAN_InitStructure.CAN_RFLM = DISABLE;
+    CAN_InitStructure.CAN_TXFP = DISABLE;
+    CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;//CAN_Mode_Normal; 
+    //CAN波特率设置,500KHz@48MHz
+    CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
+    can->btl = btl;
+    switch(can->btl) {
+        case B_250K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_7tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_8tq;
+            CAN_InitStructure.CAN_Prescaler = 12;
+        break;
+        case B_125K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_2tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_1tq;
+            CAN_InitStructure.CAN_Prescaler = 96;
+        break;
+        case B_50K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
+            CAN_InitStructure.CAN_Prescaler = 160;
+        break;
+        case B_20K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_6tq;
+            CAN_InitStructure.CAN_Prescaler = 240;
+        break;
+        case B_10K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
+            CAN_InitStructure.CAN_Prescaler = 600;
+        break;
+        case B_5K:
+            CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
+            CAN_InitStructure.CAN_BS2 = CAN_BS2_8tq;
+            CAN_InitStructure.CAN_Prescaler = 686;
+        break;
+    }
+    CAN_Init(CAN, &CAN_InitStructure);
 }
 
 static uint8_t bxcan_package_cmd( struct _can_package_obj* pack,uint8_t num);

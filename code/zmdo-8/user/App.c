@@ -34,8 +34,8 @@ int main(void) {
         {
             {GPIOF,GPIO_Pin_1},
             {GPIOF,GPIO_Pin_0},
-            {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D,
-            0x07, 0x7F, 0x6F, 0x76, 0x40,0x79, 0x00},
+             {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D,
+            0x07, 0x7F, 0x6F, 0x76, 0x40,0x79, 0x00,0x7c},
             {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
             {0x00,0x00,0x00,0x00},
         },
@@ -140,7 +140,7 @@ int main(void) {
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(1), 1);
             flag_data = 0;//默认继电器状态
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(2), 1);
-            flag_data = B_10K;//默认继电器状态
+            flag_data = B_50K;//默认继电器状态
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(3), 1);
         }
     }
@@ -150,23 +150,23 @@ int main(void) {
     TM1650.show_nex(&TM1650.tm1650_n,0,CANBUS.can_n.id/10);
     TM1650.show_nex(&TM1650.tm1650_n,1,CANBUS.can_n.id%10);
     /** -- 设置IO状态 -- by lhb_steven -- 2017/7/14**/
-    if(OUTSIGNAL.readstop(&OUTSIGNAL.outsignal_n) == 1) {//只有急停没有按下才可以
-        uint8_t coil_val = 0;
-        OUTSIGNAL.outsignal_n.coil_val = SFLASH.readbit(FLASH_ADDR_FLAG(2));
-        coil_val = OUTSIGNAL.outsignal_n.coil_val;
-        for(uint8_t i = 0;i < 8;i++) {
-            uint8_t val = 1;
-            if ((coil_val & 0x80) == 0) {
-                val = 0;
-            }
-            coil_val <<= 1;
-            /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
-            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
-            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
-        }
-    }
+//    if(OUTSIGNAL.readstop(&OUTSIGNAL.outsignal_n) == 1) {//只有急停没有按下才可以
+//        uint8_t coil_val = 0;
+//        OUTSIGNAL.outsignal_n.coil_val = SFLASH.readbit(FLASH_ADDR_FLAG(2));
+//        coil_val = OUTSIGNAL.outsignal_n.coil_val;
+//        for(uint8_t i = 0;i < 8;i++) {
+//            uint8_t val = 1;
+//            if ((coil_val & 0x80) == 0) {
+//                val = 0;
+//            }
+//            coil_val <<= 1;
+//            /** -- 关闭继电器和指示灯 -- by lhb_steven -- 2017/7/7**/
+//            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
+//            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
+//        }
+//    }
     /** -- 看门狗初始化 -- by lhb_steven -- 2017/6/26**/
-    //WDOG.init();
+    WDOG.init();
     do{
         /** -- 系统运行灯 -- by lhb_steven -- 2017/6/21**/
         if(TIMER.Timer_n.timer[0] <= TIMER.getclock()) {
@@ -196,7 +196,7 @@ int main(void) {
                         TM1650.show_nex(&TM1650.tm1650_n,0,MENU.getvar(&MENU.menu_n)/10);
                         TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n)%10);
                     } else {
-                        TM1650.show_nex(&TM1650.tm1650_n,0,12);
+                        TM1650.show_nex(&TM1650.tm1650_n,0,14);
                         TM1650.show_nex(&TM1650.tm1650_n,1,MENU.getvar(&MENU.menu_n));
                     }
                 }

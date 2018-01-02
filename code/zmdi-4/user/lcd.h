@@ -22,7 +22,7 @@ typedef struct {
     Stdlcd_pin_TypeDef DG1;
     Stdlcd_pin_TypeDef DG2;
     
-    const uint8_t show_code[11];//数码管编码
+    const uint8_t show_code[12];//数码管编码
     uint8_t show[2];//显示数字
     uint8_t choice_num;//轮询标志
     uint8_t point[2];//小数点

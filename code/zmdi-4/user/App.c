@@ -14,11 +14,13 @@ int main(void) {
     /** -- 声明 -- by lhb_steven -- 2017/6/14**/
     can_obj can_bus = {
         99,
+        B_50K,
         {0,0,0,0,0,0,0,0},
         {0},
         &bxcan_init,
         &bxcan_send,
         &bxcan_set_id,
+        &bxcan_set_blt,
         &bxcan_get_packget,
     };
     StdLcd LCD = {
@@ -33,7 +35,7 @@ int main(void) {
             {GPIOB, GPIO_Pin_5},
             {GPIOA, GPIO_Pin_3},
             {GPIOB, GPIO_Pin_4},
-            {0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00},
+            {0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00,0x7c},
             {0,0},
             0
         },
@@ -121,15 +123,18 @@ int main(void) {
     {
         uint16_t flag_data;//数据写入标志位
         SFLASH.read(&flag_data, FLASH_ADDR_FLAG(0), 1);
-        if(0x55AA != flag_data)
+        if(0x5555 != flag_data)
         {
-            flag_data = 0x55AA;//将标志位置为"已写入"
+            flag_data = 0x5555;//将标志位置为"已写入"
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(0), 1);
             flag_data = 99;//将标志位置为"已写入"
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(1), 1);
+            flag_data = B_50K;//默认继电器状态
+            SFLASH.write(&flag_data, FLASH_ADDR_FLAG(3), 1);
         }
     }
     can_bus.set_id(&can_bus,SFLASH.readbit(FLASH_ADDR_FLAG(1)));
+    can_bus.set_btl(&can_bus,(btl_e)SFLASH.readbit(FLASH_ADDR_FLAG(3)));//读取ID
     LCD.set(&LCD.Lcd_n,0,can_bus.id/10);
     LCD.set(&LCD.Lcd_n,1,can_bus.id%10);
     /** -- 看门狗初始化 -- by lhb_steven -- 2017/6/26**/
@@ -143,7 +148,7 @@ int main(void) {
         //数码管闪烁
         if(TIMER.Timer_n.timer[2] <= TIMER.getclock()) {
             TIMER.Timer_n.timer[2] = TIMER.getclock() + 200;
-            if(MENU.getmenu(&MENU.menu_n) == 1) {
+            if(MENU.getmenu(&MENU.menu_n) > 0) {
                 static uint8_t dr = 0;
                 /** -- 设置的时候小数点为长亮 -- by lhb_steven -- 2017/7/31**/
                 LCD.point(&LCD.Lcd_n,1,1);
@@ -153,8 +158,13 @@ int main(void) {
                     LCD.set(&LCD.Lcd_n,1,10);
                 } else {
                     dr = 0;
-                    LCD.set(&LCD.Lcd_n,0,MENU.getvar(&MENU.menu_n)/10);
-                    LCD.set(&LCD.Lcd_n,1,MENU.getvar(&MENU.menu_n)%10);
+                    if(MENU.getmenu(&MENU.menu_n) == 1) {
+                        LCD.set(&LCD.Lcd_n,0,MENU.getvar(&MENU.menu_n)/10);
+                        LCD.set(&LCD.Lcd_n,1,MENU.getvar(&MENU.menu_n)%10);
+                    } else {
+                        LCD.set(&LCD.Lcd_n,0,11);
+                        LCD.set(&LCD.Lcd_n,1,MENU.menu_n.m_var);
+                    }
                 }
                 /** -- 数码管超时不操作，退出 -- by lhb_steven -- 2017/7/31**/
                 if(MENU.menu_n.lcd_out_num < 30) {
@@ -182,17 +192,17 @@ int main(void) {
             /** -- 喂狗 -- by lhb_steven -- 2017/6/26**/
             WDOG.reload();
             /** -- 上传送报文 -- by lhb_steven -- 2017/12/13**/
-            if(TIMER.Timer_n.timer[4] <= TIMER.getclock()) {
-                TIMER.Timer_n.timer[2] = TIMER.getclock() + 3000;
-                /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
-                can_bus.send_msg.send_id = 0xff;	 
-                can_bus.send_msg.id = can_bus.id;
-                can_bus.send_msg.device_id = 0xd1;	 
-                can_bus.send_msg.cmd = 0x01;	
-                can_bus.send_msg.len = 1;			
-                can_bus.send_msg.arr[0] = INSIGNED.insignal_n.val;
-                can_bus.send(&can_bus);
-            }
+//            if(TIMER.Timer_n.timer[4] <= TIMER.getclock()) {
+//                TIMER.Timer_n.timer[2] = TIMER.getclock() + 3000;
+//                /** -- 上传报文 -- by lhb_steven -- 2017/12/13**/
+//                can_bus.send_msg.send_id = 0xff;	 
+//                can_bus.send_msg.id = can_bus.id;
+//                can_bus.send_msg.device_id = 0xd1;	 
+//                can_bus.send_msg.cmd = 0x01;	
+//                can_bus.send_msg.len = 1;			
+//                can_bus.send_msg.arr[0] = INSIGNED.insignal_n.val;
+//                can_bus.send(&can_bus);
+//            }
         }
         /** -- 按键检测 -- by lhb_steven -- 2017/6/19**/
         if(TIMER.Timer_n.timer[1] <= TIMER.getclock()) {
@@ -367,6 +377,14 @@ int main(void) {
                                 MENU.setvar(&MENU.menu_n,0);
                             }
                         break;
+                        case 2:
+                            can_bus.set_btl(&can_bus,(btl_e)MENU.getvar(&MENU.menu_n));
+                            MENU.menu_n.menu_page = 0;
+                            LCD.set(&LCD.Lcd_n,0,can_bus.id/10);
+                            LCD.set(&LCD.Lcd_n,1,can_bus.id%10);
+                            uint16_t blt =can_bus.btl;
+                            SFLASH.write(&blt, FLASH_ADDR_FLAG(3), 1);
+                        break;
                     }
                 }
                 KEY.Key_n.key1_count = 0;
@@ -377,10 +395,20 @@ int main(void) {
                     KEY.Key_n.key2_count++;
                 if(KEY.Key_n.key2_count == 2000) {
                     //长按
-//                    CANBUS.can_n.TxMessage.StdId = 10;
-//                    CANBUS.can_n.TxMessage.Data[0] = 0x55;
-//                    CANBUS.can_n.TxMessage.Data[7] = 0x55;
-//                    CANBUS.Send(&CANBUS.can_n);
+                    switch(MENU.getmenu(&MENU.menu_n)) {
+                        case 0:
+                            MENU.setvar(&MENU.menu_n,can_bus.btl);
+                            MENU.menu_n.menu_page = 2;
+                        break;
+                        case 2:
+                            can_bus.set_btl(&can_bus,(btl_e)MENU.getvar(&MENU.menu_n));
+                            MENU.menu_n.menu_page = 0;
+                            LCD.set(&LCD.Lcd_n,0,can_bus.id/10);
+                            LCD.set(&LCD.Lcd_n,1,can_bus.id%10);
+                            uint16_t blt = can_bus.btl;
+                            SFLASH.write(&blt, FLASH_ADDR_FLAG(3), 1);
+                        break;
+                    }
                 }
             } else {
                 if( (KEY.Key_n.key2_count > 50) && (KEY.Key_n.key2_count < 2000) ) {
@@ -394,6 +422,13 @@ int main(void) {
                                 MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)-1);
                             } else {
                                 MENU.setvar(&MENU.menu_n,99);
+                            }
+                        break;
+                        case 2:
+                            if(MENU.getvar(&MENU.menu_n) > 0) {
+                                MENU.setvar(&MENU.menu_n,MENU.getvar(&MENU.menu_n)-1);
+                            } else {
+                                MENU.setvar(&MENU.menu_n,5);
                             }
                         break;
                     }

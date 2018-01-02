@@ -19,6 +19,9 @@ typedef struct _wdog_obj {
 	void (*reload)(struct _wdog_obj* wdog);
 }wdog_obj;
 
+void wdog_init(struct _wdog_obj* wdog);
+void wdog_reload(struct _wdog_obj* wdog);
+
 #ifdef __cplusplus
 }
 #endif

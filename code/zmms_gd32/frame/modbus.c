@@ -13,19 +13,21 @@
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])	
 #define REG_INPUT_START       0					// 输入寄存器起始地址
-#define REG_INPUT_NREGS       16                    // 输入寄存器数量
+#define REG_INPUT_NREGS       800                    // 输入寄存器数量
 
 #define REG_HOLDING_START     0                // 保持寄存器起始地址
-#define REG_HOLDING_NREGS     16                    // 保持寄存器数量
+#define REG_HOLDING_NREGS     800                    // 保持寄存器数量
 
 #define REG_COILS_START       0                // 线圈起始地址
 #define REG_COILS_SIZE        800              // 线圈数量
 
 #define REG_DISCRETE_START    0                // 开关寄存器起始地址
-#define REG_DISCRETE_SIZE     16                    // 开关寄存器数量
+#define REG_DISCRETE_SIZE     800                    // 开关寄存器数量
 
 static uint8_t modbus_coil[100];
  uint8_t modbus_coil_r[100];
+ uint8_t modbus_input[100];
+ int modbus_Holding[100];
 
 void modbus_init(struct _modbus_obj* modbus) {
 	uint8_t i;     
@@ -103,7 +105,7 @@ void modbus_set_coil(struct _modbus_obj* modbus,uint16_t num,uint8_t val) {
 }
 
 void modbus_set_input(struct _modbus_obj* modbus,uint16_t num,uint8_t val) {
-	modbus_coil[num] = val;
+	modbus_input[num] = val;
 	//modbus_coil_r[num] = val;
 }
 
@@ -148,16 +150,16 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,
         switch ( eMode ) {
         case MB_REG_READ:            
             while( usNRegs > 0 ) {
-                *pucRegBuffer++ = ( unsigned char )( 0x02 );
-                *pucRegBuffer++ = ( unsigned char )( 0x00 );
+                *pucRegBuffer++ = ( unsigned char )( modbus_Holding[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char )( modbus_Holding[iRegIndex] & 0xFF );
                 iRegIndex++;
                 usNRegs--;
             }
             break;
         case MB_REG_WRITE:
             while( usNRegs > 0 ) {
-//                usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
-//                usRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
+                modbus_Holding[iRegIndex] = *pucRegBuffer++ << 8;
+                modbus_Holding[iRegIndex] |= *pucRegBuffer++;
                 iRegIndex++;
                 usNRegs--;
             }
@@ -215,11 +217,11 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete ) {
     if( ( (int16_t)usAddress >= REG_DISCRETE_START ) &&
        ( usAddress + usNDiscrete <= REG_DISCRETE_START + REG_DISCRETE_SIZE ) ) {
         usBitOffset = ( unsigned short )( usAddress - REG_DISCRETE_START );
-        
+        uint16_t adr_num = usBitOffset/8;
         while( iNDiscrete > 0 ) {
-            *pucRegBuffer++ = 0x04;
+            *pucRegBuffer++ = modbus_input[adr_num];
             iNDiscrete -= 8;
-            usBitOffset += 8;
+            adr_num += 1;
         }
     } else {
         eStatus = MB_ENOREG;

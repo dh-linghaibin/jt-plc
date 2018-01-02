@@ -41,6 +41,7 @@
 
 #include <stdio.h> /* printf() */
 #include <stdlib.h> /* exit() */
+#include <string.h>
 //FreeRTOS Define
 #include "FreeRTOS.h"
 #include "task.h"
@@ -67,8 +68,8 @@ struct for_state {
 static struct for_state for_stack[MAX_FOR_STACK_DEPTH];
 static int for_stack_ptr;
 
-#define MAX_VARNUM 26
-static char variables[MAX_VARNUM];
+#define MAX_VARNUM 26		//26 个字母 所以26个变量
+static int variables[MAX_VARNUM];
 
 static int ended;
 
@@ -240,8 +241,8 @@ static void write_statement(void) {
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
 			
-			printf("get DI %s\n",string);
-			put_my_statement(string);
+			//printf("get DI %s\n",string);
+			//put_my_statement(string);
 			bit = 0;
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_COMMA) {
@@ -257,11 +258,15 @@ static void write_statement(void) {
 				adr_bit = i;
 			} else if(bit == 2) {
 				bit = 0;
-				printf("DI on %d  %d  %d \n",adr,adr_bit,i);
-				if(i == 0) {
-					modbus_coil_r[adr] &= ~(1 << adr_bit);
+				//printf("DI on %d  %d  %d \n",adr,adr_bit,i);
+				if(adr_bit >= 8) {
+					modbus_coil_r[adr] = i;
 				} else {
-					modbus_coil_r[adr] |= (1 << adr_bit);
+					if(i == 0) {
+						modbus_coil_r[adr] &= ~(1 << adr_bit);
+					} else {
+						modbus_coil_r[adr] |= (1 << adr_bit);
+					}
 				}
 			}
 		}
@@ -274,22 +279,79 @@ static void write_statement(void) {
 	tokenizer_next();
 }
 /*---------------------------------------------------------------------------*/
+extern uint8_t modbus_input[100];
+extern int modbus_Holding[100];
+uint8_t r_bit = 0;
+uint8_t r_adr = 0;
+uint8_t r_adr_bit = 0;
+uint8_t gongneng = 0;
 static void read_statement(void) {
 	accept(TOKENIZER_READ);
 	do {
 		DEBUG_PRINTF("read loop\n");
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
-			
-			printf("read DI %s\n",string);
-			put_my_statement(string);
-		
+			//printf("read  %s\n",string);
+			//put_my_statement(string);
+			if(strcmp(string, "di_4") == 0) {
+				//printf("di_4 ----- \n");
+				gongneng = 1;
+			} else if(strcmp(string, "holding") == 0) { 
+				//printf("holding ----- \n");
+				gongneng = 2;
+			} else if(strcmp(string, "time") == 0) { 
+				//printf("time ----- \n");
+				gongneng = 3;
+			} else {
+				gongneng = 0;
+			}
+			r_bit = 0;
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_COMMA) {
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_VARIABLE
 			|| tokenizer_token() == TOKENIZER_NUMBER) {
-			 printf("read %d \n",expr());
+			int i = expr();
+			switch(gongneng) {
+				case 1:{
+					if(r_bit == 0) {
+						r_bit = 1;
+						r_adr = i;
+					} else if(r_bit == 1) {
+						bit = 0;
+						r_adr_bit = i;
+						
+						int var = 0;
+						if(r_adr_bit >= 8) {
+							var = modbus_input[r_adr];
+						} else {
+							int dat = (modbus_input[r_adr] >> r_adr_bit);
+							if(dat&0x01) var=1;
+							else var=0;
+							//printf("read di %d \n",dat);
+						}
+						ubasic_set_variable(25,var);
+					} 
+				}
+					break;
+				case 2:{
+					switch(r_bit) {
+						case 0:
+						ubasic_set_variable(25,modbus_Holding[i]);
+						break;
+					}
+				}
+					break;
+				case 3:{
+					switch(r_bit) {
+						case 0:
+						
+						break;
+					}
+				}
+					break;
+			}
+			
 		}
 		else {
 			break;
@@ -306,8 +368,8 @@ static void wait_statement(void) {
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
 			
-			printf("read DI %s\n",string);
-			put_my_statement(string);
+			//printf("read DI %s\n",string);
+			//put_my_statement(string);
 		
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_COMMA) {

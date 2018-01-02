@@ -13,6 +13,8 @@
 #include "modbus.h"
 #include "ubasic.h"
 #include "usart.h"
+#include "wdog.h"
+#include "rtc.h"
 #include "only_id.h"
 #include "sha1.h"
 //FreeRTOS Define
@@ -24,6 +26,11 @@
 #define DELAY_S(t) DELAY_mS(1000*t)
 #define DELAY_M(t) DELAY_S(60*t)
 
+static wdog_obj wdog = {
+	.init = wdog_init,
+	.reload = wdog_reload,
+};
+
 static usart_obj usart = {
 	.init 	  = usart_init,
 	.sen_byte = usart_sen_byte,
@@ -32,6 +39,12 @@ static usart_obj usart = {
 static only_id_obj only_id = {
 	.id		= {0,},
 	.get_id = only_id_get_id,
+};
+
+static rtc_obj rtc = {
+	.init = rtc_init,
+	.read = rtc_read,
+	.set = rtc_set,
 };
 
 static modbus_obj modbus = {
@@ -177,6 +190,7 @@ void can_task(void *p){
 				DELAY_mS(1);
 			} 
 		}
+		wdog.reload(&wdog);
 	}
 }
 
@@ -295,41 +309,56 @@ void can_up_task(void *p){
     }
 }
 
-void theTimerCallback(TimerHandle_t pxTimer) {
-//	uint8_t pcWriteBuffer[500];
-//	printf("=================================================\r\n");
-//	printf("ÈÎÎñÃû      ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
-//	vTaskList((char *)&pcWriteBuffer);
-//	printf("%s\r\n", pcWriteBuffer);
 
-//	printf("\r\nÈÎÎñÃû       ÔËÐÐ¼ÆÊý         Ê¹ÓÃÂÊ\r\n");
-//	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
-//	printf("%s\r\n", pcWriteBuffer);
-}
+static const char program[] =
+"1 i = 2000\n\
+2 j = 3\n\
+3 k = ii+j\n\
+4 k = i+j\n\
+5 print k\n\
+";
 
-void theTimerInit(int msCount)
-{
-	TickType_t timertime = (msCount/portTICK_PERIOD_MS);
-	TimerHandle_t theTimer = xTimerCreate("theTimer", timertime , pdTRUE, 0, theTimerCallback );
-	if( xTimerStart(theTimer, 0) != pdPASS )
-	{
-		//debugU("Timer failed to start");
-	}
-}
+static const char program2[] =
+"1 v=1\n\
+2 l=1500\n\
+3 for g = 0 to 5\n\
+4 for p = 0 to 7\n\
+5 write \"do_8\"\,g,p,v\n\
+6 read \"di_4\"\,g,p,v\n\
+7 v = get\n\
+7 wait l\n\
+8 next p\n\
+9 next g\n\
+10 if v=0 then goto 1\n\
+11 if v=1 then v=0\n\
+12 goto 2 ";
 
+static const char program3[] =
+"1 read \"holding\"\,0\n\
+3 if z=1 then goto 6\n\
+4 write \"do_8\"\,0,8,0\n\
+5 goto 8\n\
+6 write \"do_8\"\,0,8,255\n\
+8 read \"di_4\"\,31,1\n\
+9 if z=1 then goto 12\n\
+10 write \"do_8\"\,1,8,255\n\
+11 goto 1\n\
+12 write \"do_8\"\,1,8,0\n\
+13 goto 1\n\
+";
 
 void ubasic_task(void *p){
     for(;;){
-		ubasic_init(ReadBuffer);
+		ubasic_init(program3);
+		//ubasic_init(ReadBuffer);
 		do {
 			ubasic_run();
 		} while(!ubasic_finished());
-		DELAY_mS(1000);
+		DELAY_mS(500);
     }
 }
 
 void test(void) {
-	
 	//在外部SPI Flash挂载文件系统，文件系统挂载时会对SPI设备初始化
 	res_sd = f_mount(&fs,"0:",0);
 	/*----------------------- 格式化测试 ---------------------------*/
@@ -394,6 +423,34 @@ void test(void) {
 	//f_mount(0,"0:",0);
 }
 
+
+//static TimerHandle_t xTimers = NULL;
+
+//static void vTimerCallback(xTimerHandle pxTimer) {
+//	configASSERT(pxTimer);
+//	printf("time\n");
+//}
+
+//static void AppObjCreate(void) {
+//	uint8_t i;
+//	const TickType_t  xTimerPer = 100;
+
+//	xTimers = xTimerCreate("Timer",          
+//	xTimerPer,   
+//	pdTRUE,        
+//	(void *) 0,    
+//	vTimerCallback); 
+
+//	if(xTimers == NULL) {
+
+//	} else {
+//		if(xTimerStart(xTimers, 0) != pdPASS) {
+//		
+//		}
+//	}
+//}
+
+
 void delay() {
 	for(int i = 0;i < 200;i++) 
 		for(int j = 0;j < 0xffff;j++);
@@ -401,14 +458,11 @@ void delay() {
 
 int main(void) {
 	delay();
-
 	usart.init(&usart,115200);
 	led.init(&led);
-		
-	printf("------------\n");
-
-	test();
-	
+	rtc.init(&rtc);
+	//printf("------------\n");
+	//test();
 	only_id.get_id(&only_id);
 	can_bus.init(&can_bus);
 	/* mac ID */
@@ -417,8 +471,8 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-	
-	theTimerInit(500);
+	//AppObjCreate();
+	wdog.init(&wdog);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
 	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
