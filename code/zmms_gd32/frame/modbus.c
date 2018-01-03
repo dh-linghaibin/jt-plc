@@ -181,12 +181,13 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils,
     if( ( (int16_t)usAddress >= REG_COILS_START ) &&
        ( usAddress + usNCoils <= REG_COILS_START + REG_COILS_SIZE ) ) {
         usBitOffset = ( unsigned short )( usAddress - REG_COILS_START );
+		uint16_t adr_num = usBitOffset/8;
         switch ( eMode ) {
         case MB_REG_READ:
             while( iNCoils > 0 ) {
-                *pucRegBuffer++ = modbus_coil[usBitOffset];
+                *pucRegBuffer++ = modbus_coil[adr_num];
                 iNCoils -= 8;
-                usBitOffset += 1;
+                adr_num += 1;
             }
             break;
         case MB_REG_WRITE:

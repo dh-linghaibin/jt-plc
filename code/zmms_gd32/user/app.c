@@ -48,7 +48,7 @@ static rtc_obj rtc = {
 };
 
 static modbus_obj modbus = {
-	.ipv4_ip 			  = {192,168,1,200},
+	.ipv4_ip 			  = {192,168,1,250},
 	.gateway_ip 		  = {192,168,1,1},
 	.mask_ip 			  = {255,255,255,0},
 	.uip_mac.addr 	      = {0,},
@@ -310,41 +310,63 @@ void can_up_task(void *p){
 }
 
 
-static const char program[] =
-"1 i = 2000\n\
-2 j = 3\n\
-3 k = ii+j\n\
-4 k = i+j\n\
-5 print k\n\
-";
+//static const char program[] =
+//"1 i = 2000\n\
+//2 j = 3\n\
+//3 k = ii+j\n\
+//4 k = i+j\n\
+//5 print k\n\
+//";
 
-static const char program2[] =
-"1 v=1\n\
-2 l=1500\n\
-3 for g = 0 to 5\n\
-4 for p = 0 to 7\n\
-5 write \"do_8\"\,g,p,v\n\
-6 read \"di_4\"\,g,p,v\n\
-7 v = get\n\
-7 wait l\n\
-8 next p\n\
-9 next g\n\
-10 if v=0 then goto 1\n\
-11 if v=1 then v=0\n\
-12 goto 2 ";
+//static const char program2[] =
+//"1 v=1\n\
+//2 l=1500\n\
+//3 for g = 0 to 5\n\
+//4 for p = 0 to 7\n\
+//5 write \"do_8\"\,g,p,v\n\
+//6 read \"di_4\"\,g,p,v\n\
+//7 v = get\n\
+//7 wait l\n\
+//8 next p\n\
+//9 next g\n\
+//10 if v=0 then goto 1\n\
+//11 if v=1 then v=0\n\
+//12 goto 2 ";
 
 static const char program3[] =
-"1 read \"holding\"\,0\n\
-3 if z=1 then goto 6\n\
-4 write \"do_8\"\,0,8,0\n\
-5 goto 8\n\
-6 write \"do_8\"\,0,8,255\n\
-8 read \"di_4\"\,31,1\n\
-9 if z=1 then goto 12\n\
+"1 a=0\n\
+2 read \"holding\"\,10\n\
+3 if z=0 then goto 1\n\
+4 if z=1 then goto 8\n\
+5 if z=2 then goto 21\n\
+6 if z=3 then goto 1\n\
+7 if z=4 then goto 1\n\
+8 if a = 1 then goto 2\n\
+9 a=1\n\
 10 write \"do_8\"\,1,8,255\n\
-11 goto 1\n\
-12 write \"do_8\"\,1,8,0\n\
-13 goto 1\n\
+11 write \"do_8\"\,2,8,255\n\
+12 write \"do_8\"\,3,8,255\n\
+13 write \"do_8\"\,4,8,255\n\
+14 write \"do_8\"\,5,8,255\n\
+15 write \"do_8\"\,6,8,255\n\
+16 write \"do_8\"\,7,8,255\n\
+17 write \"do_8\"\,8,8,255\n\
+18 write \"do_8\"\,14,8,255\n\
+19 write \"do_8\"\,15,8,255\n\
+20 goto 2\n\
+21 if a = 2 then goto 2\n\
+22 a=2\n\
+23 write \"do_8\"\,1,8,0\n\
+24 write \"do_8\"\,2,8,0\n\
+25 write \"do_8\"\,3,8,0\n\
+26 write \"do_8\"\,4,8,0\n\
+27 write \"do_8\"\,5,8,0\n\
+28 write \"do_8\"\,6,8,0\n\
+29 write \"do_8\"\,7,8,0\n\
+30 write \"do_8\"\,8,8,0\n\
+31 write \"do_8\"\,14,8,0\n\
+32 write \"do_8\"\,15,8,0\n\
+33 goto 2\n\
 ";
 
 void ubasic_task(void *p){
@@ -462,7 +484,7 @@ int main(void) {
 	led.init(&led);
 	rtc.init(&rtc);
 	//printf("------------\n");
-	//test();
+	test();
 	only_id.get_id(&only_id);
 	can_bus.init(&can_bus);
 	/* mac ID */
@@ -472,7 +494,7 @@ int main(void) {
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
 	//AppObjCreate();
-	wdog.init(&wdog);
+	//wdog.init(&wdog);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
 	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);

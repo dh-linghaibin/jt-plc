@@ -73,9 +73,12 @@ void bxcan_init(struct _can_obj* can) {
     CAN_InitStructure.CAN_TXFP = ENABLE;
     CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
     CAN_InitStructure.CAN_SJW=CAN_SJW_1tq;	  //BTR-SJW 重新同步跳跃宽度 1个时间单元
-    CAN_InitStructure.CAN_BS1=CAN_BS1_4tq;	  //BTR-TS1 时间段1 占用了2个时间单元
-    CAN_InitStructure.CAN_BS2=CAN_BS2_5tq;	  //BTR-TS1 时间段2 占用了3个时间单元
-    CAN_InitStructure.CAN_Prescaler =72;
+//    CAN_InitStructure.CAN_BS1=CAN_BS1_4tq;	  //BTR-TS1 时间段1 占用了2个时间单元
+//    CAN_InitStructure.CAN_BS2=CAN_BS2_5tq;	  //BTR-TS1 时间段2 占用了3个时间单元
+//    CAN_InitStructure.CAN_Prescaler =72;
+	CAN_InitStructure.CAN_BS1=CAN_BS1_3tq;	  //BTR-TS1 时间段1 占用了2个时间单元
+    CAN_InitStructure.CAN_BS2=CAN_BS2_1tq;	  //BTR-TS1 时间段2 占用了3个时间单元
+    CAN_InitStructure.CAN_Prescaler =720;
     if (CAN_Init(CAN1,&CAN_InitStructure) == CANINITFAILED)           
     {  
         return;                                                       
