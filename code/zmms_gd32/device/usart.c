@@ -6,6 +6,9 @@
  */
 
 #include "usart.h"
+//FreeRTOS Define
+#include "FreeRTOS.h"
+#include "task.h"
 
 void usart_init(struct _usart_obj* usart,uint32_t baud_rate) {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -117,6 +120,11 @@ void rs485_init(struct _rs485_obj *re485) {
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;   
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;  
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  
+    GPIO_Init(GPIOA, &GPIO_InitStructure);   
+	GPIO_WriteBit(GPIOA,GPIO_Pin_1,(BitAction)0);
 
 	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=1 ;
@@ -148,9 +156,17 @@ void rs485_init(struct _rs485_obj *re485) {
 	USART_ClearFlag(USART2, USART_FLAG_TC);	
 }
 
-static rs485_packet_obj rs485_packet[RS485_PACKAGE_NUM] = {0,};
+static rs485_packet_obj rs485_packet = {0,};
+static uint8_t packet_dat[2] = {0,0};
+
+rs485_packet_obj* rs485_get_packet(struct _rs485_obj *re485) {
+	return &rs485_packet;
+}
 
 void USART2_IRQHandler(void) {
+	UBaseType_t uxSavedInterruptStatus;
+	uxSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
+
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){
 		USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 		uint8_t dat = USART_ReceiveData(USART2);//接收到数据
@@ -159,35 +175,68 @@ void USART2_IRQHandler(void) {
 			case 0:
 				if(dat == R_HEAD) {
 					flag = 1;
-				}
+				} 
 			break;
 			case 1:
-				if(dat == R_HEAD) {
-					flag = 1;
+				if(dat == R_TYPE) {
+					flag = 2;
+				} else {
+					flag = 0;
 				}
 			break;
 			case 2:
-				if(dat == R_HEAD) {
-					flag = 1;
+				if(dat == R_TYPE) {
+					flag = 3;
+				} else {
+					flag = 0;
 				}
 			break;
 			case 3:
-				
+				if(dat == R_CMD) {
+					flag = 4;
+				} else {
+					flag = 0;
+				}
 			break;
 			case 4:
-
+				switch(dat) {
+					case 0x00:packet_dat[0] = 1;break;
+					case 0x10:packet_dat[0] = 2;break;
+					case 0x20:packet_dat[0] = 3;break;
+					case 0x30:packet_dat[0] = 4;break;
+					case 0x40:packet_dat[0] = 5;break;
+					case 0x50:packet_dat[0] = 6;break;
+					case 0x60:packet_dat[0] = 7;break;
+					case 0x70:packet_dat[0] = 8;break;
+				}
+				flag = 5;
 			break;
 			case 5:
-
+				packet_dat[1] = dat;
+				flag = 6;
 			break;
 			case 6:
-
+				if(dat == 0x7d) {
+					flag = 7;
+				} else {
+					flag = 0;
+				}
 			break;
 			case 7:
-
+				flag = 0;
+				for(int i = 0;i < RS485_PACKAGE_NUM;i++) {
+					if(rs485_packet.package[i].flag == RF_NO_USE) {
+						rs485_packet.package[i].back_number = packet_dat[1];
+						rs485_packet.package[i].number = packet_dat[0];
+						rs485_packet.package[i].flag = RF_USE;
+						break;
+					}
+				}
 			break;
 		}
 	}
+
+	portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedInterruptStatus );  
 }
 
 

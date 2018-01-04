@@ -231,18 +231,24 @@ static void goto_statement(void) {
 }
 /*---------------------------------------------------------------------------*/
 extern uint8_t modbus_coil_r[100];
+extern int modbus_Holding[100];
 uint8_t bit = 0;
 uint8_t adr = 0;
 uint8_t adr_bit = 0;
+uint8_t write_flag = 0;
 static void write_statement(void) {
 	accept(TOKENIZER_WRITE);
 	do {
 		DEBUG_PRINTF("Write loop\n");
 		if (tokenizer_token() == TOKENIZER_STRING) {
 			tokenizer_string(string, sizeof(string));
-			
-			//printf("get DI %s\n",string);
-			//put_my_statement(string);
+			if(strcmp(string, "do_8") == 0) {
+				write_flag = 1;
+			} else if(strcmp(string, "holding") == 0) {
+				write_flag = 2;
+			} else {
+				write_flag = 0;
+			}
 			bit = 0;
 			tokenizer_next();
 		} else if (tokenizer_token() == TOKENIZER_COMMA) {
@@ -250,24 +256,41 @@ static void write_statement(void) {
 		} else if (tokenizer_token() == TOKENIZER_VARIABLE
 			|| tokenizer_token() == TOKENIZER_NUMBER) {
 			int i = expr();
-			if(bit == 0) {
-				bit = 1;
-				adr = i;
-			} else if(bit == 1) {
-				bit = 2;
-				adr_bit = i;
-			} else if(bit == 2) {
-				bit = 0;
-				//printf("DI on %d  %d  %d \n",adr,adr_bit,i);
-				if(adr_bit >= 8) {
-					modbus_coil_r[adr] = i;
-				} else {
-					if(i == 0) {
-						modbus_coil_r[adr] &= ~(1 << adr_bit);
-					} else {
-						modbus_coil_r[adr] |= (1 << adr_bit);
+			switch(write_flag) {
+				case 0:break;
+				case 1: {
+					if(bit == 0) {
+						bit = 1;
+						adr = i;
+					} else if(bit == 1) {
+						bit = 2;
+						adr_bit = i;
+					} else if(bit == 2) {
+						bit = 0;
+						//printf("DI on %d  %d  %d \n",adr,adr_bit,i);
+						if(adr_bit >= 8) {
+							modbus_coil_r[adr] = i;
+						} else {
+							if(i == 0) {
+								modbus_coil_r[adr] &= ~(1 << adr_bit);
+							} else {
+								modbus_coil_r[adr] |= (1 << adr_bit);
+							}
+						}
 					}
-				}
+				} break;
+				case 2: {
+					switch(bit) {
+						case 0: {
+							bit = 1;
+							adr = i;
+						} break;
+						case 1: {
+							modbus_Holding[adr] = i;
+						} break;
+						case 2:break;
+					}
+				} break;
 			}
 		}
 		else {
@@ -280,7 +303,7 @@ static void write_statement(void) {
 }
 /*---------------------------------------------------------------------------*/
 extern uint8_t modbus_input[100];
-extern int modbus_Holding[100];
+
 uint8_t r_bit = 0;
 uint8_t r_adr = 0;
 uint8_t r_adr_bit = 0;

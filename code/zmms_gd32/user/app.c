@@ -41,10 +41,15 @@ static only_id_obj only_id = {
 	.get_id = only_id_get_id,
 };
 
-static rtc_obj rtc = {
+ rtc_obj rtc = {
 	.init = rtc_init,
 	.read = rtc_read,
-	.set = rtc_set,
+	.set  = rtc_set,
+};
+
+static rs485_obj rs485 = {
+	.init 		= rs485_init,
+	.get_packet = rs485_get_packet,
 };
 
 static modbus_obj modbus = {
@@ -81,6 +86,7 @@ static can_obj can_bus = {
 	.get_packget = bxcan_get_packget,
 };
 
+extern int modbus_Holding[120];
 can_packr_obj pacckr[PACKAGE_NUM];
 
 void can_task(void *p){
@@ -190,9 +196,19 @@ void can_task(void *p){
 				DELAY_mS(1);
 			} 
 		}
+
+		rs485_packet_obj* rs485_packet = rs485.get_packet(&rs485);
+		for(int i = 0;i < RS485_PACKAGE_NUM;i++) {
+			if(rs485_packet->package[i].flag == RF_USE) {
+				modbus_Holding[99] = rs485_packet->package[i].back_number*8 + rs485_packet->package[i].number;
+				rs485_packet->package[i].flag = RF_NO_USE;
+				led.tager(&led,L_RS485);
+			}
+		}
 		wdog.reload(&wdog);
 	}
 }
+
 
 void modbus_task(void *p) {
 	uint16_t count = 0;
@@ -207,6 +223,19 @@ void modbus_task(void *p) {
     }
 }
 
+void time_task(void *p) {
+	for(;;){
+		DELAY_mS(950);
+		rtc_t time = rtc.read(&rtc);
+		modbus_Holding[100] = time.year;
+		modbus_Holding[101] = time.month;
+		modbus_Holding[102] = time.mday;
+		modbus_Holding[103] = time.wday;
+		modbus_Holding[104] = time.hour;
+		modbus_Holding[105] = time.min;
+		modbus_Holding[106] = time.sec;
+	}
+}
 
 FATFS fs; /* FatFs文件系统对象 */
 FIL fnew; /* 文件对象 */
@@ -333,50 +362,563 @@ void can_up_task(void *p){
 //11 if v=1 then v=0\n\
 //12 goto 2 ";
 
-static const char program3[] =
-"1 a=0\n\
-2 read \"holding\"\,10\n\
-3 if z=0 then goto 1\n\
-4 if z=1 then goto 8\n\
-5 if z=2 then goto 21\n\
-6 if z=3 then goto 1\n\
-7 if z=4 then goto 1\n\
-8 if a = 1 then goto 2\n\
-9 a=1\n\
-10 write \"do_8\"\,1,8,255\n\
-11 write \"do_8\"\,2,8,255\n\
-12 write \"do_8\"\,3,8,255\n\
-13 write \"do_8\"\,4,8,255\n\
-14 write \"do_8\"\,5,8,255\n\
-15 write \"do_8\"\,6,8,255\n\
-16 write \"do_8\"\,7,8,255\n\
-17 write \"do_8\"\,8,8,255\n\
-18 write \"do_8\"\,14,8,255\n\
-19 write \"do_8\"\,15,8,255\n\
-20 goto 2\n\
-21 if a = 2 then goto 2\n\
-22 a=2\n\
-23 write \"do_8\"\,1,8,0\n\
-24 write \"do_8\"\,2,8,0\n\
-25 write \"do_8\"\,3,8,0\n\
-26 write \"do_8\"\,4,8,0\n\
-27 write \"do_8\"\,5,8,0\n\
-28 write \"do_8\"\,6,8,0\n\
-29 write \"do_8\"\,7,8,0\n\
-30 write \"do_8\"\,8,8,0\n\
-31 write \"do_8\"\,14,8,0\n\
-32 write \"do_8\"\,15,8,0\n\
-33 goto 2\n\
-";
+
+//static const char program3[] =
+//"1 b=0\n\
+//2 read \"holding\"\,10\n\
+//3 if z=0 then goto 1\n\
+//4 if z=1 then goto 8\n\
+//5 if z=2 then goto 21\n\
+//8 if b = 1 then goto 2\n\
+//51 print b\n\
+//10 write \"do_8\"\,1,8,255\n\
+//11 write \"do_8\"\,2,8,255\n\
+//12 write \"do_8\"\,3,8,255\n\
+//13 write \"do_8\"\,4,8,255\n\
+//14 write \"do_8\"\,5,8,255\n\
+//15 write \"do_8\"\,6,8,255\n\
+//16 write \"do_8\"\,7,8,255\n\
+//17 write \"do_8\"\,8,8,255\n\
+//18 write \"do_8\"\,14,8,255\n\
+//19 write \"do_8\"\,15,8,255\n\
+//20 goto 2\n\
+//21 if b = 2 then goto 2\n\
+//22 b=2\n\
+//23 write \"do_8\"\,1,8,0\n\
+//24 write \"do_8\"\,2,8,0\n\
+//25 write \"do_8\"\,3,8,0\n\
+//26 write \"do_8\"\,4,8,0\n\
+//27 write \"do_8\"\,5,8,0\n\
+//28 write \"do_8\"\,6,8,0\n\
+//29 write \"do_8\"\,7,8,0\n\
+//30 write \"do_8\"\,8,8,0\n\
+//31 write \"do_8\"\,14,8,0\n\
+//32 write \"do_8\"\,15,8,0\n\
+//33 goto 2\n\
+//50 read \"holding\"\,99\n\
+//51 if z=1 then goto 1\n\
+//52 if z=2 then goto 1\n\
+//53 if z=3 then goto 1\n\
+//54 if z=4 then goto 1\n\
+//55 if z=5 then goto 1\n\
+//56 if z=6 then goto 1\n\
+//57 if z=7 then goto 1\n\
+//58 if z=8 then goto 1\n\
+//59 if z=9 then goto 1\n\
+//60 if z=10 then goto 1\n\
+//61 if z=11 then goto 1\n\
+//62 if z=12 then goto 1\n\
+//63 if z=13 then goto 1\n\
+//64 if z=14 then goto 1\n\
+//65 if z=15 then goto 1\n\
+//66 if z=16 then goto 1\n\
+//67 goto 2\n\
+//70 write \"do_8\"\,1,8,255\n\
+//75 goto 2\n\
+//76 write \"do_8\"\,1,8,0\n\
+//80 goto 2\n\
+//81 write \"do_8\"\,1,8,255\n\
+//85 goto 2\n\
+//86 write \"do_8\"\,1,8,0\n\
+//90 goto 2\n\
+//91 write \"do_8\"\,1,8,255\n\
+//95 goto 2\n\
+//96 write \"do_8\"\,1,8,0\n\
+//100 goto 2\n\
+//101 write \"do_8\"\,1,8,255\n\
+//105 goto 2\n\
+//106 write \"do_8\"\,1,8,0\n\
+//110 goto 2\n\
+//111 write \"do_8\"\,1,8,255\n\
+//115 goto 2\n\
+//116 write \"do_8\"\,1,8,0\n\
+//120 goto 2\n\
+//121 write \"do_8\"\,1,8,255\n\
+//125 goto 2\n\
+//";
+
+//static const char program4[] =
+//"2 read \"holding\"\,99\n\
+//51 if z=1 then goto 70\n\
+//52 if z=2 then goto 76\n\
+//53 if z=3 then goto 81\n\
+//54 if z=4 then goto 86\n\
+//55 if z=5 then goto 90\n\
+//56 if z=6 then goto 96\n\
+//57 if z=7 then goto 101\n\
+//58 if z=8 then goto 106\n\
+//59 if z=9 then goto 111\n\
+//60 if z=10 then goto 116\n\
+//61 if z=11 then goto 121\n\
+//62 if z=12 then goto 126\n\
+//63 if z=13 then goto 131\n\
+//64 if z=14 then goto 140\n\
+//65 if z=15 then goto 146\n\
+//66 if z=16 then goto 151\n\
+//67 goto 2\n\
+//70 if c = 1 them goto 2\n\
+//71 c = 1\n\
+//72 write \"do_8\"\,1,8,255\n\
+//75 goto 2\n\
+//76 write \"do_8\"\,1,8,0\n\
+//80 goto 2\n\
+//81 write \"do_8\"\,1,8,255\n\
+//85 goto 2\n\
+//86 write \"do_8\"\,1,8,0\n\
+//90 goto 2\n\
+//91 write \"do_8\"\,1,8,255\n\
+//95 goto 2\n\
+//96 write \"do_8\"\,1,8,0\n\
+//100 goto 2\n\
+//101 write \"do_8\"\,1,8,255\n\
+//105 goto 2\n\
+//106 write \"do_8\"\,1,8,0\n\
+//110 goto 2\n\
+//111 write \"do_8\"\,1,8,255\n\
+//115 goto 2\n\
+//116 write \"do_8\"\,1,8,0\n\
+//120 goto 2\n\
+//121 write \"do_8\"\,1,8,255\n\
+//125 goto 2\n\
+//126 write \"do_8\"\,1,8,255\n\
+//130 goto 2\n\
+//131 write \"do_8\"\,1,8,255\n\
+//135 goto 2\n\
+//140 write \"do_8\"\,1,8,255\n\
+//145 goto 2\n\
+//146 write \"do_8\"\,1,8,255\n\
+//150 goto 2\n\
+//151 write \"do_8\"\,1,8,255\n\
+//156 goto 2\n\
+//";
+
+extern uint8_t modbus_coil_r[100];
+extern uint8_t modbus_input[100];
+
+void write_coil(uint8_t addr,uint8_t num,uint8_t val) {
+	if(val == 0) {
+		modbus_coil_r[addr] &= ~(1 << num);
+	} else {
+		modbus_coil_r[addr] |= (1 << num);
+	}
+}
 
 void ubasic_task(void *p){
+	rtc_t time = rtc.read(&rtc);
+	modbus_Holding[100] = time.year;
+	modbus_Holding[101] = time.month;
+	modbus_Holding[102] = time.mday;
+	modbus_Holding[103] = time.wday;
+	modbus_Holding[104] = time.hour;
+	modbus_Holding[105] = time.min;
+	modbus_Holding[106] = time.sec;
     for(;;){
-		ubasic_init(program3);
-		//ubasic_init(ReadBuffer);
-		do {
-			ubasic_run();
-		} while(!ubasic_finished());
-		DELAY_mS(500);
+//		ubasic_init(program4);
+//		//ubasic_init(ReadBuffer);
+//		do {
+//			ubasic_run();
+//		} while(!ubasic_finished());
+		/*键盘控制*/
+		switch(modbus_Holding[99]) {
+			case 0:{
+				
+			}break;
+			case 1:{
+				modbus_coil_r[1] = 255;
+				modbus_coil_r[2] = 255;
+				modbus_coil_r[3] = 255;
+				modbus_coil_r[4] = 255;
+				modbus_coil_r[5] = 255;
+				modbus_coil_r[6] = 255;
+				modbus_coil_r[7] = 255;
+				modbus_coil_r[8] = 255;
+				modbus_coil_r[14] = 255;
+				modbus_coil_r[15] = 255;
+			}break;
+			case 2:{
+				write_coil(1,5,1);
+				write_coil(1,6,1);
+				write_coil(2,0,1);
+				write_coil(3,0,1);
+				write_coil(3,2,1);
+				write_coil(3,3,1);
+				write_coil(3,4,1);
+				write_coil(4,3,1);
+				write_coil(5,1,1);
+				write_coil(5,2,1);
+				write_coil(5,3,1);
+				write_coil(5,5,1);
+				write_coil(6,0,1);
+				write_coil(7,3,1);
+				write_coil(7,4,1);
+				write_coil(7,6,1);
+				write_coil(8,0,1);
+				write_coil(8,1,1);
+				write_coil(8,5,1);
+				write_coil(8,6,1);
+				write_coil(14,4,1);
+				write_coil(14,7,1);
+			}break;
+			case 3:{
+				write_coil(1,2,1);
+				write_coil(1,3,1);
+				write_coil(1,4,1);
+				write_coil(2,1,1);
+				write_coil(3,6,1);
+				write_coil(4,1,1);
+				write_coil(7,0,1);
+				write_coil(7,2,1);
+			}break;
+			case 4:{
+				write_coil(1,0,1);
+				write_coil(1,1,1);
+				write_coil(1,7,1);
+				write_coil(2,2,1);
+				write_coil(3,1,1);
+				write_coil(3,5,1);
+				write_coil(3,7,1);
+				write_coil(4,0,1);
+				write_coil(4,2,1);
+				write_coil(5,0,1);
+				write_coil(5,4,1);
+				write_coil(5,6,1);
+				write_coil(5,7,1);
+				write_coil(7,5,1);
+				write_coil(8,2,1);
+				write_coil(8,3,1);
+				write_coil(8,4,1);
+				write_coil(14,0,1);
+				write_coil(14,1,1);
+				write_coil(14,2,1);
+				write_coil(14,3,1);
+				write_coil(14,5,1);
+				write_coil(14,6,1);
+				write_coil(15,1,1);
+				write_coil(15,2,1);
+				write_coil(15,3,1);
+				write_coil(15,4,1);
+				write_coil(15,5,1);
+			}break;
+			case 5:{
+				modbus_coil_r[1] = 0;
+				modbus_coil_r[2] = 0;
+				modbus_coil_r[3] = 0;
+				modbus_coil_r[4] = 0;
+				modbus_coil_r[5] = 0;
+				modbus_coil_r[6] = 0;
+				modbus_coil_r[7] = 0;
+				modbus_coil_r[8] = 0;
+				modbus_coil_r[14] = 0;
+				modbus_coil_r[15] = 0;
+			}break;
+			case 6:{
+				write_coil(1,5,0);
+				write_coil(1,6,0);
+				write_coil(2,0,0);
+				write_coil(3,0,0);
+				write_coil(3,2,0);
+				write_coil(3,3,0);
+				write_coil(3,4,0);
+				write_coil(4,3,0);
+				write_coil(5,1,0);
+				write_coil(5,2,0);
+				write_coil(5,3,0);
+				write_coil(5,5,0);
+				write_coil(6,0,0);
+				write_coil(7,3,0);
+				write_coil(7,4,0);
+				write_coil(7,6,0);
+				write_coil(8,0,0);
+				write_coil(8,1,0);
+				write_coil(8,5,0);
+				write_coil(8,6,0);
+				write_coil(14,4,0);
+				write_coil(14,7,0);
+			}break;
+			case 7:{
+				write_coil(1,2,0);
+				write_coil(1,3,0);
+				write_coil(1,4,0);
+				write_coil(2,1,0);
+				write_coil(3,6,0);
+				write_coil(4,1,0);
+				write_coil(7,0,0);
+				write_coil(7,2,0);
+			}break;
+			case 8:{
+				write_coil(1,0,0);
+				write_coil(1,1,0);
+				write_coil(1,7,0);
+				write_coil(2,2,0);
+				write_coil(3,1,0);
+				write_coil(3,5,0);
+				write_coil(3,7,0);
+				write_coil(4,0,0);
+				write_coil(4,2,0);
+				write_coil(5,0,0);
+
+				write_coil(5,4,0);
+				write_coil(5,6,0);
+				write_coil(5,7,0);
+				write_coil(7,5,0);
+				write_coil(8,2,0);
+				write_coil(8,3,0);
+				write_coil(8,4,0);
+				write_coil(14,0,0);
+				write_coil(14,1,0);
+				write_coil(14,2,0);
+				write_coil(14,3,0);
+		
+				write_coil(14,5,0);
+				write_coil(14,6,0);
+				write_coil(15,1,0);
+				write_coil(15,2,0);
+				write_coil(15,3,0);
+				write_coil(15,4,0);
+				write_coil(15,5,0);
+			}break;
+			case 9:{
+				write_coil(9,0,1);
+				write_coil(9,1,1);
+				write_coil(9,2,1);
+			}break;
+			case 10:{
+				write_coil(9,3,1);
+				write_coil(9,4,1);
+				write_coil(9,5,1);
+				write_coil(9,6,1);
+				write_coil(9,7,1);
+				write_coil(10,0,1);
+				write_coil(11,0,1);
+				write_coil(11,1,1);
+				write_coil(11,2,1);
+				write_coil(11,3,1);
+				write_coil(11,4,1);
+				write_coil(11,5,1);
+				write_coil(12,0,1);
+				write_coil(12,1,1);
+				write_coil(12,2,1);
+				write_coil(12,3,1);
+				write_coil(12,4,1);
+				write_coil(12,5,1);
+				write_coil(13,0,1);
+				write_coil(13,1,1);
+				write_coil(13,2,1);
+				write_coil(13,3,1);
+				write_coil(13,4,1);
+				write_coil(13,5,1);
+			}break;
+			case 11:{
+				write_coil(8,0,1);
+				write_coil(8,1,1);
+				write_coil(8,2,1);
+				write_coil(8,3,1);
+				write_coil(8,4,1);
+				write_coil(8,5,1);
+				write_coil(8,6,1);
+				write_coil(7,0,1);
+				write_coil(7,2,1);
+				write_coil(7,3,1);
+				write_coil(7,4,1);
+				write_coil(7,5,1);
+				write_coil(7,6,1);
+			}break;
+			case 12:{
+				write_coil(3,0,1);
+				write_coil(3,1,1);
+				write_coil(3,2,1);
+				write_coil(3,3,1);
+				write_coil(3,4,1);
+				write_coil(3,5,1);
+				write_coil(3,6,1);
+				write_coil(3,7,1);
+				write_coil(4,0,1);
+				write_coil(4,1,1);
+				write_coil(4,2,1);
+				write_coil(4,3,1);
+				write_coil(5,0,1);
+				write_coil(5,1,1);
+				write_coil(5,2,1);
+				write_coil(5,3,1);
+				write_coil(5,4,1);
+				write_coil(5,5,1);
+				write_coil(5,6,1);
+				write_coil(5,7,1);
+				write_coil(6,0,1);
+			}break;
+			case 13:{
+				write_coil(9,0,0);
+				write_coil(9,1,0);
+				write_coil(9,2,0);
+			}break;
+			case 14:{
+				write_coil(9,3,0);
+				write_coil(9,4,0);
+				write_coil(9,5,0);
+				write_coil(9,6,0);
+				write_coil(9,7,0);
+				write_coil(10,0,0);
+				write_coil(11,0,0);
+				write_coil(11,1,0);
+				write_coil(11,2,0);
+				write_coil(11,3,0);
+				write_coil(11,4,0);
+				write_coil(11,5,0);
+				write_coil(12,0,0);
+				write_coil(12,1,0);
+				write_coil(12,2,0);
+				write_coil(12,3,0);
+				write_coil(12,4,0);
+				write_coil(12,5,0);
+				write_coil(13,0,0);
+				write_coil(13,1,0);
+				write_coil(13,2,0);
+				write_coil(13,3,0);
+				write_coil(13,4,0);
+				write_coil(13,5,0);
+			}break;
+			case 15:{
+				write_coil(8,0,0);
+				write_coil(8,1,0);
+				write_coil(8,2,0);
+				write_coil(8,3,0);
+				write_coil(8,4,0);
+				write_coil(8,5,0);
+				write_coil(8,6,0);
+				write_coil(7,0,0);
+				write_coil(7,2,0);
+				write_coil(7,3,0);
+				write_coil(7,4,0);
+				write_coil(7,5,0);
+				write_coil(7,6,0);
+			}break;
+			case 16:{
+				write_coil(3,0,0);
+				write_coil(3,1,0);
+				write_coil(3,2,0);
+				write_coil(3,3,0);
+				write_coil(3,4,0);
+				write_coil(3,5,0);
+				write_coil(3,6,0);
+				write_coil(3,7,0);
+				write_coil(4,0,0);
+				write_coil(4,1,0);
+				write_coil(4,2,0);
+				write_coil(4,3,0);
+				write_coil(5,0,0);
+				write_coil(5,1,0);
+				write_coil(5,2,0);
+				write_coil(5,3,0);
+				write_coil(5,4,0);
+				write_coil(5,5,0);
+				write_coil(5,6,0);
+				write_coil(5,7,0);
+				write_coil(6,0,0);
+			}break;
+		}
+		if(modbus_Holding[99] > 0) {
+			modbus_Holding[99] = 0;
+		}
+		if(modbus_Holding[11] == 1) {
+			/*时间控制*/
+			static uint8_t time_flag = 0;
+			if( (modbus_Holding[104] == modbus_Holding[1]) && (modbus_Holding[105] == modbus_Holding[2]) ) {
+				if(time_flag == 0) {
+					modbus_coil_r[1] = 255;
+					modbus_coil_r[2] = 255;
+					modbus_coil_r[3] = 255;
+					modbus_coil_r[4] = 255;
+					modbus_coil_r[5] = 255;
+					modbus_coil_r[6] = 255;
+					modbus_coil_r[7] = 255;
+					modbus_coil_r[8] = 255;
+					modbus_coil_r[14] = 255;
+					modbus_coil_r[15] = 255;
+				}
+				time_flag = 1;
+			} else if( (modbus_Holding[104] == modbus_Holding[3]) && (modbus_Holding[105] == modbus_Holding[4]) ) {
+				if(time_flag == 0) {
+					modbus_coil_r[1] = 0;
+					modbus_coil_r[2] = 0;
+					modbus_coil_r[3] = 0;
+					modbus_coil_r[4] = 0;
+					modbus_coil_r[5] = 0;
+					modbus_coil_r[6] = 0;
+					modbus_coil_r[7] = 0;
+					modbus_coil_r[8] = 0;
+					modbus_coil_r[14] = 0;
+					modbus_coil_r[15] = 0;
+				}
+				time_flag = 1;
+			} else {
+				time_flag = 0;
+			}
+		}
+		if(modbus_Holding[12] == 1) {
+			/*光电控制*/
+			static uint8_t shangshengyan = 0;
+			if(modbus_input[1] == 0x08) {
+				if(shangshengyan == 0) {
+					modbus_coil_r[1] = 255;
+					modbus_coil_r[2] = 255;
+					modbus_coil_r[3] = 255;
+					modbus_coil_r[4] = 255;
+					modbus_coil_r[5] = 255;
+					modbus_coil_r[6] = 255;
+					modbus_coil_r[7] = 255;
+					modbus_coil_r[8] = 255;
+					modbus_coil_r[14] = 255;
+					modbus_coil_r[15] = 255;
+				}
+				shangshengyan = 1;
+			} else {
+				if(shangshengyan == 1) {
+					modbus_coil_r[1] = 0;
+					modbus_coil_r[2] = 0;
+					modbus_coil_r[3] = 0;
+					modbus_coil_r[4] = 0;
+					modbus_coil_r[5] = 0;
+					modbus_coil_r[6] = 0;
+					modbus_coil_r[7] = 0;
+					modbus_coil_r[8] = 0;
+					modbus_coil_r[14] = 0;
+					modbus_coil_r[15] = 0;
+				}
+				shangshengyan = 0;
+			}
+		}
+		
+		/*全开*/
+		switch(modbus_Holding[10]) {
+			case 1:{
+				modbus_coil_r[1] = 255;
+				modbus_coil_r[2] = 255;
+				modbus_coil_r[3] = 255;
+				modbus_coil_r[4] = 255;
+				modbus_coil_r[5] = 255;
+				modbus_coil_r[6] = 255;
+				modbus_coil_r[7] = 255;
+				modbus_coil_r[8] = 255;
+				modbus_coil_r[14] = 255;
+				modbus_coil_r[15] = 255;
+			}break;
+			case 2:{
+				modbus_coil_r[1] = 0;
+				modbus_coil_r[2] = 0;
+				modbus_coil_r[3] = 0;
+				modbus_coil_r[4] = 0;
+				modbus_coil_r[5] = 0;
+				modbus_coil_r[6] = 0;
+				modbus_coil_r[7] = 0;
+				modbus_coil_r[8] = 0;
+				modbus_coil_r[14] = 0;
+				modbus_coil_r[15] = 0;
+			}break;
+		}
+		if(modbus_Holding[10] > 0) {
+			modbus_Holding[10] = 0;
+		}
+		DELAY_mS(50);
     }
 }
 
@@ -481,9 +1023,9 @@ void delay() {
 int main(void) {
 	delay();
 	usart.init(&usart,115200);
+	rs485.init(&rs485);
 	led.init(&led);
 	rtc.init(&rtc);
-	//printf("------------\n");
 	test();
 	only_id.get_id(&only_id);
 	can_bus.init(&can_bus);
@@ -493,12 +1035,12 @@ int main(void) {
 	modbus.enc28.mac[5] = only_id.id[2];
 	modbus.init(&modbus);
 	uip_listen(HTONS(1200));
-	//AppObjCreate();
-	//wdog.init(&wdog);
+	wdog.init(&wdog);
 	xTaskCreate(modbus_task, (const char*)"modbus_task", 1024, NULL, 4, NULL);
 	xTaskCreate(can_task, (const char*)"can_task", 512, NULL, 4, NULL);
-	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 1024, NULL, 4, &xhande_task_basic);
-	xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
+	xTaskCreate(ubasic_task, (const char*)"ubasic_task", 512, NULL, 4, &xhande_task_basic);
+	//xTaskCreate(can_up_task, (const char*)"can_up_task", 1024, NULL, 4, NULL);
+	xTaskCreate(time_task, (const char*)"time_task", 512, NULL, 4, NULL);
 	vTaskStartScheduler();
 }
 

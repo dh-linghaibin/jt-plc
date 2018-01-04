@@ -129,7 +129,7 @@ int main(void) {
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(0), 1);
             flag_data = 99;//将标志位置为"已写入"
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(1), 1);
-            flag_data = B_50K;//默认继电器状态
+            flag_data = B_10K;//默认继电器状态
             SFLASH.write(&flag_data, FLASH_ADDR_FLAG(3), 1);
         }
     }

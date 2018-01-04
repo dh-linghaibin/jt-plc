@@ -29,23 +29,31 @@ typedef enum {
 	R_CMD  = 0X03,
 }rs485_cmd_e;
 
+typedef enum {
+	RF_NO_USE = 0,
+	RF_USE,
+	RF_PACK_OK,
+}rs485_packet_flag_e;
+
 #define RS485_PACKAGE_NUM 5
 
-typedef struct _rs485_packet_obj {
+typedef struct _rs485_cmd_obj {
 	uint8_t flag;
-//	uint8_t head;
-//	uint8_t type;
-	uint8_t num;
-	uint8_t cmd;
 	uint8_t back_number;
 	uint8_t number;
+}rs485_cmd_obj;
+
+typedef struct _rs485_packet_obj {
+	rs485_cmd_obj package[RS485_PACKAGE_NUM];
 }rs485_packet_obj;
 
 typedef struct _rs485_obj {
 	void (*init)(struct _rs485_obj *re485);
+	rs485_packet_obj* (*get_packet)(struct _rs485_obj *re485);
 }rs485_obj;
 
 void rs485_init(struct _rs485_obj *re485);
+rs485_packet_obj* rs485_get_packet(struct _rs485_obj *re485);
 
 #ifdef __cplusplus
 }

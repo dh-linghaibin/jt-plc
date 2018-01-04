@@ -160,17 +160,17 @@ int main(void) {
 	
 	SPI_Flash_Init();
 	
-	{
-		uint8_t xxx[1] = {0};
-		SPI_Flash_Read(xxx ,0,1);	
-		if(xxx[0] != 0xa5) {
-			SPI_Flash_Erase_Chip();
-			xxx[0] = 0xa5;
-			SPI_Flash_Write(xxx ,0,1);
-		} else {
-			//SPI_Flash_Erase_Chip();
-		}
-	}
+//	{
+//		uint8_t xxx[1] = {0};
+//		SPI_Flash_Read(xxx ,0,1);	
+//		if(xxx[0] != 0xa5) {
+//			SPI_Flash_Erase_Chip();
+//			xxx[0] = 0xa5;
+//			SPI_Flash_Write(xxx ,0,1);
+//		} else {
+//			//SPI_Flash_Erase_Chip();
+//		}
+//	}
     /* IO口初始化 主要是为了避免SPI总线上的其他设备 */
     LED.Init(&LED.Led_n);                    
     /* 配置systic作为1ms中断 */

@@ -206,9 +206,9 @@ void rtc_init(struct _rtc_obj *t_rtc) {
 }
 
 rtc_t rtc_read(struct _rtc_obj *t_rtc) {
-	rtc_t *t;
-	counter_to_struct(RTC_GetCounter(), t);
-	return *t;
+	rtc_t t;
+	counter_to_struct(RTC_GetCounter(), &t);
+	return t;
 }
 
 void rtc_set(struct _rtc_obj *t_rtc,rtc_t time) {

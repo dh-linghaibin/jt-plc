@@ -10,6 +10,7 @@
 #include "uip_arp.h"
 #include "mb.h"
 #include "mbutils.h"
+#include "rtc.h"
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])	
 #define REG_INPUT_START       0					// 输入寄存器起始地址
@@ -27,7 +28,7 @@
 static uint8_t modbus_coil[100];
  uint8_t modbus_coil_r[100];
  uint8_t modbus_input[100];
- int modbus_Holding[100];
+ int modbus_Holding[120];
 
 void modbus_init(struct _modbus_obj* modbus) {
 	uint8_t i;     
@@ -139,6 +140,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs ) {
     return eStatus;
 }
 
+extern rtc_obj rtc;
+
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,
                 eMBRegisterMode eMode ) {
@@ -158,10 +161,21 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,
             break;
         case MB_REG_WRITE:
             while( usNRegs > 0 ) {
-                modbus_Holding[iRegIndex] = *pucRegBuffer++ << 8;
-                modbus_Holding[iRegIndex] |= *pucRegBuffer++;
-                iRegIndex++;
-                usNRegs--;
+				modbus_Holding[iRegIndex] = *pucRegBuffer++ << 8;
+				modbus_Holding[iRegIndex] |= *pucRegBuffer++;
+				iRegIndex++;
+				usNRegs--;
+				if(iRegIndex >= 100) {
+					rtc_t t_rtc;
+					t_rtc.year = modbus_Holding[100];
+                    t_rtc.month = modbus_Holding[101];
+                    t_rtc.mday = modbus_Holding[102];
+                    t_rtc.wday = modbus_Holding[103];
+                    t_rtc.hour = modbus_Holding[104];
+                    t_rtc.min = modbus_Holding[105];
+                    t_rtc.sec = modbus_Holding[106];
+					rtc.set(&rtc,t_rtc);
+				}
             }
             break;
         }

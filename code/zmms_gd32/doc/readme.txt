@@ -142,3 +142,9 @@ static const char program2[] =
 //	do {
 //		ubasic_run();
 //	} while(!ubasic_finished());
+
+16个场景 
+定时 
+全开全关
+单独控制
+
