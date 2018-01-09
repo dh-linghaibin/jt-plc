@@ -62,7 +62,7 @@ static int dochunk (lua_State *L, int status) {
   return report(L, status);
 }
 
-static int dostring (lua_State *L, const char *s, const char *name) {
+ int dostring (lua_State *L, const char *s, const char *name) {
   return dochunk(L, luaL_loadbuffer(L, s, strlen(s), name));
 }
 

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\zmms.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\zmms.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Sun Dec 31 14:42:11 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Sat Jan 06 11:13:31 2018
 <BR><P>
 <H3>Maximum Stack Usage =      10424 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -346,7 +346,7 @@ Function Pointers
  <LI><a href="#[18]">modbus_set_input</a> from modbus.o(i.modbus_set_input) referenced 2 times from app.o(.data)
  <LI><a href="#[a1]">modbus_task</a> from app.o(i.modbus_task) referenced from app.o(i.main)
  <LI><a href="#[19]">modbus_up_coil</a> from modbus.o(i.modbus_up_coil) referenced 2 times from app.o(.data)
- <LI><a href="#[89]">msghandler</a> from app.o(i.msghandler) referenced from app.o(i.docall)
+ <LI><a href="#[89]">msghandler</a> from mcu_lua.o(i.msghandler) referenced from mcu_lua.o(i.docall)
  <LI><a href="#[f]">only_id_get_id</a> from only_id.o(i.only_id_get_id) referenced 2 times from app.o(.data)
  <LI><a href="#[c9]">os_clock</a> from loslib.o(i.os_clock) referenced from loslib.o(.constdata)
  <LI><a href="#[ca]">os_date</a> from loslib.o(i.os_date) referenced from loslib.o(.constdata)
@@ -3112,6 +3112,17 @@ Global Symbols
 <LI><a href="#[395]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_clear
 </UL>
 
+<P><STRONG><a name="[3a5]"></a>dostring</STRONG> (Thumb, 48 bytes, Stack size 32 bytes, mcu_lua.o(i.dostring))
+<BR><BR>[Stack]<UL><LI>Max Depth = 2104 + Unknown Stack Size
+<LI>Call Chain = dostring &rArr; luaL_loadbufferx &rArr; lua_load &rArr; luaD_protectedparser &rArr; luaM_realloc_ &rArr; luaD_throw &rArr;  luaD_throw (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[376]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_loadbufferx
+<LI><a href="#[3a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dochunk
+<LI><a href="#[281]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+</UL>
+<BR>[Called By]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
 <P><STRONG><a name="[534]"></a>eMBEnable</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, mb.o(i.eMBEnable))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = eMBEnable
 </UL>
@@ -5654,8 +5665,8 @@ Global Symbols
 <LI><a href="#[311]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lua_getfield
 <LI><a href="#[405]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lua_rawequal
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_checkudata
-<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;io_type
+<BR>[Called By]<UL><LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;io_type
+<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_checkudata
 </UL>
 
 <P><STRONG><a name="[26b]"></a>luaL_tolstring</STRONG> (Thumb, 296 bytes, Stack size 32 bytes, lauxlib.o(i.luaL_tolstring))
@@ -7542,9 +7553,9 @@ Global Symbols
 <P><STRONG><a name="[26d]"></a>lua_settop</STRONG> (Thumb, 62 bytes, Stack size 12 bytes, lapi.o(i.lua_settop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = lua_settop
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_openlibs
-<LI><a href="#[3a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;report
+<BR>[Called By]<UL><LI><a href="#[3a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;report
 <LI><a href="#[3a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;docall
+<LI><a href="#[4ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_openlibs
 <LI><a href="#[36e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_setfuncs
 <LI><a href="#[412]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_pushresult
 <LI><a href="#[26e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_addvalue
@@ -8007,10 +8018,10 @@ Global Symbols
 <LI><a href="#[513]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lua_close
 <LI><a href="#[4ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_openlibs
 <LI><a href="#[4ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_newstate
+<LI><a href="#[3a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dostring
 <LI><a href="#[523]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;theTimerInit
 <LI><a href="#[521]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;test
 <LI><a href="#[520]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
-<LI><a href="#[3a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dostring
 <LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
@@ -9186,8 +9197,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[5d5]"></a>_drsb</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, daddsub_clz.o(x$fpl$drsb), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[5d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
-<LI><a href="#[5c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dsub1
+<BR><BR>[Calls]<UL><LI><a href="#[5c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dsub1
+<LI><a href="#[5d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
 </UL>
 
 <P><STRONG><a name="[593]"></a>_dsqrt</STRONG> (Thumb, 456 bytes, Stack size 24 bytes, dsqrt_noumaal.o(x$fpl$dsqrt))
@@ -9219,8 +9230,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[5d7]"></a>_dsub</STRONG> (Thumb, 464 bytes, Stack size 32 bytes, daddsub_clz.o(x$fpl$dsub), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[5d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
-<LI><a href="#[5c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_dnaninf
+<BR><BR>[Calls]<UL><LI><a href="#[5c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_dnaninf
+<LI><a href="#[5d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
 </UL>
 
 <P><STRONG><a name="[59a]"></a>__aeabi_f2d</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, f2d.o(x$fpl$f2d))
@@ -9335,7 +9346,7 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[3a2]"></a>docall</STRONG> (Thumb, 86 bytes, Stack size 32 bytes, app.o(i.docall))
+<P><STRONG><a name="[3a2]"></a>docall</STRONG> (Thumb, 86 bytes, Stack size 32 bytes, mcu_lua.o(i.docall))
 <BR><BR>[Stack]<UL><LI>Max Depth = 1432<LI>Call Chain = docall &rArr; lua_pcallk &rArr; luaD_call &rArr; luaV_execute &rArr;  luaT_trybinTM (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[26d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lua_settop
@@ -9347,7 +9358,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[3a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dochunk
 </UL>
 
-<P><STRONG><a name="[3a3]"></a>dochunk</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, app.o(i.dochunk))
+<P><STRONG><a name="[3a3]"></a>dochunk</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, mcu_lua.o(i.dochunk))
 <BR><BR>[Stack]<UL><LI>Max Depth = 1448 + Unknown Stack Size
 <LI>Call Chain = dochunk &rArr; docall &rArr; lua_pcallk &rArr; luaD_call &rArr; luaV_execute &rArr;  luaT_trybinTM (Cycle)
 </UL>
@@ -9357,18 +9368,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[3a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dostring
 </UL>
 
-<P><STRONG><a name="[3a5]"></a>dostring</STRONG> (Thumb, 48 bytes, Stack size 32 bytes, app.o(i.dostring))
-<BR><BR>[Stack]<UL><LI>Max Depth = 2104 + Unknown Stack Size
-<LI>Call Chain = dostring &rArr; luaL_loadbufferx &rArr; lua_load &rArr; luaD_protectedparser &rArr; luaM_realloc_ &rArr; luaD_throw &rArr;  luaD_throw (Cycle)
-</UL>
-<BR>[Calls]<UL><LI><a href="#[376]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_loadbufferx
-<LI><a href="#[3a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dochunk
-<LI><a href="#[281]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
-</UL>
-<BR>[Called By]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-</UL>
-
-<P><STRONG><a name="[89]"></a>msghandler</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, app.o(i.msghandler))
+<P><STRONG><a name="[89]"></a>msghandler</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, mcu_lua.o(i.msghandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 2072 + Unknown Stack Size
 <LI>Call Chain = msghandler &rArr; luaL_traceback &rArr; pushfuncname &rArr; pushglobalfuncname &rArr; findfield &rArr;  findfield (Cycle)
 </UL>
@@ -9379,9 +9379,9 @@ Local Symbols
 <LI><a href="#[38d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_traceback
 <LI><a href="#[4e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_callmeta
 </UL>
-<BR>[Address Reference Count : 1]<UL><LI> app.o(i.docall)
+<BR>[Address Reference Count : 1]<UL><LI> mcu_lua.o(i.docall)
 </UL>
-<P><STRONG><a name="[3a4]"></a>report</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, app.o(i.report))
+<P><STRONG><a name="[3a4]"></a>report</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, mcu_lua.o(i.report))
 <BR><BR>[Stack]<UL><LI>Max Depth = 432 + Unknown Stack Size
 <LI>Call Chain = report &rArr; lua_tolstring &rArr; luaC_step &rArr; singlestep &rArr; runafewfinalizers &rArr; GCTM &rArr;  luaO_pushfstring (Cycle)
 </UL>
@@ -13289,8 +13289,8 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 2104 + Unknown Stack Size
 <LI>Call Chain = f_gc &rArr; aux_close &rArr; luaL_checkudata &rArr; typeerror &rArr; luaL_argerror &rArr; pushglobalfuncname &rArr; findfield &rArr;  findfield (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_checkudata
-<LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;aux_close
+<BR>[Calls]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;aux_close
+<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;luaL_checkudata
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> liolib.o(.constdata)
 </UL>
