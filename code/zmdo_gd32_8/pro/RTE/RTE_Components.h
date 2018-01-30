@@ -4,7 +4,7 @@
  *      *** Do not modify ! ***
  *
  * Project: 'zmdo_8' 
- * Target:  'Target 1' 
+ * Target:  'zmdo+8' 
  */
 
 #ifndef RTE_COMPONENTS_H

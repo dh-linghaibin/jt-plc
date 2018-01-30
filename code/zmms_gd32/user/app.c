@@ -854,6 +854,182 @@ void ubasic_task(void *p){
 				time_flag = 0;
 			}
 		}
+		//围墙
+		if(modbus_Holding[13] == 1) {
+			/*时间控制*/
+			static uint8_t xtime_flag = 0;
+			if( (modbus_Holding[104] == modbus_Holding[20]) && (modbus_Holding[105] == modbus_Holding[21]) ) {
+				if(xtime_flag == 0) {
+					write_coil(1,2,1);
+					write_coil(1,3,1);
+					write_coil(1,4,1);
+					write_coil(2,1,1);
+					write_coil(3,6,1);
+					write_coil(4,1,1);
+					write_coil(7,0,1);
+					write_coil(7,2,1);
+				}
+				xtime_flag = 1;
+			} else if( (modbus_Holding[104] == modbus_Holding[22]) && (modbus_Holding[105] == modbus_Holding[23]) ) {
+				if(xtime_flag == 0) {
+					write_coil(1,2,0);
+					write_coil(1,3,0);
+					write_coil(1,4,0);
+					write_coil(2,1,0);
+					write_coil(3,6,0);
+					write_coil(4,1,0);
+					write_coil(7,0,0);
+					write_coil(7,2,0);
+				}
+				xtime_flag = 1;
+			} else {
+				xtime_flag = 0;
+			}
+		}
+		//宿舍楼
+		if(modbus_Holding[14] == 1) {
+			/*时间控制*/
+			static uint8_t ytime_flag = 0;
+			if( (modbus_Holding[104] == modbus_Holding[24]) && (modbus_Holding[105] == modbus_Holding[25]) ) {
+				if(ytime_flag == 0) {
+					write_coil(8,0,1);
+					write_coil(8,1,1);
+					write_coil(8,2,1);
+					write_coil(8,3,1);
+					write_coil(8,4,1);
+					write_coil(8,5,1);
+					write_coil(8,6,1);
+					write_coil(7,3,1);
+					write_coil(7,4,1);
+					write_coil(7,5,1);
+					write_coil(7,6,1);
+					write_coil(14,4,1);
+				}
+				ytime_flag = 1;
+			} else if( (modbus_Holding[104] == modbus_Holding[26]) && (modbus_Holding[105] == modbus_Holding[27]) ) {
+				if(ytime_flag == 0) {
+					write_coil(8,0,0);
+					write_coil(8,1,0);
+					write_coil(8,2,0);
+					write_coil(8,3,0);
+					write_coil(8,4,0);
+					write_coil(8,5,0);
+					write_coil(8,6,0);
+					write_coil(7,3,0);
+					write_coil(7,4,0);
+					write_coil(7,5,0);
+					write_coil(7,6,0);
+					write_coil(14,4,0);
+				}
+				ytime_flag = 1;
+			} else {
+				ytime_flag = 0;
+			}
+		}
+		//其他（除了操场）
+		if(modbus_Holding[15] == 1) {
+			static uint8_t ztime_flag = 0;
+			if( (modbus_Holding[104] == modbus_Holding[28]) && (modbus_Holding[105] == modbus_Holding[29]) ) {
+				if(ztime_flag == 0) {
+					write_coil(1,0,1);
+					write_coil(1,1,1);
+					write_coil(1,5,1);
+					write_coil(1,6,1);
+					write_coil(1,7,1);
+					write_coil(2,0,1);
+					write_coil(2,2,1);
+					write_coil(3,0,1);
+					write_coil(3,1,1);
+					write_coil(3,2,1);
+					write_coil(3,3,1);
+					write_coil(3,4,1);
+					write_coil(3,5,1);
+					write_coil(3,6,1);
+					write_coil(3,7,1);
+					write_coil(4,0,1);
+					write_coil(4,2,1);
+					write_coil(4,3,1);
+
+					write_coil(5,0,1);
+					write_coil(5,1,1);
+					write_coil(5,2,1);
+					write_coil(5,3,1);
+					write_coil(5,4,1);
+					write_coil(5,5,1);
+					write_coil(5,6,1);
+					write_coil(5,7,1);
+					
+					write_coil(6,0,1);
+			
+					write_coil(14,0,1);
+					write_coil(14,1,1);
+					write_coil(14,2,1);
+					write_coil(14,3,1);
+					write_coil(14,4,1);
+					write_coil(14,5,1);
+					write_coil(14,6,1);
+					write_coil(14,7,1);
+	
+					write_coil(15,1,1);
+					write_coil(15,2,1);
+					write_coil(15,3,1);
+					write_coil(15,4,1);
+					write_coil(15,5,1);
+				}
+				ztime_flag = 1;
+			} else if( (modbus_Holding[104] == modbus_Holding[30]) && (modbus_Holding[105] == modbus_Holding[31]) ) {
+				if(ztime_flag == 0) {
+					write_coil(1,0,0);
+					write_coil(1,1,0);
+					write_coil(1,5,0);
+					write_coil(1,6,0);
+					write_coil(1,7,0);
+					write_coil(2,0,0);
+					write_coil(2,2,0);
+					write_coil(3,0,0);
+					write_coil(3,1,0);
+					write_coil(3,2,0);
+					write_coil(3,3,0);
+					write_coil(3,4,0);
+					write_coil(3,5,0);
+					write_coil(3,6,0);
+					write_coil(3,7,0);
+					write_coil(4,0,0);
+					write_coil(4,2,0);
+					write_coil(4,3,0);
+
+					write_coil(5,0,0);
+					write_coil(5,1,0);
+					write_coil(5,2,0);
+					write_coil(5,3,0);
+					write_coil(5,4,0);
+					write_coil(5,5,0);
+					write_coil(5,6,0);
+					write_coil(5,7,0);
+					
+					write_coil(6,0,0);
+			
+					write_coil(14,0,0);
+					write_coil(14,1,0);
+					write_coil(14,2,0);
+					write_coil(14,3,0);
+					write_coil(14,4,0);
+					write_coil(14,5,0);
+					write_coil(14,6,0);
+					write_coil(14,7,0);
+	
+					write_coil(15,1,0);
+					write_coil(15,2,0);
+					write_coil(15,3,0);
+					write_coil(15,4,0);
+					write_coil(15,5,0);
+				}
+				ztime_flag = 1;
+			} else {
+				ztime_flag = 0;
+			}
+		}
+		
 		if(modbus_Holding[12] == 1) {
 			/*光电控制*/
 			static uint8_t shangshengyan = 0;

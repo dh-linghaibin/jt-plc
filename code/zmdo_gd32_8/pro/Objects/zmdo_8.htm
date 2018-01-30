@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\zmdo_8.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\zmdo_8.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Thu Dec 28 16:03:08 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Tue Jan 30 15:36:15 2018
 <BR><P>
 <H3>Maximum Stack Usage =        128 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -905,6 +905,11 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bxcan_init
 </UL>
 
+<P><STRONG><a name="[81]"></a>flash_read32</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, flash.o(i.flash_read32))
+<BR><BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_write
+<LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_read
+</UL>
+
 <P><STRONG><a name="[5f]"></a>OutsignalClock</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, outsignal.o(i.OutsignalClock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = OutsignalClock
 </UL>
@@ -913,9 +918,10 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OutsignedInit
 </UL>
 
-<P><STRONG><a name="[81]"></a>flash_read32</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, flash.o(i.flash_read32))
-<BR><BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_write
-<LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_read
+<P><STRONG><a name="[91]"></a>NVIC_SetPriority</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, time.o(i.NVIC_SetPriority))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = NVIC_SetPriority
+</UL>
+<BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;time_init
 </UL>
 
 <P><STRONG><a name="[6d]"></a>TM1650Send</STRONG> (Thumb, 134 bytes, Stack size 16 bytes, tm1650.o(i.TM1650Send))
@@ -945,20 +951,14 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Tm1650Init
 </UL>
 
-<P><STRONG><a name="[91]"></a>NVIC_SetPriority</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, time.o(i.NVIC_SetPriority))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = NVIC_SetPriority
-</UL>
-<BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;time_init
-</UL>
-
-<P><STRONG><a name="[90]"></a>system_clock_72m_hxtal</STRONG> (Thumb, 182 bytes, Stack size 0 bytes, system_gd32f10x.o(i.system_clock_72m_hxtal))
+<P><STRONG><a name="[90]"></a>system_clock_108m_hxtal</STRONG> (Thumb, 182 bytes, Stack size 0 bytes, system_gd32f10x.o(i.system_clock_108m_hxtal))
 <BR><BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_config
 </UL>
 
 <P><STRONG><a name="[65]"></a>system_clock_config</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, system_gd32f10x.o(i.system_clock_config))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = system_clock_config
 </UL>
-<BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_72m_hxtal
+<BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_108m_hxtal
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
 </UL>
