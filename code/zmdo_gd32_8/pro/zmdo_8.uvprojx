@@ -7,9 +7,10 @@
 
   <Targets>
     <Target>
-      <TargetName>Target 1</TargetName>
+      <TargetName>zmdo+8</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>GD32F103C8</Device>
@@ -255,17 +256,17 @@
                 <Size>0x0</Size>
               </XRAM>
               <OCR_RVCT1>
-                <Type>0</Type>
+                <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
               </OCR_RVCT1>
               <OCR_RVCT2>
-                <Type>0</Type>
+                <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
               </OCR_RVCT2>
               <OCR_RVCT3>
-                <Type>0</Type>
+                <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
               </OCR_RVCT3>
@@ -275,7 +276,7 @@
                 <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
-                <Type>0</Type>
+                <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
               </OCR_RVCT5>
@@ -321,7 +322,7 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -334,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\device\include;..\frame</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -376,10 +377,425 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>user</GroupName>
+          <Files>
+            <File>
+              <FileName>app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user\app.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>device</GroupName>
+          <Files>
+            <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\can.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>outsignal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\outsignal.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm1650.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\tm1650.c</FilePath>
+            </File>
+            <File>
+              <FileName>wdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\wdog.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>frame</GroupName>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
+        </Group>
+        <Group>
+          <GroupName>::Device</GroupName>
         </Group>
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.0" condition="Cortex-M ARMv8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.0.0-Beta12"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="ADC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="BKP" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="CAN" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="CRC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DAC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DBG" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DMA" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="ENET" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="EXMC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="EXTI" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="FMC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="FWDGT" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="GPIO" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="I2C" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="MISC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x CMSIS">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="PMU" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="RCU" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS MISC">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="RTC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="SDIO" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="SPI_I2S" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="TIMER" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="USART" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="WWDGT" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="GD32F10x_libopt" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x CMSIS">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Startup" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10xMD">
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </component>
+    </components>
+    <files>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_adc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_adc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="ADC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_bkp.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_bkp.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="BKP" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_can.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_can.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="CAN" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_crc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_crc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="CRC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_dac.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_dac.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DAC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_dbg.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_dbg.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DBG" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_dma.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_dma.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="DMA" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_enet.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_enet.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="ENET" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_exmc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_exmc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="EXMC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_exti.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_exti.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="EXTI" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_fmc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_fmc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="FMC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_fwdgt.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_fwdgt.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="FWDGT" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_gpio.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_gpio.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="GPIO" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_i2c.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_i2c.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="I2C" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_misc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_misc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="MISC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x CMSIS"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_pmu.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_pmu.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="PMU" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_rcu.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_rcu.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="RCU" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS MISC"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_rtc.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_rtc.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="RTC" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_sdio.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_sdio.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="SDIO" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_spi.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_spi.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="SPI_I2S" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_timer.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_timer.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="TIMER" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_usart.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_usart.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="USART" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Firmware\Peripherals\src\gd32f10x_wwdgt.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\gd32f10x_wwdgt.c</instance>
+        <component Cclass="Device" Cgroup="GD32F10x_StdPeripherals" Csub="WWDGT" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10x STDPERIPHERALS RCU"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" condition="Compiler ARMCC" name="Device\Source\ARM\startup_gd32f10x_md.s" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\startup_gd32f10x_md.s</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10xMD"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Source\system_gd32f10x.c" version="2.0.0">
+        <instance index="0">RTE\Device\GD32F103C8\system_gd32f10x.c</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="GigaDevice" Cversion="2.0.0" condition="GD32F10xMD"/>
+        <package name="GD32F10x_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="GigaDevice" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="zmdo+8"/>
+        </targetInfos>
+      </file>
+    </files>
+  </RTE>
 
 </Project>
