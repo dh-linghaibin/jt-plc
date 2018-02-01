@@ -62,19 +62,19 @@ void OutsignalSetout(Stdoutsignal_n* outsignal,uint8_t num,uint8_t var) {
         case 3:
             out_pin = outsignal->DO4;
         break;
+//        case 4:
+//            out_pin = outsignal->DO5;
+//        break;
+//        case 5:
+//            out_pin = outsignal->DO6;
+//        break;
+//        case 6:
+//            out_pin = outsignal->DO7;
+//        break;
+//        case 7:
+//            out_pin = outsignal->DO8;
+//        break;
         case 4:
-            out_pin = outsignal->DO5;
-        break;
-        case 5:
-            out_pin = outsignal->DO6;
-        break;
-        case 6:
-            out_pin = outsignal->DO7;
-        break;
-        case 7:
-            out_pin = outsignal->DO8;
-        break;
-        case 8:
             outsignal->all_pin_var = var;
             out_pin = outsignal->DO1;
             gpio_bit_write(out_pin.port,out_pin.pin,(FlagStatus)(var));
@@ -124,19 +124,19 @@ uint8_t OutsignalReadout(Stdoutsignal_n* outsignal,uint8_t num) {
         case 3:
             out_pin = outsignal->DO4;
         break;
+//        case 4:
+//            out_pin = outsignal->DO5;
+//        break;
+//        case 5:
+//            out_pin = outsignal->DO6;
+//        break;
+//        case 6:
+//            out_pin = outsignal->DO7;
+//        break;
+//        case 7:
+//            out_pin = outsignal->DO8;
+//        break;
         case 4:
-            out_pin = outsignal->DO5;
-        break;
-        case 5:
-            out_pin = outsignal->DO6;
-        break;
-        case 6:
-            out_pin = outsignal->DO7;
-        break;
-        case 7:
-            out_pin = outsignal->DO8;
-        break;
-        case 8:
             return outsignal->all_pin_var;
        // break;
     }

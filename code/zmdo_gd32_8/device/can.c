@@ -7,6 +7,8 @@
 
 #include "can.h"
 #include <cstring>
+
+static uint16_t * can_id;
 /*!
     \brief      initialize CAN and filter
     \param[in]  can_parameter
@@ -34,6 +36,7 @@ static void can_config(can_parameter_struct can_parameter, can_filter_parameter_
 */
 static void nvic_config(void) {
     /* configure CAN0 NVIC */
+	nvic_irq_enable(CAN0_RX1_IRQn,0,0);
     nvic_irq_enable(USBD_LP_CAN0_RX0_IRQn,0,1);
 	//nvic_irq_enable(USBD_HP_CAN0_TX_IRQn,0,2);
 }
@@ -59,6 +62,8 @@ static void can_gpio_config(void) {
 }
 
 void bxcan_init(struct _can_obj* can) {
+	can_id = &can->id;
+	
 	can_parameter_struct can_init_parameter;
 	can_filter_parameter_struct can_filter_parameter;
 
@@ -71,19 +76,56 @@ void bxcan_init(struct _can_obj* can) {
     can_init_parameter.trans_fifo_order = DISABLE;
     can_init_parameter.working_mode = CAN_NORMAL_MODE;
     can_init_parameter.resync_jump_width = CAN_BT_SJW_1TQ;
-    can_init_parameter.time_segment_1 = CAN_BT_BS1_3TQ;
-    can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
-	can_init_parameter.prescaler = 144;
-	
+	switch(can->btl) {
+        case B_250K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_2TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+			can_init_parameter.prescaler = 36;
+        break;
+        case B_125K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_2TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+			can_init_parameter.prescaler = 72;
+        break;
+        case B_50K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_2TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+			can_init_parameter.prescaler = 180;
+        break;
+        case B_20K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_2TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+			can_init_parameter.prescaler = 450;
+        break;
+        case B_10K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_6TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_1TQ;
+			can_init_parameter.prescaler = 450;
+        break;
+        case B_5K:
+			can_init_parameter.time_segment_1 = CAN_BT_BS1_13TQ;
+			can_init_parameter.time_segment_2 = CAN_BT_BS2_2TQ;
+			can_init_parameter.prescaler = 450;
+        break;
+    }
 	/* initialize filter */ 
-    can_filter_parameter.filter_number=0;
-    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
+//    can_filter_parameter.filter_number=0;
+//    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
+//    can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
+//    can_filter_parameter.filter_list_high = (can->id<<5);
+//    can_filter_parameter.filter_list_low = 0|0x00000000;
+//    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
+//    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
+//    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
+//    can_filter_parameter.filter_enable = ENABLE;
+	can_filter_parameter.filter_number=0;
+	can_filter_parameter.filter_mode = CAN_FILTERMODE_MASK;
     can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
-    can_filter_parameter.filter_list_high = (can->id<<5);
-    can_filter_parameter.filter_list_low = 0|0x00000000;
-    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
-    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
-    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
+    can_filter_parameter.filter_list_high = 0x0000;
+    can_filter_parameter.filter_list_low = 0x0000;
+    can_filter_parameter.filter_mask_high = 0x0000;
+    can_filter_parameter.filter_mask_low = 0x0000;  
+    can_filter_parameter.filter_fifo_number = CAN_FIFO1;
     can_filter_parameter.filter_enable = ENABLE;
 
 	/* configure GPIO */
@@ -95,6 +137,7 @@ void bxcan_init(struct _can_obj* can) {
     /* enable can receive FIFO0 not empty interrupt */
 	can_interrupt_enable(CAN0, CAN_INT_RFNE0);
 	can_interrupt_enable(CAN0, CAN_INT_RFO0);
+	can_interrupt_enable(CAN0, CAN_INT_RFNE1);
 }
 
 void bxcan_send(struct _can_obj* can) {
@@ -147,21 +190,22 @@ void bxcan_send(struct _can_obj* can) {
 }
 
 void bxcan_set_id(struct _can_obj* can,uint8_t id) {
-	can_filter_parameter_struct can_filter_parameter;
-	
+//	can_filter_parameter_struct can_filter_parameter;
+//	
 	can->id = id;
+	can_id = &can->id;
 
-	/* initialize filter */ 
-    can_filter_parameter.filter_number=0;
-    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
-    can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
-    can_filter_parameter.filter_list_high = (can->id<<5);
-    can_filter_parameter.filter_list_low = 0|0x00000000;
-    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
-    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
-    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
-    can_filter_parameter.filter_enable = ENABLE;
-	can_filter_init(&can_filter_parameter);
+//	/* initialize filter */ 
+//    can_filter_parameter.filter_number=0;
+//    can_filter_parameter.filter_mode = CAN_FILTERMODE_LIST;
+//    can_filter_parameter.filter_bits = CAN_FILTERBITS_32BIT;
+//    can_filter_parameter.filter_list_high = (can->id<<5);
+//    can_filter_parameter.filter_list_low = 0|0x00000000;
+//    can_filter_parameter.filter_mask_high = ((can->ext_id<<3)>>16) & 0xffff;
+//    can_filter_parameter.filter_mask_low = ((can->ext_id<<3)& 0xffff) | 0x00000004;
+//    can_filter_parameter.filter_fifo_number = CAN_FIFO0;
+//    can_filter_parameter.filter_enable = ENABLE;
+//	can_filter_init(&can_filter_parameter);
 }
 
 static can_package_obj can_rx_package = {
@@ -189,55 +233,33 @@ void USBD_LP_CAN0_RX0_IRQHandler(void) {
 			break;
 		}
 	}
-//	uint8_t can_rx_flag = 0;/* 没有包的标志 */
-//	for(int i = 0;i < PACKAGE_NUM;i++) {
-//		if(can_rx_package.package[i][0] > 0) {
-//			if(can_rx_package.package[i][1] == receive_message.rx_data[0]) { /* 判断地址是否相同 */
-//				uint8_t pack_len = can_rx_package.package[i][4]/7;
-//				if(can_rx_package.package[i][3]%7 != 0) {
-//					pack_len += 1;
-//				}
-//				if(can_rx_package.package[i][0] < pack_len) { /* 一个包的最大数据长度 */
-//					uint8_t pack_num = 1 + can_rx_package.package[i][0] * 8;
-//					for(int j = 0;j < 8;j++) { /* 打包 */
-//						can_rx_package.package[i][pack_num+j] = receive_message.rx_data[j];
-//					}
-//					can_rx_package.package[i][0]++;
-//					if(can_rx_package.package[i][0] >= pack_len) {
-//						/* 打包完成 */
-//						can_rx_package.package[i][0] = 0xff;
-//					}
-//				} else {
-//					/* 打包完成 */
-//					can_rx_package.package[i][0] = 0xff;
-//				}
-//				can_rx_flag = 1;
-//				break;
-//			}
-//		}
-//	}
-//	if(0 == can_rx_flag) {
-//		if(receive_message.rx_data[1] == 0x3a) { /* 头帧保护 */
-//			for(int i = 0;i < PACKAGE_NUM;i++) {
-//				if(can_rx_package.package[i][0] == 0) {
-//					for(int j = 0;j < 8;j++) { /* 打包 */
-//						can_rx_package.package[i][1+j] = receive_message.rx_data[j];
-//					}
-//					if(can_rx_package.package[i][4] <= 4) {
-//						/* 打包完成 */
-//						can_rx_package.package[i][0] = 0xff;
-//					} else {
-//						can_rx_package.package[i][0]++;
-//					}
-//					break;
-//				}
-//			}
-//		}
-//	}
 }
 
 void USBD_HP_CAN0_TX_IRQHandler(void) {
 	
+}
+
+FlagStatus receive_flag;
+can_receive_message_struct receive_message;
+/*!
+    \brief      this function handles CAN0 RX0 exception
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void CAN0_RX1_IRQHandler(void) {
+    /* check the receive message */
+    can_message_receive(CAN0, CAN_FIFO1, &receive_message);
+    if( ( (*can_id == receive_message.rx_sfid)||(0x1000 == receive_message.rx_sfid) )&&
+		  (CAN_FF_STANDARD == receive_message.rx_ff) ){
+		for(int i = 0;i < PACKAGE_NUM;i++) {
+			if(can_rx_package.package[i].flag == F_NO_USE) {
+				memcpy(can_rx_package.package[i].dat,receive_message.rx_data,8);
+				can_rx_package.package[i].flag  = F_USE;
+				break;
+			}
+		}
+    }
 }
 
 

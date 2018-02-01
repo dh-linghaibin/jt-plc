@@ -15,7 +15,7 @@ typedef struct {
     Stdtm1650_pin_TypeDef sda;
     const uint8_t show_code[14];
     uint8_t key_count[11];//按键状态
-    uint8_t show_merry[4];//led状态
+    uint8_t show_merry[3];//led状态
     uint8_t key_down_num;//哪个按钮被按下了
 }Stdtm1650_n; 
 

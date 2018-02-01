@@ -30,6 +30,15 @@ typedef enum {
 }packet_cmd_e;
 
 typedef enum {
+	B_250K = 5,
+    B_125K = 4,
+    B_50K = 3,
+    B_20K = 2,
+    B_10K = 1,
+    B_5K = 0,
+}btl_e;
+
+typedef enum {
 	F_NO_USE = 0,
 	F_USE,
 	F_PACK_OK,
@@ -68,7 +77,7 @@ typedef struct _can_message_obj {
 
 typedef struct _can_obj{   
 	uint16_t id;
-    uint32_t ext_id;
+	btl_e btl;
     uint8_t send_packed[8];
 	can_message_obj send_msg;
     void (*init)(struct _can_obj* can);

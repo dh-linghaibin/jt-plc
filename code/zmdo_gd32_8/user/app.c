@@ -18,14 +18,14 @@
 
 static Stdoutsignal OUTSIGNAL = {
 	{
-		{GPIOA, GPIO_PIN_0},
-		{GPIOA, GPIO_PIN_1},
-		{GPIOA, GPIO_PIN_2},
-		{GPIOA, GPIO_PIN_3},
-		{GPIOA, GPIO_PIN_4},
-		{GPIOA, GPIO_PIN_5},
-		{GPIOA, GPIO_PIN_6},
 		{GPIOA, GPIO_PIN_7},
+		{GPIOA, GPIO_PIN_6},
+		{GPIOA, GPIO_PIN_5},
+		{GPIOA, GPIO_PIN_4},
+		{GPIOA, GPIO_PIN_3},
+		{GPIOA, GPIO_PIN_2},
+		{GPIOA, GPIO_PIN_1},
+		{GPIOA, GPIO_PIN_0},
 		
 		{GPIOB, GPIO_PIN_0},
 		0,
@@ -44,9 +44,8 @@ static flash_obj flash = {
 };
 
 static can_obj can_bus = {
-	
 		4,
-		0x1800f001,
+		B_50K,
 		{0,0,0,0,0,0,0,0},
 		{0},
 	&bxcan_init,
@@ -62,7 +61,7 @@ static Stdtm1650 TM1650 = {
 		{0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D,
 		0x07, 0x7F, 0x6F, 0x76, 0x40,0x79, 0x00},
 		{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
-		{0x00,0x00,0x00,0x00},
+		{0x00,0x00,0x00},
 	},
 	&Tm1650Init,
 	&Tm1650ShowNex,
@@ -100,26 +99,18 @@ fsm_init_name(menu_task)
 		me.but_key = TM1650.readkey(&TM1650.tm1650_n);
 		if(me.but_key == 0x67) {
 			TM1650.tm1650_n.key_down_num = 0;
-		} else if(me.but_key == 0x5f) {
-			TM1650.tm1650_n.key_down_num = 1;
-		} else if(me.but_key == 0x57) {
-			TM1650.tm1650_n.key_down_num = 2;
 		} else if(me.but_key == 0x6f) {
+			TM1650.tm1650_n.key_down_num = 1;
+		} else if(me.but_key == 0x77) {
+			TM1650.tm1650_n.key_down_num = 2;
+		} else if(me.but_key == 0x5f) {
 			TM1650.tm1650_n.key_down_num = 3;
 		} else if(me.but_key == 0x47) {
+			TM1650.tm1650_n.key_down_num = 9;
+		} else if(me.but_key == 0x57) {
 			TM1650.tm1650_n.key_down_num = 4;
 		} else if(me.but_key == 0x4f) {
-			TM1650.tm1650_n.key_down_num = 5;
-		} else if(me.but_key == 0x77) {	
-			TM1650.tm1650_n.key_down_num = 6;
-		} else if(me.but_key == 0x76) {
-			TM1650.tm1650_n.key_down_num = 7;
-		} else if(me.but_key == 0x66) {
-			TM1650.tm1650_n.key_down_num = 9;
-		} else if(me.but_key == 0x5e) {
 			TM1650.tm1650_n.key_down_num = 10;
-		} else if(me.but_key == 0x56) {
-			TM1650.tm1650_n.key_down_num = 8;
 		} else {
 			if(TM1650.tm1650_n.key_down_num == 9) {
 				if( (TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] >= 1) &&
@@ -142,7 +133,7 @@ fsm_init_name(menu_task)
 			TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] = 0;
 			TM1650.tm1650_n.key_down_num = 20;
 		}
-		if(TM1650.tm1650_n.key_down_num <= 8) { 
+		if(TM1650.tm1650_n.key_down_num <= 4) { 
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 2)
 				TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] ++;
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] == 1) {
@@ -305,6 +296,9 @@ fsm_init_name(can_rx_task)
 							case 3:
 
 							break;
+							case 0xfe: {
+								
+							} break;
 						}
 					}
 						break;
@@ -313,7 +307,6 @@ fsm_init_name(can_rx_task)
 				/* 保存设备继电器信息 */
 				{
 					uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-					//flash.write(C_DEVICE_VAL,val);
 				}
 				/*更新设备情况*/
 				can_bus.send_msg.send_id = 0xff;	  /* 目标设备地址 */
@@ -357,7 +350,7 @@ int main(void) {
         flash.read(C_DEVICE_VAL,&addr);
 		OUTSIGNAL.outsignal_n.coil_val = addr;
         coil_val = OUTSIGNAL.outsignal_n.coil_val;
-        for(uint8_t i = 0;i < 8;i++) {
+        for(uint8_t i = 0;i < 4;i++) {
             uint8_t val = 1;
             if ((coil_val & 0x80) == 0) {
                 val = 0;

@@ -109,70 +109,68 @@ void Tm1650ShowLed(Stdtm1650_n * tm1650n,uint8_t num,uint8_t var) {
         switch(num) {
             case 0:
             if(var == 0) {
-                tm1650n->show_merry[3] &= 0xef;
+                tm1650n->show_merry[2] &= 0xef;
             } else {
-                tm1650n->show_merry[3] |= 0x10;
+                tm1650n->show_merry[2] |= 0x10;
             }
             break;
             case 1:
             if(var == 0) {
-                tm1650n->show_merry[3] &= 0xf7;
+                tm1650n->show_merry[2] &= 0xdf;
             } else {
-                tm1650n->show_merry[3] |= 0x08;
+                tm1650n->show_merry[2] |= 0x20;
             }
             break;
             case 2:
             if(var == 0) {
-                tm1650n->show_merry[3] &= 0xfb;
+                tm1650n->show_merry[2] &= 0xbf;
             } else {
-                tm1650n->show_merry[3] |= 0x04;
+                tm1650n->show_merry[2] |= 0x40;
             }
             break;
             case 3:
             if(var == 0) {
-                tm1650n->show_merry[3] &= 0xdf;
+                tm1650n->show_merry[2] &= 0xf7;
             } else {
-                tm1650n->show_merry[3] |= 0x20;
+                tm1650n->show_merry[2] |= 0x08;
             }
             break;
+//            case 4:
+//            if(var == 0) {
+//                tm1650n->show_merry[3] &= 0xfe;
+//            } else {
+//                tm1650n->show_merry[3] |= 0x01;
+//            }
+//            break;
+//            case 5:
+//            if(var == 0) {
+//                tm1650n->show_merry[3] &= 0xfd;
+//            } else {
+//                tm1650n->show_merry[3] |= 0x02;
+//            }
+//            break;
+//            case 6:
+//            if(var == 0) {
+//                tm1650n->show_merry[3] &= 0xbf;
+//            } else {
+//                tm1650n->show_merry[3] |= 0x40;
+//            }
+//            break;
+//            case 7:
+//            if(var == 0) {
+//                tm1650n->show_merry[3] &= 0x7f;
+//            } else {
+//                tm1650n->show_merry[3] |= 0x80;
+//            }
+//            break;
             case 4:
             if(var == 0) {
-                tm1650n->show_merry[3] &= 0xfe;
+                tm1650n->show_merry[2] &= 0x03;
             } else {
-                tm1650n->show_merry[3] |= 0x01;
-            }
-            break;
-            case 5:
-            if(var == 0) {
-                tm1650n->show_merry[3] &= 0xfd;
-            } else {
-                tm1650n->show_merry[3] |= 0x02;
-            }
-            break;
-            case 6:
-            if(var == 0) {
-                tm1650n->show_merry[3] &= 0xbf;
-            } else {
-                tm1650n->show_merry[3] |= 0x40;
-            }
-            break;
-            case 7:
-            if(var == 0) {
-                tm1650n->show_merry[3] &= 0x7f;
-            } else {
-                tm1650n->show_merry[3] |= 0x80;
-            }
-            break;
-            case 8:
-            if(var == 0) {
-                tm1650n->show_merry[3] &= 0x00;
-                tm1650n->show_merry[2] &= 0xfb;
-            } else {
-                tm1650n->show_merry[3] |= 0xff;
-                tm1650n->show_merry[2] |= 0x04;
+                tm1650n->show_merry[2] |= 0xfc;
             }
             /*第三位*/
-            TM1650Send(tm1650n,THIRD_POSITION, tm1650n->show_merry[2]);
+            //TM1650Send(tm1650n,THIRD_POSITION, tm1650n->show_merry[2]);
             break;
             case 9://运行指示灯
             if(var == 0) {
@@ -189,13 +187,8 @@ void Tm1650ShowLed(Stdtm1650_n * tm1650n,uint8_t num,uint8_t var) {
             }
             break;
         }
-        if(num <= 8) {
-            /*第四位*/
-            TM1650Send(tm1650n,FOURTH_POSITON, tm1650n->show_merry[3]);
-        } else {
-            /*第三位*/
-            TM1650Send(tm1650n,THIRD_POSITION, tm1650n->show_merry[2]);
-        }
+        /*第三位*/
+		TM1650Send(tm1650n,THIRD_POSITION, tm1650n->show_merry[2]);
 }
 
 void Tm1650Init(Stdtm1650_n * tm1650n) { 
