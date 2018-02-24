@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>..\frame\list.c</FilePath>
             </File>
+            <File>
+              <FileName>co_configure.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\frame\co_configure.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
