@@ -472,31 +472,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>fatfs</GroupName>
-          <Files>
-            <File>
-              <FileName>diskio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\fatfs\diskio.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\fatfs\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffsystem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\fatfs\ffsystem.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffunicode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\fatfs\ffunicode.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>freertos</GroupName>
           <Files>
             <File>
@@ -653,26 +628,6 @@
               <FileName>readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\doc\readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ubasic</GroupName>
-          <Files>
-            <File>
-              <FileName>tokenizer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\ubasic\tokenizer.c</FilePath>
-            </File>
-            <File>
-              <FileName>ubasic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\ubasic\ubasic.c</FilePath>
-            </File>
-            <File>
-              <FileName>write_statement.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\software\ubasic\write_statement.c</FilePath>
             </File>
           </Files>
         </Group>

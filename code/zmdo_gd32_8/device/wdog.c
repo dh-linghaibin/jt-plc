@@ -8,7 +8,7 @@
 /* 私有函数声明 ***************************************************************/
 /* 私有函数  ******************************************************************/
 /* 变量 ----------------------------------------------------------------------*/
-void WdogInit(void) {
+void wdog_init(void) {
     /* enable IRC40K */
     rcu_osci_on(RCU_IRC40K);
   
@@ -28,7 +28,7 @@ void WdogInit(void) {
     }
 }
 
-void WdogReload(void) {
+void wdog_reload(void) {
     /* 从新导入IWDG计数器 */
     fwdgt_counter_reload();
 }

@@ -31,8 +31,8 @@ typedef enum {
 
 typedef enum {
 	F_NO_USE = 0,
-	F_USE,
-	F_PACK_OK,
+	F_USE = 1,
+	F_PACK_OK = 2,
 }packet_flag_e;
 
 #define PACKAGE_NUM 40

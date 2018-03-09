@@ -76,9 +76,9 @@ void bxcan_init(struct _can_obj* can) {
 //    CAN_InitStructure.CAN_BS1=CAN_BS1_4tq;	  //BTR-TS1 时间段1 占用了2个时间单元
 //    CAN_InitStructure.CAN_BS2=CAN_BS2_5tq;	  //BTR-TS1 时间段2 占用了3个时间单元
 //    CAN_InitStructure.CAN_Prescaler =72;
-	CAN_InitStructure.CAN_BS1=CAN_BS1_3tq;	  //BTR-TS1 时间段1 占用了2个时间单元
+	CAN_InitStructure.CAN_BS1=CAN_BS1_8tq;	  //BTR-TS1 时间段1 占用了2个时间单元
     CAN_InitStructure.CAN_BS2=CAN_BS2_1tq;	  //BTR-TS1 时间段2 占用了3个时间单元
-    CAN_InitStructure.CAN_Prescaler =720;
+    CAN_InitStructure.CAN_Prescaler =72;
     if (CAN_Init(CAN1,&CAN_InitStructure) == CANINITFAILED)           
     {  
         return;                                                       
@@ -186,6 +186,7 @@ can_package_obj*  bxcan_get_packget(struct _can_obj* can) {
 void USB_LP_CAN1_RX0_IRQHandler(void) {
 	UBaseType_t uxSavedInterruptStatus;
 	uxSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
+	//taskDISABLE_INTERRUPTS();
 
 	/* check the receive message */
 	CanRxMsg receive_message;
@@ -197,13 +198,17 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
         CAN_Receive(CAN1, CAN_FIFO0, &receive_message);
 		for(int i = 0;i < PACKAGE_NUM;i++) {
 			if(can_rx_package.package[i].flag == F_NO_USE) {
-				memcpy(can_rx_package.package[i].dat,receive_message.Data,8);
+				//memcpy(can_rx_package.package[i].dat,receive_message.Data,8);
+				for(int m_i = 0;m_i < 8;m_i++) {
+					can_rx_package.package[i].dat[m_i] = receive_message.Data[m_i];
+				}
 				can_rx_package.package[i].flag  = F_USE;
 				break;
 			}
 		}
     }
-
+	
+	//taskENABLE_INTERRUPTS(); 
 	portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedInterruptStatus );  
 }
 

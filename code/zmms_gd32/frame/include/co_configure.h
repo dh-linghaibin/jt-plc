@@ -14,6 +14,13 @@ extern "C" {
 
 #include "stm32f10x.h"
 
+typedef enum _coc_mode {
+	F_CONTRAL = 0X00,//消防
+	M_CONTRAL = 0x01, //手动
+	T_CONTRAL = 0x02,//时间控制
+	L_CONTRAL = 0X03,//光 控
+} coc_mode;
+
 typedef struct _co_configure_time {
 	uint16_t open_light_time1;
 	uint16_t close_light_time1;

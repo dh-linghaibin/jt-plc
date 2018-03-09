@@ -132,12 +132,12 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <Capability>1</Capability>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\device\include;..\frame</IncludePath>
+              <IncludePath>..\device\include;..\freertos\include;..\freertos\portable\RVDS\ARM_CM3;..\frame\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -405,11 +405,6 @@
               <FilePath>..\device\outsignal.c</FilePath>
             </File>
             <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\device\time.c</FilePath>
-            </File>
-            <File>
               <FileName>tm1650.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\device\tm1650.c</FilePath>
@@ -419,10 +414,27 @@
               <FileType>1</FileType>
               <FilePath>..\device\wdog.c</FilePath>
             </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\device\time.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>frame</GroupName>
+          <Files>
+            <File>
+              <FileName>event.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\frame\event.c</FilePath>
+            </File>
+            <File>
+              <FileName>stime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\frame\stime.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

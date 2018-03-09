@@ -8,6 +8,10 @@
 #ifndef _FSM_H_
 #define _FSM_H_
 
+#define DELAY_mS(t) vTaskDelay(t/portTICK_RATE_MS)
+#define DELAY_S(t) DELAY_mS(1000*t)
+#define DELAY_M(t) DELAY_S(60*t)
+
 // 3，得到指定地址上的一个字节或字
 #define MEM_B( x ) ( *( (byte *) (x) ) )
 #define MEM_W( x ) ( *( (word *) (x) ) )

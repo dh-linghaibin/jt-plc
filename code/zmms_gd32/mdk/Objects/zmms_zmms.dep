@@ -1,10 +1,7 @@
 Dependencies for Project 'zmms', Target 'zmms': (DO NOT MODIFY !)
-F (..\user\app.c)(0x5A90FE73)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\app.o --omf_browse .\objects\app.crf --depend .\objects\app.d)
+F (..\user\app.c)(0x5AA24310)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\app.o --omf_browse .\objects\app.crf --depend .\objects\app.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x574E3E26)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x574E3E26)
-I (..\software\fatfs\ff.h)(0x5A3A2015)
-I (..\software\fatfs\integer.h)(0x5A3A2015)
-I (..\software\fatfs\ffconf.h)(0x5A3A2015)
 I (..\device\include\led.h)(0x5A3A2015)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
 I (D:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\RTE_Components.h)(0x5A3A2015)
@@ -37,7 +34,7 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm3
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_usart.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)
-I (..\device\include\can.h)(0x5A90F939)
+I (..\device\include\can.h)(0x5AA23E9C)
 I (..\frame\include\modbus.h)(0x5A433C79)
 I (..\device\include\enc28j60.h)(0x5A3B143E)
 I (..\software\uip\uip.h)(0x5A3A2015)
@@ -50,7 +47,6 @@ I (..\software\uip\pt.h)(0x5A4480E0)
 I (..\software\uip\lc.h)(0x5A3A2015)
 I (..\software\uip\lc-switch.h)(0x5A3A2015)
 I (..\software\uip\uip_arp.h)(0x5A3A2015)
-I (..\software\ubasic\ubasic.h)(0x53789AFE)
 I (..\device\include\usart.h)(0x5A90F939)
 I (..\device\include\wdog.h)(0x5A90F939)
 I (..\device\include\rtc.h)(0x5A90F939)
@@ -67,8 +63,9 @@ I (..\software\freertos\include\mpu_wrappers.h)(0x58A4789E)
 I (..\software\freertos\include\task.h)(0x58A4789E)
 I (..\software\freertos\include\list.h)(0x58A4789E)
 I (..\software\freertos\include\timers.h)(0x58A4789E)
-F (..\frame\fsm.h)(0x5A3A2015)()
-F (..\frame\modbus.c)(0x5A90FCDD)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\modbus.o --omf_browse .\objects\modbus.crf --depend .\objects\modbus.d)
+I (..\frame\fsm.h)(0x5A9FBB6B)
+F (..\frame\fsm.h)(0x5A9FBB6B)()
+F (..\frame\modbus.c)(0x5AA1E4EF)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\modbus.o --omf_browse .\objects\modbus.crf --depend .\objects\modbus.d)
 I (..\frame\include\modbus.h)(0x5A433C79)
 I (..\device\include\enc28j60.h)(0x5A3B143E)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
@@ -158,8 +155,8 @@ I (C:\Keil_v5\ARM\ARMCC\include\ctype.h)(0x574E3E26)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x574E3E26)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x574E3E26)
 F (..\frame\list.c)(0x5A41CD1D)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\list.o --omf_browse .\objects\list.crf --depend .\objects\list.d)
-F (..\frame\co_configure.c)(0x5A91079D)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\co_configure.o --omf_browse .\objects\co_configure.crf --depend .\objects\co_configure.d)
-I (..\frame\include\co_configure.h)(0x5A91116D)
+F (..\frame\co_configure.c)(0x5AA1E4B6)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\co_configure.o --omf_browse .\objects\co_configure.crf --depend .\objects\co_configure.d)
+I (..\frame\include\co_configure.h)(0x5A9FA4DB)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
 I (D:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\RTE_Components.h)(0x5A3A2015)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
@@ -191,6 +188,18 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm3
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_usart.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)
+I (..\software\freertos\include\FreeRTOS.h)(0x58A4789E)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x574E3E26)
+I (..\software\freertos\include\FreeRTOSConfig.h)(0x5A90F93A)
+I (..\software\freertos\include\projdefs.h)(0x58A4789E)
+I (..\software\freertos\include\portable.h)(0x58A4789E)
+I (..\software\freertos\include\deprecated_definitions.h)(0x58A4789E)
+I (..\software\freertos\portable\RVDS\ARM_CM3\portmacro.h)(0x58A4789E)
+I (..\software\freertos\include\mpu_wrappers.h)(0x58A4789E)
+I (..\software\freertos\include\task.h)(0x58A4789E)
+I (..\software\freertos\include\list.h)(0x58A4789E)
+I (..\software\freertos\include\timers.h)(0x58A4789E)
+I (..\frame\fsm.h)(0x5A9FBB6B)
 F (..\device\w25qxx.c)(0x5A3A2015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\w25qxx.o --omf_browse .\objects\w25qxx.crf --depend .\objects\w25qxx.d)
 I (..\device\include\w25qxx.h)(0x5A3A2015)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
@@ -400,8 +409,8 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm3
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_usart.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)
-F (..\device\can.c)(0x5A90F939)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\can.o --omf_browse .\objects\can.crf --depend .\objects\can.d)
-I (..\device\include\can.h)(0x5A90F939)
+F (..\device\can.c)(0x5AA24150)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\can.o --omf_browse .\objects\can.crf --depend .\objects\can.d)
+I (..\device\include\can.h)(0x5AA23E9C)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
 I (D:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\RTE_Components.h)(0x5A3A2015)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
@@ -511,55 +520,6 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm3
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_usart.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x52F9EB20)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)
-F (..\software\fatfs\diskio.c)(0x5A3A2015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\diskio.o --omf_browse .\objects\diskio.crf --depend .\objects\diskio.d)
-I (..\software\fatfs\diskio.h)(0x5A3A2015)
-I (..\software\fatfs\integer.h)(0x5A3A2015)
-I (..\device\include\w25qxx.h)(0x5A3A2015)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\stm32f10x.h)(0x5825386C)
-I (D:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\RTE_Components.h)(0x5A3A2015)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\core_cm3.h)(0x57D7BCDA)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\cmsis_compiler.h)(0x57D7BCDA)
-I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include\cmsis_armcc.h)(0x57EB0E6C)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include\system_stm32f10x.h)(0x5825386C)
-I (D:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC\stm32f10x_conf.h)(0x5A3A2015)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_adc.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_bkp.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_can.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_cec.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_crc.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_dac.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_dbgmcu.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_dma.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_exti.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_flash.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_fsmc.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_gpio.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_i2c.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_iwdg.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_pwr.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_rcc.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_rtc.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_sdio.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_spi.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_tim.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_usart.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x52F9EB20)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)
-F (..\software\fatfs\ff.c)(0x5A3A2015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\ff.o --omf_browse .\objects\ff.crf --depend .\objects\ff.d)
-I (..\software\fatfs\ff.h)(0x5A3A2015)
-I (..\software\fatfs\integer.h)(0x5A3A2015)
-I (..\software\fatfs\ffconf.h)(0x5A3A2015)
-I (..\software\fatfs\diskio.h)(0x5A3A2015)
-I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x574E3E26)
-F (..\software\fatfs\ffsystem.c)(0x5A3A2015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\ffsystem.o --omf_browse .\objects\ffsystem.crf --depend .\objects\ffsystem.d)
-I (..\software\fatfs\ff.h)(0x5A3A2015)
-I (..\software\fatfs\integer.h)(0x5A3A2015)
-I (..\software\fatfs\ffconf.h)(0x5A3A2015)
-F (..\software\fatfs\ffunicode.c)(0x5A3A2015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\ffunicode.o --omf_browse .\objects\ffunicode.crf --depend .\objects\ffunicode.d)
-I (..\software\fatfs\ff.h)(0x5A3A2015)
-I (..\software\fatfs\integer.h)(0x5A3A2015)
-I (..\software\fatfs\ffconf.h)(0x5A3A2015)
 F (..\software\freertos\croutine.c)(0x58A4789E)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\croutine.o --omf_browse .\objects\croutine.crf --depend .\objects\croutine.d)
 I (..\software\freertos\include\FreeRTOS.h)(0x58A4789E)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x574E3E26)
@@ -872,33 +832,6 @@ I (..\software\freemodbus\modbus\include\mb.h)(0x5A3A2015)
 I (..\software\freemodbus\modbus\include\mbport.h)(0x5A3A2015)
 I (..\software\freemodbus\modbus\include\mbproto.h)(0x5A3A2015)
 F (..\doc\readme.txt)(0x5A90F939)()
-F (..\software\ubasic\tokenizer.c)(0x5A4B2D1F)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\tokenizer.o --omf_browse .\objects\tokenizer.crf --depend .\objects\tokenizer.d)
-I (..\software\ubasic\tokenizer.h)(0x5A431038)
-I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\ctype.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x574E3E26)
-F (..\software\ubasic\ubasic.c)(0x5A90F93A)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\ubasic.o --omf_browse .\objects\ubasic.crf --depend .\objects\ubasic.d)
-I (..\software\ubasic\ubasic.h)(0x53789AFE)
-I (..\software\ubasic\tokenizer.h)(0x5A431038)
-I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x574E3E26)
-I (..\software\freertos\include\FreeRTOS.h)(0x58A4789E)
-I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x574E3E26)
-I (..\software\freertos\include\FreeRTOSConfig.h)(0x5A90F93A)
-I (..\software\freertos\include\projdefs.h)(0x58A4789E)
-I (..\software\freertos\include\portable.h)(0x58A4789E)
-I (..\software\freertos\include\deprecated_definitions.h)(0x58A4789E)
-I (..\software\freertos\portable\RVDS\ARM_CM3\portmacro.h)(0x58A4789E)
-I (..\software\freertos\include\mpu_wrappers.h)(0x58A4789E)
-I (..\software\freertos\include\task.h)(0x58A4789E)
-I (..\software\freertos\include\list.h)(0x58A4789E)
-I (..\software\freertos\include\timers.h)(0x58A4789E)
-F (..\software\ubasic\write_statement.c)(0x5A430546)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\write_statement.o --omf_browse .\objects\write_statement.crf --depend .\objects\write_statement.d)
-I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\ctype.h)(0x574E3E26)
-I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x574E3E26)
 F (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Lib\ARM\arm_cortexM3l_math.lib)(0x57ECBD58)()
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\src\misc.c)(0x52F9EB20)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\device\include -I ..\frame -I ..\software\fatfs -I ..\software\uip -I ..\software\freemodbus\modbus\tcp -I ..\software\freemodbus\modbus\include -I ..\software\freemodbus\port -I ..\frame\include -I ..\software\ubasic -I ..\software\freertos\include -I ..\software\freertos\portable\RVDS\ARM_CM3 -I ..\software\tcp_file -I ..\software\lua-5.3.4 --c99-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE-ID:\03-project\53-jt_plc\code\zmms_gd32\mdk\RTE\Device\STM32F103RC-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta12\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="521" -D_RTE_ -DSTM32F10X_HD-o .\objects\misc.o --omf_browse .\objects\misc.crf --depend .\objects\misc.d)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\StdPeriph_Driver\inc\misc.h)(0x52F9EB20)

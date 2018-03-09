@@ -4,17 +4,19 @@
  * Copyright (c) 2016-2017 linghaibin
  *
  */
-
-//#include "timer.h"
 #include "can.h"
-//#include "sys.h"
 #include "tm1650.h"
 #include "outsignal.h"
 #include "flash.h"
-//#include "menu.h"
 #include "wdog.h"
 #include "fsm.h"
 #include "time.h"
+
+static time_obj time = {
+	.init	= time_init,
+	.get_1ms	= time_get_1ms,
+	.set_1ms	= time_set_1ms,
+};
 
 static Stdoutsignal OUTSIGNAL = {
 	{
@@ -38,22 +40,18 @@ static Stdoutsignal OUTSIGNAL = {
 	&OutsignalEmergencyStop,
 };
 
-static flash_obj flash = {
-	&flash_write,
-	&flash_read,
-};
 
-static can_obj can_bus = {
-	
-		4,
-		0x1800f001,
-		{0,0,0,0,0,0,0,0},
-		{0},
-	&bxcan_init,
-	&bxcan_send,
-	&bxcan_set_id,
-	&bxcan_get_packget,
-};
+//static can_obj can_bus = {
+//	
+//		4,
+//		0x1800f001,
+//		{0,0,0,0,0,0,0,0},
+//		{0},
+//	&bxcan_init,
+//	&bxcan_send,
+//	&bxcan_set_id,
+//	&bxcan_get_packget,
+//};
 
 static Stdtm1650 TM1650 = {
 	{
@@ -69,20 +67,38 @@ static Stdtm1650 TM1650 = {
 	&Tm1650ShowLed,
 	&TM1650ScanKey,
 };
-static time_obj time = {
-	&time_init,
-	&time_get_1ms,
-	&time_set_1ms,
-};
+
+static uint8_t ws_flag = 0;
 
 simple_fsm(LedTask,
 	)
 fsm_init_name(LedTask)
 	while(1) {
-		TM1650.show_led(&TM1650.tm1650_n,9,0);
-		WaitX(1000);
-		TM1650.show_led(&TM1650.tm1650_n,9,1);
-		WaitX(1000);
+		if(ws_flag == 0) {
+			TM1650.show_led(&TM1650.tm1650_n,9,0);
+			WaitX(2000);
+			TM1650.show_led(&TM1650.tm1650_n,9,1);
+			WaitX(2000);
+		} else {
+			TM1650.show_led(&TM1650.tm1650_n,10,0);
+			WaitX(2000);
+			TM1650.show_led(&TM1650.tm1650_n,10,1);
+			WaitX(2000);
+		}
+		switch(ws_flag) {
+			case 0: {
+				can_message_obj send_msg;
+				send_msg.send_id = 0xff;	  /* 目标设备地址 */
+				send_msg.id = bxcan_get_id(); /* 设备地址 */
+				send_msg.device_id = 0xd0;	  /* 设备类型 */
+				send_msg.cmd = 0xf1;		  /* 命令 */
+				send_msg.len = 0;			
+				bxcan_send(send_msg);
+			} break;
+			case 1: {
+
+			} break;
+		}
 	}
 fsm_end
 
@@ -152,17 +168,18 @@ fsm_init_name(menu_task)
 				TM1650.show_led(&TM1650.tm1650_n,TM1650.tm1650_n.key_down_num,var); 
 				/* 保存设备继电器信息 */
 				{
-					uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
+					//uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
 					//flash.write(C_DEVICE_VAL,val);
 				}
 				/*更新设备情况*/
-				can_bus.send_msg.send_id = 0xff;	  /* 目标设备地址 */
-				can_bus.send_msg.id = can_bus.id; /* 设备地址 */
-				can_bus.send_msg.device_id = 0xd0;	  /* 设备类型 */
-				can_bus.send_msg.cmd = 0x01;		  /* 命令 */
-				can_bus.send_msg.len = 1;			
-				can_bus.send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
-				can_bus.send(&can_bus);
+				can_message_obj send_msg;
+				send_msg.send_id = 0xff;	  /* 目标设备地址 */
+				send_msg.id = bxcan_get_id(); /* 设备地址 */
+				send_msg.device_id = 0xd0;	  /* 设备类型 */
+				send_msg.cmd = 0x01;		  /* 命令 */
+				send_msg.len = 1;			
+				send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
+				bxcan_send(send_msg);
 			}
 		} else if(TM1650.tm1650_n.key_down_num == 9) {
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 25)
@@ -171,15 +188,15 @@ fsm_init_name(menu_task)
 				switch(me.menu_flag) {
 					case 0:
 					me.menu_flag = 1;
-					me.menu_addr = can_bus.id;
+					me.menu_addr = bxcan_get_id();
 					fsm_task_init(tm1650_task);
 					fsm_task_on(tm1650_task);
 					break;
 					case 1:
-					can_bus.set_id(&can_bus,me.menu_addr);	/* 设置设备ID */
-					TM1650.show_nex(&TM1650.tm1650_n,0,can_bus.id/10);
-					TM1650.show_nex(&TM1650.tm1650_n,1,can_bus.id%10);
-					flash.write(C_ADDR,can_bus.id);
+					bxcan_set_id(me.menu_addr);	/* 设置设备ID */
+					TM1650.show_nex(&TM1650.tm1650_n,0,bxcan_get_id()/10);
+					TM1650.show_nex(&TM1650.tm1650_n,1,bxcan_get_id()%10);
+					flash_write(C_ADDR,bxcan_get_id());
 					fsm_task_off(tm1650_task);
 					break;
 				}
@@ -224,106 +241,71 @@ fsm_init_name(tm1650_task)
 		} else {
 			lmenu_task.menu_flag = 0;
 			me.lcd_out_num = 0;
-			TM1650.show_nex(&TM1650.tm1650_n,0,can_bus.id/10);
-			TM1650.show_nex(&TM1650.tm1650_n,1,can_bus.id%10);
+			TM1650.show_nex(&TM1650.tm1650_n,0,bxcan_get_id()/10);
+			TM1650.show_nex(&TM1650.tm1650_n,1,bxcan_get_id()%10);
 			fsm_task_off(tm1650_task);
 		}
 	}
 fsm_end
 
-can_packr_obj pacckr[PACKAGE_NUM];
+
 
 simple_fsm(can_rx_task,)
 fsm_init_name(can_rx_task)
 	while(1) {
 		WaitX(100);
-		can_package_obj *pack = can_bus.get_packget(&can_bus);
-		for(int i = 0;i < PACKAGE_NUM;i++) {
-			uint8_t can_rx_flag = 0;
-			if(pack->package[i].flag == F_USE) { /* 获取数据 */
-				for(int j = 0;j < PACKAGE_NUM;j++) {
-					if(pacckr[j].flag == F_USE) { /* 判断是否使用 */
-						if(pacckr[j].id == pack->package[i].dat[0]) { /* 判断ID是否相同 */
-							for(int k = 0;k < 7;k++) { /* 打包 */
-								pacckr[j].arr[pacckr[j].pack_bum + k] = pack->package[i].dat[1+k];
-							}
-							pacckr[j].pack_bum += 7;
-							if(pacckr[j].pack_bum >= pacckr[j].len) { /* 判断打包是否完成 */
-								pacckr[j].flag = F_PACK_OK; /* 打包完成 */
-							}
-							can_rx_flag = 1;
-						}
-						break;
-					}
-				}
-				if(can_rx_flag == 0) {
-					if(pack->package[i].dat[1] == 0x3a) { /* 判断这个一帧是不是头针 */
-						for(int j = 0;j < PACKAGE_NUM;j++) {
-							if(pacckr[j].flag == F_NO_USE) { /* 寻找未使用包 */
-								pacckr[j].id = pack->package[i].dat[0]; /* 获取ID */
-								pacckr[j].device_id = pack->package[i].dat[2];
-								pacckr[j].len = pack->package[i].dat[3];
-								pacckr[j].cmd = pack->package[i].dat[4];
-								for(int k = 0;k < 3;k++) { /* 打包 */
-									pacckr[j].arr[k] = pack->package[i].dat[5+k];
-								}
-								if(pacckr[j].len <= 3) { 
-									pacckr[j].flag = F_PACK_OK; /* 打包完成 */
-								} else {
-									pacckr[j].pack_bum = 3;
-									pacckr[j].flag = F_USE; /* 提示第一个包已经打包完成 */
-								}
-								break;
-							}
-						}
-					}
-				}
-				pack->package[i].flag = F_NO_USE;//表示这个已经打包完成
-			}
-		}
+		bxcan_lb_poll();
 		/* 运行命令 */
+		can_packr_obj *pacckr = bxcan_lb_get_msg();
 		for(int i = 0;i < PACKAGE_NUM;i++) { 
 			if(pacckr[i].flag == F_PACK_OK) {
-				switch(pacckr[i].device_id) {
-					case 0xf0: { /* 八位数字输出 */
-						switch(pacckr[i].cmd) {
-							case 0:
-							
-							break;
-							case 1: {
-								uint8_t dat = pacckr[i].arr[0];
-								for(int i = 0;i < 8;i++) {
-									OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,(dat&0x01)<<7); 
-									TM1650.show_led(&TM1650.tm1650_n,i,(dat&0x01)<<7);
-									 dat>>=1;
+				switch(pacckr[i].cmd) {
+					case 0xf1: {
+						ws_flag = 1;
+					} break;
+					default: {
+							switch(pacckr[i].device_id) {
+								case 0xf0: { /* 八位数字输出 */
+									switch(pacckr[i].cmd) {
+										case 0:
+										
+										break;
+										case 1: {
+											uint8_t dat = pacckr[i].arr[0];
+											for(int i = 0;i < 8;i++) {
+												OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,(dat&0x01)<<7); 
+												TM1650.show_led(&TM1650.tm1650_n,i,(dat&0x01)<<7);
+												 dat>>=1;
+											}
+										}
+											break;	
+										case 2:
+
+										break;
+										case 3:
+
+										break;
+									}
 								}
+									break;
 							}
-								break;	
-							case 2:
-
-							break;
-							case 3:
-
-							break;
-						}
-					}
-						break;
+							//WaitX(1); /* 休息一下 */
+							/* 保存设备继电器信息 */
+							{
+								//uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
+								//flash.write(C_DEVICE_VAL,val);
+							}
+							/*更新设备情况*/
+							can_message_obj send_msg;
+							send_msg.send_id = 0xff;	  /* 目标设备地址 */
+							send_msg.id = bxcan_get_id(); /* 设备地址 */
+							send_msg.device_id = 0xd0;	  /* 设备类型 */
+							send_msg.cmd = 0x01;		  /* 命令 */
+							send_msg.len = 1;			
+							send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
+							bxcan_send(send_msg);
+					} break;
 				}
-				WaitX(1); /* 休息一下 */
-				/* 保存设备继电器信息 */
-				{
-					uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-					//flash.write(C_DEVICE_VAL,val);
-				}
-				/*更新设备情况*/
-				can_bus.send_msg.send_id = 0xff;	  /* 目标设备地址 */
-				can_bus.send_msg.id = can_bus.id; /* 设备地址 */
-				can_bus.send_msg.device_id = 0xd0;	  /* 设备类型 */
-				can_bus.send_msg.cmd = 0x01;		  /* 命令 */
-				can_bus.send_msg.len = 1;			
-				can_bus.send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
-				can_bus.send(&can_bus);
-
 				pacckr[i].flag = F_NO_USE;/* 数据处理完毕 */
 			}
 		}
@@ -333,28 +315,28 @@ fsm_end
 int main(void) {
 	OUTSIGNAL.Init(&OUTSIGNAL.outsignal_n); /* 继电器初始化 */
 	TM1650.init(&TM1650.tm1650_n); 			/* 显示初始化 */
-	can_bus.init(&can_bus); 				/* can总线初始化 */
 	time.init(&time); 						/* 系统节拍初始化 */
+	bxcan_init();				/* can总线初始化 */
 	uint32_t addr = 0;						/* 读取地址 */
-	flash.read(C_FLAG,&addr);
+	flash_read(C_FLAG,&addr);
 	if(addr != 0x5555) {					/* 判断是否第一次上电 */
 		addr = 0x5555; 
-		flash.write(C_FLAG,addr);
+		flash_write(C_FLAG,addr);
 		addr = 99;
-		flash.write(C_ADDR,addr);
+		flash_write(C_ADDR,addr);
 		addr = 0x00;
-		flash.write(C_DEVICE_VAL,addr);
+		flash_write(C_DEVICE_VAL,addr);
 	}
-	flash.read(C_ADDR,&addr);
+	flash_read(C_ADDR,&addr);
 	if(addr > 100) { 						/* 保护地址合法范围 */
 		addr = 99;
 	}
 	TM1650.show_nex(&TM1650.tm1650_n,0,addr/10);/* 显示设备地址 */
 	TM1650.show_nex(&TM1650.tm1650_n,1,addr%10);
-	can_bus.set_id(&can_bus,addr);				/* 设置设备ID */
+	bxcan_set_id(addr);				/* 设置设备ID */
     if(OUTSIGNAL.readstop(&OUTSIGNAL.outsignal_n) == 1) {
         uint8_t coil_val = 0;
-        flash.read(C_DEVICE_VAL,&addr);
+        flash_read(C_DEVICE_VAL,&addr);
 		OUTSIGNAL.outsignal_n.coil_val = addr;
         coil_val = OUTSIGNAL.outsignal_n.coil_val;
         for(uint8_t i = 0;i < 8;i++) {
@@ -367,7 +349,7 @@ int main(void) {
             TM1650.show_led(&TM1650.tm1650_n,7-i,val);
         }
     }
-
+	//wdog_init();
 	fsm_task_on(LedTask);
 	fsm_task_on(menu_task);
 	fsm_task_on(can_rx_task);

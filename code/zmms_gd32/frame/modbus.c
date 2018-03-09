@@ -26,9 +26,10 @@
 #define REG_DISCRETE_SIZE     800                    // 开关寄存器数量
 
 static uint8_t modbus_coil[100];
- uint8_t modbus_coil_r[100];
- uint8_t modbus_input[100];
- int modbus_Holding[120];
+uint8_t modbus_coil_r[100];
+uint8_t modbus_input[20];
+
+int modbus_Holding[120];
 
 void modbus_init(struct _modbus_obj* modbus) {
 	uint8_t i;     

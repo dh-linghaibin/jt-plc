@@ -35,7 +35,7 @@ typedef enum {
 	F_PACK_OK,
 }packet_flag_e;
 
-#define PACKAGE_NUM 10
+#define PACKAGE_NUM 28
 /* Ω” ’ */
 typedef struct _pacck_obj {
 	uint8_t flag;
@@ -66,22 +66,12 @@ typedef struct _can_message_obj {
 	uint8_t arr[24];
 }can_message_obj;
 
-typedef struct _can_obj{   
-	uint16_t id;
-    uint32_t ext_id;
-    uint8_t send_packed[8];
-	can_message_obj send_msg;
-    void (*init)(struct _can_obj* can);
-    void (*send)(struct _can_obj* can);
-    void (*set_id)(struct _can_obj* can,uint8_t id);
-	can_package_obj* (*get_packget)(struct _can_obj* can);
-}can_obj; 
-
-
-void bxcan_init(struct _can_obj* can);
-void bxcan_send(struct _can_obj* can);
-void bxcan_set_id(struct _can_obj* can,uint8_t id);
-can_package_obj*  bxcan_get_packget(struct _can_obj* can);
+void bxcan_init(void);
+void bxcan_send(can_message_obj send_msg);
+void bxcan_set_id(uint8_t id);
+uint8_t bxcan_get_id(void);
+can_package_obj*  bxcan_get_packget(void);
+can_packr_obj* bxcan_lb_get_msg(void);
 
 #ifdef __cplusplus
 }
