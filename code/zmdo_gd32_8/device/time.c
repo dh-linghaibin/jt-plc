@@ -28,6 +28,6 @@ void time_set_1ms(struct _time_obj* time,uint8_t var) {
 	flag_1ms = var;
 }
 
-void SysTick_Handler(void) {
+void SysTick_Handler2(void) {
 	flag_1ms++;
 }

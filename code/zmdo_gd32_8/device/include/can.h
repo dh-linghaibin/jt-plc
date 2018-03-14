@@ -14,6 +14,8 @@ extern "C" {
 
 #include "gd32f10x.h"
 
+#define HEART_OVER_TIME 2500
+    
 typedef enum {
 	P_HEAD = 2,
 	P_CMD = 5,
@@ -35,7 +37,13 @@ typedef enum {
 	F_PACK_OK,
 }packet_flag_e;
 
-#define PACKAGE_NUM 28
+typedef enum {
+	LS_ACK_1 = 0, /* 发送握手信号 */
+	LS_ACK_2 = 1, /* 发送握手确认信号 */
+	LS_ACK_OK = 2, /* 握手成功 */
+} lb_state;
+
+#define PACKAGE_NUM 12
 /* 接收 */
 typedef struct _pacck_obj {
 	uint8_t flag;
@@ -53,7 +61,7 @@ typedef struct _can_packr_obj {
 	uint8_t device_id;
 	uint8_t cmd;
 	uint8_t len;
-	uint8_t arr[24];
+	uint8_t arr[16];
 }can_packr_obj;
 
 /* 发送 */
@@ -63,7 +71,7 @@ typedef struct _can_message_obj {
 	uint8_t device_id;
 	uint8_t len;
 	uint8_t cmd;
-	uint8_t arr[24];
+	uint8_t arr[16];
 }can_message_obj;
 
 void bxcan_init(void);
@@ -72,6 +80,9 @@ void bxcan_set_id(uint8_t id);
 uint8_t bxcan_get_id(void);
 can_package_obj*  bxcan_get_packget(void);
 can_packr_obj* bxcan_lb_get_msg(void);
+void bxcan_lb_poll(void);
+lb_state bxcan_get_state(void);
+void bxcan_set_rx_callback(void (*rx_callback)(can_packr_obj *pacckr));
 
 #ifdef __cplusplus
 }

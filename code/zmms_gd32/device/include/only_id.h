@@ -16,7 +16,6 @@ extern "C" {
 
 typedef struct _only_id_obj {
 	uint8_t id[12]; 
-	void (*get_id)(struct _only_id_obj* id);
 }only_id_obj;
 
 void only_id_get_id(struct _only_id_obj* id);

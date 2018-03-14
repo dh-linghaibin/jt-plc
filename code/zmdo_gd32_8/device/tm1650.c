@@ -38,6 +38,7 @@ static void Tm1650DelayMs(uint16_t ms) {
 }
 
 static void TM1650Send(Stdtm1650_n * tm1650n,uint8_t cmd, uint8_t data) {
+	#if USB_IIC
 	/* wait until I2C bus is idle */
     while(i2c_flag_get(I2C1, I2C_FLAG_I2CBSY));
     /* send a start condition to I2C bus */
@@ -58,10 +59,12 @@ static void TM1650Send(Stdtm1650_n * tm1650n,uint8_t cmd, uint8_t data) {
 	while(!i2c_flag_get(I2C1, I2C_FLAG_TBE));
     i2c_stop_on_bus(I2C1);
     while(I2C_CTL0(I2C1)&0x0200);
+	#endif
 }
 
 uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n) {
-    uint8_t reKey,i;
+	#if USB_IIC
+    uint8_t reKey;
 	/* wait until I2C bus is idle */
     while(i2c_flag_get(I2C1, I2C_FLAG_I2CBSY));
     /* send a start condition to I2C bus */
@@ -87,6 +90,7 @@ uint8_t TM1650ScanKey(Stdtm1650_n * tm1650n) {
 	reKey = i2c_data_receive(I2C1);
 	i2c_ack_config(I2C1, I2C_ACK_ENABLE);
     return(reKey);
+	#endif
 }
 
 void Tm1650ShowNex(Stdtm1650_n * tm1650n,uint8_t num,uint8_t cmd) {

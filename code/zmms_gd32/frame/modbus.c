@@ -25,9 +25,9 @@
 #define REG_DISCRETE_START    0                // 开关寄存器起始地址
 #define REG_DISCRETE_SIZE     800                    // 开关寄存器数量
 
-static uint8_t modbus_coil[100];
+static uint8_t modbus_coil[120];
 uint8_t modbus_coil_r[100];
-uint8_t modbus_input[20];
+uint8_t modbus_input[100];
 
 int modbus_Holding[120];
 
@@ -141,8 +141,6 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs ) {
     return eStatus;
 }
 
-extern rtc_obj rtc;
-
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,
                 eMBRegisterMode eMode ) {
@@ -167,15 +165,15 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,
 				iRegIndex++;
 				usNRegs--;
 				if(iRegIndex >= 100) {
-					rtc_t t_rtc;
-					t_rtc.year = modbus_Holding[100];
-                    t_rtc.month = modbus_Holding[101];
-                    t_rtc.mday = modbus_Holding[102];
-                    t_rtc.wday = modbus_Holding[103];
-                    t_rtc.hour = modbus_Holding[104];
-                    t_rtc.min = modbus_Holding[105];
-                    t_rtc.sec = modbus_Holding[106];
-					rtc.set(&rtc,t_rtc);
+//					rtc_t t_rtc;
+//					t_rtc.year = modbus_Holding[100];
+//                    t_rtc.month = modbus_Holding[101];
+//                    t_rtc.mday = modbus_Holding[102];
+//                    t_rtc.wday = modbus_Holding[103];
+//                    t_rtc.hour = modbus_Holding[104];
+//                    t_rtc.min = modbus_Holding[105];
+//                    t_rtc.sec = modbus_Holding[106];
+//					rtc.set(&rtc,t_rtc);
 				}
             }
             break;

@@ -35,6 +35,12 @@ typedef enum {
 	F_PACK_OK = 2,
 }packet_flag_e;
 
+typedef enum {
+    LS_ACK_1 = 0, /* 发送握手信号 */
+    LS_ACK_2 = 1, /* 发送握手确认信号 */
+    LS_ACK_OK = 2, /* 握手成功 */
+} lb_state;
+
 #define PACKAGE_NUM 40
 /* 接收 */
 typedef struct _pacck_obj {
@@ -66,21 +72,17 @@ typedef struct _can_message_obj {
 	uint8_t arr[32];
 }can_message_obj;
 
-typedef struct _can_obj{   
-	uint16_t id;
-    uint8_t send_packed[8];
-	can_message_obj send_msg;
-    void (*init)(struct _can_obj* can);
-    void (*send)(struct _can_obj* can);
-    void (*set_id)(struct _can_obj* can,uint8_t id);
-	can_package_obj* (*get_packget)(struct _can_obj* can);
-}can_obj; 
+typedef struct _can_device_obj {
+	lb_state state; /* 设备状态 */
+	uint8_t address; /* 设备地址 */
+	uint8_t over_time;
+} can_device_obj;
 
-
-void bxcan_init(struct _can_obj* can);
-void bxcan_send(struct _can_obj* can);
-void bxcan_set_id(struct _can_obj* can,uint8_t id);
-can_package_obj*  bxcan_get_packget(struct _can_obj* can);
+void bxcan_init(void);
+void bxcan_send(can_message_obj send_msg);
+void bxcan_set_id(uint8_t id);
+void bxcan_lb_poll(void);
+void bxcan_set_rx_callback(void (*rx_callback)(can_packr_obj *pacckr));
 
 #ifdef __cplusplus
 }

@@ -5,6 +5,8 @@
 #include "gd32f10x.h"
 /* 外部数据类型 ***************************************************************/
 
+#define USB_IIC 1
+
 typedef struct {
 	uint32_t 	port;
 	uint16_t    pin;

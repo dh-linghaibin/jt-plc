@@ -14,13 +14,8 @@ extern "C" {
 
 #include "stm32f10x.h"
 
-typedef struct _wdog_obj {
-	void (*init)(struct _wdog_obj* wdog);
-	void (*reload)(struct _wdog_obj* wdog);
-}wdog_obj;
-
-void wdog_init(struct _wdog_obj* wdog);
-void wdog_reload(struct _wdog_obj* wdog);
+void wdog_init(void);
+void wdog_reload(void);
 
 #ifdef __cplusplus
 }

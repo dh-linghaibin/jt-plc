@@ -7,7 +7,7 @@
 
 #include "wdog.h"
 
-void wdog_init(struct _wdog_obj* wdog) {
+void wdog_init(void) {
      /* 检测系统是否由独立看门狗喂狗复位 */
     if (RCC_GetFlagStatus(RCC_FLAG_IWDGRST) != RESET) { 
         /* 清除复位标志位 */
@@ -31,7 +31,7 @@ void wdog_init(struct _wdog_obj* wdog) {
     IWDG_Enable();
 }
 
-void wdog_reload(struct _wdog_obj* wdog) {
+void wdog_reload(void) {
      /* 从新导入IWDG计数器 */
     IWDG_ReloadCounter(); 
 }

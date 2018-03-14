@@ -25,15 +25,9 @@ typedef struct {
     uint8_t  dst;   /* 0 Winter, !=0 Summer */
 }rtc_t;
 
-typedef struct _rtc_obj {
-	void (*init)(struct _rtc_obj *t_rtc);
-	rtc_t (*read)(struct _rtc_obj *t_rtc);
-	void (*set)(struct _rtc_obj *t_rtc,rtc_t time);
-}rtc_obj;
-
-void rtc_init(struct _rtc_obj *t_rtc);
-rtc_t rtc_read(struct _rtc_obj *t_rtc);
-void rtc_set(struct _rtc_obj *t_rtc,rtc_t time);
+void rtc_init(void);
+rtc_t rtc_read(void);
+void rtc_set(rtc_t time);
 
 #ifdef __cplusplus
 }

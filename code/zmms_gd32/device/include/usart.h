@@ -15,13 +15,8 @@ extern "C" {
 #include "stm32f10x.h"
 #include "stdio.h"	
 
-typedef struct _usart_obj {
-	void (*init)(struct _usart_obj* usart,uint32_t baud_rate);
-	void (*sen_byte)(struct _usart_obj* usart,uint8_t dat);
-}usart_obj;
-
-void usart_init(struct _usart_obj* usart,uint32_t baud_rate);
-void usart_sen_byte(struct _usart_obj* usart,uint8_t dat);
+void usart_init(uint32_t baud_rate);
+void usart_sen_byte(uint8_t dat);
 
 typedef enum {
 	R_HEAD = 0x77,
@@ -47,13 +42,8 @@ typedef struct _rs485_packet_obj {
 	rs485_cmd_obj package[RS485_PACKAGE_NUM];
 }rs485_packet_obj;
 
-typedef struct _rs485_obj {
-	void (*init)(struct _rs485_obj *re485);
-	rs485_packet_obj* (*get_packet)(struct _rs485_obj *re485);
-}rs485_obj;
-
-void rs485_init(struct _rs485_obj *re485);
-rs485_packet_obj* rs485_get_packet(struct _rs485_obj *re485);
+void rs485_init(void);
+rs485_packet_obj* rs485_get_packet(void);
 
 #ifdef __cplusplus
 }

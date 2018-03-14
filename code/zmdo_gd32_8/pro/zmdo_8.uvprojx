@@ -186,7 +186,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -414,25 +414,40 @@
               <FileType>1</FileType>
               <FilePath>..\device\wdog.c</FilePath>
             </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\device\time.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>frame</GroupName>
+          <GroupName>freertos</GroupName>
           <Files>
             <File>
-              <FileName>event.c</FileName>
+              <FileName>list.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\frame\event.c</FilePath>
+              <FilePath>..\freertos\list.c</FilePath>
             </File>
             <File>
-              <FileName>stime.c</FileName>
+              <FileName>queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\frame\stime.c</FilePath>
+              <FilePath>..\freertos\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\freertos\tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\freertos\portable\RVDS\ARM_CM3\port.c</FilePath>
+            </File>
+            <File>
+              <FileName>heap_2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\freertos\portable\MemMang\heap_2.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\freertos\timers.c</FilePath>
             </File>
           </Files>
         </Group>

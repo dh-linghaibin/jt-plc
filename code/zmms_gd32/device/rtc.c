@@ -143,7 +143,7 @@ void ltk_rtc_set_counter(uint32_t time_set)
     RTC_WaitForLastTask();
 }
 
-void rtc_init(struct _rtc_obj *t_rtc) {
+void rtc_init(void) {
 	/* 使能 PWR 和 BKP 时钟 */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
 
@@ -192,7 +192,7 @@ void rtc_init(struct _rtc_obj *t_rtc) {
         rtc.min = 10;
         rtc.sec = 10;
         
-        t_rtc->set(t_rtc,rtc);
+        rtc_set(rtc);
 
         /* 往备份数据写入 RCC_BACKUP_DATA，用于指示备份区域数据是否有效 */
         BKP_WriteBackupRegister(BKP_DR1, RCC_BACKUP_DATA);
@@ -205,13 +205,13 @@ void rtc_init(struct _rtc_obj *t_rtc) {
     RCC_ClearFlag();
 }
 
-rtc_t rtc_read(struct _rtc_obj *t_rtc) {
+rtc_t rtc_read(void) {
 	rtc_t t;
 	counter_to_struct(RTC_GetCounter(), &t);
 	return t;
 }
 
-void rtc_set(struct _rtc_obj *t_rtc,rtc_t time) {
+void rtc_set(rtc_t time) {
 	uint32_t cnt;
     rtc_t ts;
 

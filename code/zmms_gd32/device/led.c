@@ -7,7 +7,7 @@
 
 #include "led.h"
 
-void led_init(struct _led_obj* led) {
+void led_init(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -24,7 +24,7 @@ void led_init(struct _led_obj* led) {
 	GPIO_WriteBit(GPIOB,GPIO_Pin_1,(BitAction)(1));
 }
 
-void led_set(struct _led_obj* led,led_type_e led_type ,BitAction val) {
+void led_set(led_type_e led_type ,BitAction val) {
 	switch(led_type) {
 		case L_RUN:
 			GPIO_WriteBit(GPIOB,GPIO_Pin_11,val);
@@ -41,7 +41,7 @@ void led_set(struct _led_obj* led,led_type_e led_type ,BitAction val) {
 	}
 }
 
-void led_tager(struct _led_obj* led,led_type_e led_type) {
+void led_tager(led_type_e led_type) {
 	switch(led_type) {
 		case L_RUN:
 			GPIO_WriteBit(GPIOB, GPIO_Pin_11, 

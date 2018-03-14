@@ -21,16 +21,9 @@ typedef enum _led_type_e{
 	L_RS232,
 }led_type_e;
 
-typedef struct _led_obj {
-	void (*init)(struct _led_obj* led);
-	void (*set)(struct _led_obj* led,led_type_e led_type ,BitAction val);
-	void (*tager)(struct _led_obj* led,led_type_e led_type);
-}led_obj;
-
-
-void led_init(struct _led_obj* led);
-void led_set(struct _led_obj* led,led_type_e led_type ,BitAction val);
-void led_tager(struct _led_obj* led,led_type_e led_type);
+void led_init(void);
+void led_set(led_type_e led_type ,BitAction val);
+void led_tager(led_type_e led_type);
 
 /*
 led_obj led = {

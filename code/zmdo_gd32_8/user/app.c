@@ -9,14 +9,11 @@
 #include "outsignal.h"
 #include "flash.h"
 #include "wdog.h"
-#include "fsm.h"
-#include "time.h"
-
-static time_obj time = {
-	.init	= time_init,
-	.get_1ms	= time_get_1ms,
-	.set_1ms	= time_set_1ms,
-};
+/* Scheduler includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "timers.h"
 
 static Stdoutsignal OUTSIGNAL = {
 	{
@@ -41,18 +38,6 @@ static Stdoutsignal OUTSIGNAL = {
 };
 
 
-//static can_obj can_bus = {
-//	
-//		4,
-//		0x1800f001,
-//		{0,0,0,0,0,0,0,0},
-//		{0},
-//	&bxcan_init,
-//	&bxcan_send,
-//	&bxcan_set_id,
-//	&bxcan_get_packget,
-//};
-
 static Stdtm1650 TM1650 = {
 	{
 		{GPIOB,GPIO_PIN_10},
@@ -68,89 +53,198 @@ static Stdtm1650 TM1650 = {
 	&TM1650ScanKey,
 };
 
-static uint8_t ws_flag = 0;
+void flash_task(void *p);
+void net_task(void *p);
+void display_task(void *p);
+void display_flash_task(void *p);
 
-simple_fsm(LedTask,
-	)
-fsm_init_name(LedTask)
+int main(void) {
+    OUTSIGNAL.Init(&OUTSIGNAL.outsignal_n); /* 继电器初始化 */
+    TM1650.init(&TM1650.tm1650_n); 			/* 显示初始化 */
+    bxcan_init();							/* can总线初始化 */
+    uint32_t addr = 0;						/* 读取地址 */
+    flash_read(C_FLAG,&addr);
+    if(addr != 0x5555) {					/* 判断是否第一次上电 */
+        addr = 0x5555; 
+        flash_write(C_FLAG,addr);
+        addr = 1;
+        flash_write(C_ADDR,addr);
+        addr = 0x00;
+        flash_write(C_DEVICE_VAL,addr);
+    }
+    flash_read(C_ADDR,&addr);
+    if(addr > 100) { 						/* 保护地址合法范围 */
+        addr = 1;
+    }
+    TM1650.show_nex(&TM1650.tm1650_n,0,addr/10);/* 显示设备地址 */
+    TM1650.show_nex(&TM1650.tm1650_n,1,addr%10);
+    bxcan_set_id(addr);				/* 设置设备ID */
+    if(OUTSIGNAL.readstop(&OUTSIGNAL.outsignal_n) == 1) {
+        uint8_t coil_val = 0;
+        flash_read(C_DEVICE_VAL,&addr);
+        OUTSIGNAL.outsignal_n.coil_val = addr;
+        coil_val = OUTSIGNAL.outsignal_n.coil_val;
+        for(uint8_t i = 0;i < 8;i++) {
+            uint8_t val = 1;
+            if ((coil_val & 0x80) == 0) {
+                val = 0;
+            }
+            coil_val <<= 1;
+            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
+            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
+        }
+    }
+
+    BaseType_t xReturn = xTaskCreate(flash_task, (const char*)"flash_task", 300, NULL, 4, NULL);
+    if (xReturn != pdPASS) {
+        xReturn = pdPASS;
+    }
+    xReturn = xTaskCreate(net_task, (const char*)"net_task", 300, NULL, 4, NULL);
+    if (xReturn != pdPASS) {
+        xReturn = pdPASS;
+    }
+    xReturn = xTaskCreate(display_task, (const char*)"display_task", 300, NULL, 4, NULL);
+    if (xReturn != pdPASS) {
+        xReturn = pdPASS;
+    }
+    /* Start the scheduler. */
+    vTaskStartScheduler();
+    return 0;
+}
+
+void flash_task(void *p) {
 	while(1) {
-		if(ws_flag == 0) {
-			TM1650.show_led(&TM1650.tm1650_n,9,0);
-			WaitX(2000);
-			TM1650.show_led(&TM1650.tm1650_n,9,1);
-			WaitX(2000);
-		} else {
-			TM1650.show_led(&TM1650.tm1650_n,10,0);
-			WaitX(2000);
-			TM1650.show_led(&TM1650.tm1650_n,10,1);
-			WaitX(2000);
-		}
-		switch(ws_flag) {
-			case 0: {
-				can_message_obj send_msg;
-				send_msg.send_id = 0xff;	  /* 目标设备地址 */
-				send_msg.id = bxcan_get_id(); /* 设备地址 */
-				send_msg.device_id = 0xd0;	  /* 设备类型 */
-				send_msg.cmd = 0xf1;		  /* 命令 */
-				send_msg.len = 0;			
-				bxcan_send(send_msg);
+		switch(bxcan_get_state()) {
+			case LS_ACK_1 : {
+				TM1650.show_led(&TM1650.tm1650_n,10,0);
+				TM1650.show_led(&TM1650.tm1650_n,9,0);
+				vTaskDelay(100/portTICK_RATE_MS);
+				TM1650.show_led(&TM1650.tm1650_n,9,1);
+				vTaskDelay(100/portTICK_RATE_MS);
 			} break;
-			case 1: {
-
+			case LS_ACK_2 : {
+				TM1650.show_led(&TM1650.tm1650_n,9,0);
+				vTaskDelay(500/portTICK_RATE_MS);
+				TM1650.show_led(&TM1650.tm1650_n,9,1);
+				vTaskDelay(500/portTICK_RATE_MS);
+			} break;
+			case LS_ACK_OK: {
+				TM1650.show_led(&TM1650.tm1650_n,10,0);
+				vTaskDelay(500/portTICK_RATE_MS);
+				TM1650.show_led(&TM1650.tm1650_n,10,1);
+				vTaskDelay(500/portTICK_RATE_MS);
+			} break;
+			default :{
+				vTaskDelay(500/portTICK_RATE_MS);
 			} break;
 		}
 	}
-fsm_end
+}
 
-simple_fsm(tm1650_task,
-	uint8_t dr;
-	uint8_t lcd_out_num;)
 
-simple_fsm(menu_task,
-		   uint8_t but_key;
-		   uint8_t menu_flag;
-		   uint8_t menu_addr;)
-fsm_init_name(menu_task)
+void bxcan_rx_callback(can_packr_obj *pacckr) {
+    switch(pacckr->device_id) {
+        case 0xD0: { /* 八位数字输出 */
+            switch(pacckr->cmd) {
+                case 0xac:
+                    
+                break;
+                case 1: {
+                    uint8_t dat = pacckr->arr[0];
+                    for(int i = 0;i < 8;i++) {
+                        OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,(dat&0x01)<<7); 
+                        TM1650.show_led(&TM1650.tm1650_n,i,(dat&0x01)<<7);
+                        dat>>=1;
+                    }
+                } break;	
+                case 2:
+
+                break;
+                case 3:
+
+                break;
+            }
+        }
+        break;
+    }
+    vTaskDelay(1/portTICK_RATE_MS); /* 休息一下 */
+    /* 保存设备继电器信息 */
+    {
+    //uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
+    //flash.write(C_DEVICE_VAL,val);
+    }
+    /*更新设备情况*/
+    can_message_obj send_msg;
+    send_msg.send_id = 0xff;	  /* 目标设备地址 */
+    send_msg.id = bxcan_get_id(); /* 设备地址 */
+    send_msg.device_id = 0xd0;	  /* 设备类型 */
+    send_msg.cmd = 0x01;		  /* 命令 */
+    send_msg.len = 1;			
+    send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
+    bxcan_send(send_msg);
+}
+
+void net_task(void *p) {
+	bxcan_set_rx_callback(bxcan_rx_callback);
 	while(1) {
-		WaitX(500);
-		me.but_key = TM1650.readkey(&TM1650.tm1650_n);
-		if(me.but_key == 0x67) {
+		vTaskDelay(5/portTICK_RATE_MS);
+		bxcan_lb_poll();
+	}
+}
+
+typedef struct _menu_val {
+	uint8_t menu_flag;
+	uint8_t menu_addr;
+	uint8_t flash;
+} menu_val;
+
+void display_task(void *p) {
+   uint8_t but_key;
+	menu_val menu;
+	menu.menu_addr = 0;
+	menu.menu_flag = 0;
+	menu.flash = 0;
+	while(1) {
+		vTaskDelay(50/portTICK_RATE_MS);
+		but_key = TM1650.readkey(&TM1650.tm1650_n);
+		if(but_key == 0x67) {
 			TM1650.tm1650_n.key_down_num = 0;
-		} else if(me.but_key == 0x5f) {
+		} else if(but_key == 0x5f) {
 			TM1650.tm1650_n.key_down_num = 1;
-		} else if(me.but_key == 0x57) {
+		} else if(but_key == 0x57) {
 			TM1650.tm1650_n.key_down_num = 2;
-		} else if(me.but_key == 0x6f) {
+		} else if(but_key == 0x6f) {
 			TM1650.tm1650_n.key_down_num = 3;
-		} else if(me.but_key == 0x47) {
+		} else if(but_key == 0x47) {
 			TM1650.tm1650_n.key_down_num = 4;
-		} else if(me.but_key == 0x4f) {
+		} else if(but_key == 0x4f) {
 			TM1650.tm1650_n.key_down_num = 5;
-		} else if(me.but_key == 0x77) {	
+		} else if(but_key == 0x77) {	
 			TM1650.tm1650_n.key_down_num = 6;
-		} else if(me.but_key == 0x76) {
+		} else if(but_key == 0x76) {
 			TM1650.tm1650_n.key_down_num = 7;
-		} else if(me.but_key == 0x66) {
+		} else if(but_key == 0x66) {
 			TM1650.tm1650_n.key_down_num = 9;
-		} else if(me.but_key == 0x5e) {
+		} else if(but_key == 0x5e) {
 			TM1650.tm1650_n.key_down_num = 10;
-		} else if(me.but_key == 0x56) {
+		} else if(but_key == 0x56) {
 			TM1650.tm1650_n.key_down_num = 8;
 		} else {
 			if(TM1650.tm1650_n.key_down_num == 9) {
 				if( (TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] >= 1) &&
 				   (TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 34) ){
-						switch(me.menu_flag) {
+						switch(menu.menu_flag) {
 						case 0:
 
 						break;
 						case 1:
-						ltm1650_task.lcd_out_num = 0;
-						if(me.menu_addr < 99) {
-							me.menu_addr++;
+						//ltm1650_task.lcd_out_num = 0;
+						if(menu.menu_addr < 99) {
+							menu.menu_addr++;
 						} else {
-							me.menu_addr = 0;
+							menu.menu_addr = 0;
 						}
+						menu.flash = 0;
 						break;
 						}
 				   }
@@ -185,19 +279,21 @@ fsm_init_name(menu_task)
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 25)
 				TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] ++;
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] == 24) {
-				switch(me.menu_flag) {
+				switch(menu.menu_flag) {
 					case 0:
-					me.menu_flag = 1;
-					me.menu_addr = bxcan_get_id();
-					fsm_task_init(tm1650_task);
-					fsm_task_on(tm1650_task);
+					menu.menu_flag = 1;
+					menu.menu_addr = bxcan_get_id();
+					BaseType_t xReturn = xTaskCreate(display_flash_task, (const char*)"tled_task", 300, &menu, 4, NULL);
+					if (xReturn != pdPASS) {
+						xReturn = pdPASS;
+					}
 					break;
 					case 1:
-					bxcan_set_id(me.menu_addr);	/* 设置设备ID */
+					menu.flash = 30;
+					bxcan_set_id(menu.menu_addr);	/* 设置设备ID */
 					TM1650.show_nex(&TM1650.tm1650_n,0,bxcan_get_id()/10);
 					TM1650.show_nex(&TM1650.tm1650_n,1,bxcan_get_id()%10);
 					flash_write(C_ADDR,bxcan_get_id());
-					fsm_task_off(tm1650_task);
 					break;
 				}
 			}
@@ -205,165 +301,51 @@ fsm_init_name(menu_task)
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] < 10)
 				TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] ++;
 			if(TM1650.tm1650_n.key_count[TM1650.tm1650_n.key_down_num] == 1) {
-				switch(me.menu_flag) {
+				switch(menu.menu_flag) {
 					case 0:
 					
 					break;
 					case 1:
-					ltm1650_task.lcd_out_num = 0;
-					if(me.menu_addr > 0) {
-						me.menu_addr--;
+					//ltm1650_task.lcd_out_num = 0;
+					if(menu.menu_addr > 0) {
+						menu.menu_addr--;
 					} else {
-						me.menu_addr = 99;
+						menu.menu_addr = 99;
 					}
+					menu.flash = 0;
 					break;
 				}
 			}
 		}
 	}
-fsm_end
+}
 
-fsm_init_name(tm1650_task)
-	me.lcd_out_num = 0;
+void display_flash_task(void *p) {
+	uint8_t dr = 0;
+	menu_val *menu = (menu_val *)(p);
 	while(1) {
-		WaitX(1000);
-		if(me.dr == 0) {
-			me.dr = 1;
+		vTaskDelay(250/portTICK_RATE_MS);
+		if(dr == 0) {
+			dr = 1;
 			TM1650.show_nex(&TM1650.tm1650_n,0,13);
 			TM1650.show_nex(&TM1650.tm1650_n,1,13);
 		} else {
-			me.dr = 0;
-			TM1650.show_nex(&TM1650.tm1650_n,0,lmenu_task.menu_addr/10);
-			TM1650.show_nex(&TM1650.tm1650_n,1,lmenu_task.menu_addr%10);
+			dr = 0;
+			TM1650.show_nex(&TM1650.tm1650_n,0,menu->menu_addr/10);
+			TM1650.show_nex(&TM1650.tm1650_n,1,menu->menu_addr%10);
 		}
-		if(me.lcd_out_num < 30) {
-			me.lcd_out_num++;
+		if(menu->flash < 30) {
+			menu->flash++;
 		} else {
-			lmenu_task.menu_flag = 0;
-			me.lcd_out_num = 0;
+			menu->menu_flag = 0;
+			menu->flash = 0;
 			TM1650.show_nex(&TM1650.tm1650_n,0,bxcan_get_id()/10);
 			TM1650.show_nex(&TM1650.tm1650_n,1,bxcan_get_id()%10);
-			fsm_task_off(tm1650_task);
+			vTaskDelete(NULL);
 		}
 	}
-fsm_end
-
-
-
-simple_fsm(can_rx_task,)
-fsm_init_name(can_rx_task)
-	while(1) {
-		WaitX(100);
-		bxcan_lb_poll();
-		/* 运行命令 */
-		can_packr_obj *pacckr = bxcan_lb_get_msg();
-		for(int i = 0;i < PACKAGE_NUM;i++) { 
-			if(pacckr[i].flag == F_PACK_OK) {
-				switch(pacckr[i].cmd) {
-					case 0xf1: {
-						ws_flag = 1;
-					} break;
-					default: {
-							switch(pacckr[i].device_id) {
-								case 0xf0: { /* 八位数字输出 */
-									switch(pacckr[i].cmd) {
-										case 0:
-										
-										break;
-										case 1: {
-											uint8_t dat = pacckr[i].arr[0];
-											for(int i = 0;i < 8;i++) {
-												OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,i,(dat&0x01)<<7); 
-												TM1650.show_led(&TM1650.tm1650_n,i,(dat&0x01)<<7);
-												 dat>>=1;
-											}
-										}
-											break;	
-										case 2:
-
-										break;
-										case 3:
-
-										break;
-									}
-								}
-									break;
-							}
-							//WaitX(1); /* 休息一下 */
-							/* 保存设备继电器信息 */
-							{
-								//uint16_t val = OUTSIGNAL.outsignal_n.coil_val;
-								//flash.write(C_DEVICE_VAL,val);
-							}
-							/*更新设备情况*/
-							can_message_obj send_msg;
-							send_msg.send_id = 0xff;	  /* 目标设备地址 */
-							send_msg.id = bxcan_get_id(); /* 设备地址 */
-							send_msg.device_id = 0xd0;	  /* 设备类型 */
-							send_msg.cmd = 0x01;		  /* 命令 */
-							send_msg.len = 1;			
-							send_msg.arr[0]  = OUTSIGNAL.outsignal_n.coil_val;
-							bxcan_send(send_msg);
-					} break;
-				}
-				pacckr[i].flag = F_NO_USE;/* 数据处理完毕 */
-			}
-		}
-	}
-fsm_end
-
-int main(void) {
-	OUTSIGNAL.Init(&OUTSIGNAL.outsignal_n); /* 继电器初始化 */
-	TM1650.init(&TM1650.tm1650_n); 			/* 显示初始化 */
-	time.init(&time); 						/* 系统节拍初始化 */
-	bxcan_init();				/* can总线初始化 */
-	uint32_t addr = 0;						/* 读取地址 */
-	flash_read(C_FLAG,&addr);
-	if(addr != 0x5555) {					/* 判断是否第一次上电 */
-		addr = 0x5555; 
-		flash_write(C_FLAG,addr);
-		addr = 99;
-		flash_write(C_ADDR,addr);
-		addr = 0x00;
-		flash_write(C_DEVICE_VAL,addr);
-	}
-	flash_read(C_ADDR,&addr);
-	if(addr > 100) { 						/* 保护地址合法范围 */
-		addr = 99;
-	}
-	TM1650.show_nex(&TM1650.tm1650_n,0,addr/10);/* 显示设备地址 */
-	TM1650.show_nex(&TM1650.tm1650_n,1,addr%10);
-	bxcan_set_id(addr);				/* 设置设备ID */
-    if(OUTSIGNAL.readstop(&OUTSIGNAL.outsignal_n) == 1) {
-        uint8_t coil_val = 0;
-        flash_read(C_DEVICE_VAL,&addr);
-		OUTSIGNAL.outsignal_n.coil_val = addr;
-        coil_val = OUTSIGNAL.outsignal_n.coil_val;
-        for(uint8_t i = 0;i < 8;i++) {
-            uint8_t val = 1;
-            if ((coil_val & 0x80) == 0) {
-                val = 0;
-            }
-            coil_val <<= 1;
-            OUTSIGNAL.setout(&OUTSIGNAL.outsignal_n,7-i,val);
-            TM1650.show_led(&TM1650.tm1650_n,7-i,val);
-        }
-    }
-	//wdog_init();
-	fsm_task_on(LedTask);
-	fsm_task_on(menu_task);
-	fsm_task_on(can_rx_task);
-	while(1) {
-		if(time.get_1ms(&time) == 1) {
-			time.set_1ms(&time,0);
-			fsm_going(LedTask);
-			fsm_going(menu_task);
-			fsm_going(can_rx_task);
-			fsm_going(tm1650_task);
-		}
-	}
-	//return 0;
 }
+
 
 
 

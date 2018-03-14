@@ -5,9 +5,12 @@
 ".\objects\outsignal.o"
 ".\objects\tm1650.o"
 ".\objects\wdog.o"
-".\objects\time.o"
-".\objects\event.o"
-".\objects\stime.o"
+".\objects\list.o"
+".\objects\queue.o"
+".\objects\tasks.o"
+".\objects\port.o"
+".\objects\heap_2.o"
+".\objects\timers.o"
 ".\objects\gd32f10x_adc.o"
 ".\objects\gd32f10x_bkp.o"
 ".\objects\gd32f10x_can.o"
@@ -33,7 +36,7 @@
 ".\objects\gd32f10x_wwdgt.o"
 ".\objects\startup_gd32f10x_md.o"
 ".\objects\system_gd32f10x.o"
---strict --scatter ".\Objects\zmdo_8.sct"
+--library_type=microlib --strict --scatter ".\Objects\zmdo_8.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list ".\Listings\zmdo_8.map" -o .\Objects\zmdo_8.axf

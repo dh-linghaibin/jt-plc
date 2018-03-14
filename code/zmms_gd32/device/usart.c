@@ -10,7 +10,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-void usart_init(struct _usart_obj* usart,uint32_t baud_rate) {
+void usart_init(uint32_t baud_rate) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
 
@@ -53,7 +53,7 @@ void usart_init(struct _usart_obj* usart,uint32_t baud_rate) {
 	USART_ClearFlag(USART1, USART_FLAG_TC);
 }
 
-void usart_sen_byte(struct _usart_obj* usart,uint8_t dat) {
+void usart_sen_byte(uint8_t dat) {
 	/* 写一个字节到USART1 */
   USART_SendData(USART1, (uint8_t) dat);
   /* 等待发送结束 */
@@ -97,7 +97,7 @@ int fgetc(FILE *f) {
 }
 #endif 
 
-void rs485_init(struct _rs485_obj *re485) {
+void rs485_init(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -159,7 +159,7 @@ void rs485_init(struct _rs485_obj *re485) {
 static rs485_packet_obj rs485_packet = {0,};
 static uint8_t packet_dat[2] = {0,0};
 
-rs485_packet_obj* rs485_get_packet(struct _rs485_obj *re485) {
+rs485_packet_obj* rs485_get_packet(void) {
 	return &rs485_packet;
 }
 
